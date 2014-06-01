@@ -1,0 +1,54 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+publish
+/source/Build
+
+# NuGet packages
+packages
+
+# Cache files
+*.cache
+
+# Visual Studio temporary files
+*.aps
+*.bsc
+*.cspkg
+*.dep
+*.docstates
+*.exp
+*.idb
+*.ilk
+*.ncb
+*.obj
+*.opt
+*.pch
+*.pdb
+*.plg
+*.res
+*.sbr
+*.suo
+*.user
+*.vbw
+*.vs10x
+
+# Visual Studio bin deployment
+_bin_deployable[Aa]ssemblies/
+
+# Unwanted log files
+*.log
+
+# ReSharper
+_ReSharper*/
+*.resharper*
+
+# NCrunch
+_[Nn][Cc]runch*/
+
+# Other
+~$*
+*.Tmp
+
+# Project-specific excluded content
