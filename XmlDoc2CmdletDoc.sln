@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlDoc2CmdletDoc.Core", "XmlDoc2CmdletDoc.Core\XmlDoc2CmdletDoc.Core.csproj", "{D59BC007-3898-4556-9D8F-6C951BB3E50E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlDoc2CmdletDoc", "XmlDoc2CmdletDoc\XmlDoc2CmdletDoc.csproj", "{34C12E10-BF70-4771-89CA-234DBD44E03A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D59BC007-3898-4556-9D8F-6C951BB3E50E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D59BC007-3898-4556-9D8F-6C951BB3E50E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D59BC007-3898-4556-9D8F-6C951BB3E50E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D59BC007-3898-4556-9D8F-6C951BB3E50E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34C12E10-BF70-4771-89CA-234DBD44E03A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34C12E10-BF70-4771-89CA-234DBD44E03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34C12E10-BF70-4771-89CA-234DBD44E03A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34C12E10-BF70-4771-89CA-234DBD44E03A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

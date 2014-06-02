@@ -6,9 +6,6 @@
 publish
 /source/Build
 
-# NuGet packages
-packages
-
 # Cache files
 *.cache
 

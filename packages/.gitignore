@@ -1,0 +1,2 @@
+# Include all files, overriding the root-level repository ignore rules.
+!*
