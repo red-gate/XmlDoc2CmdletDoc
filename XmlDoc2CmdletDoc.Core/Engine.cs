@@ -17,6 +17,8 @@ namespace XmlDoc2CmdletDoc.Core
                 var assembly = LoadAssembly(options);
                 var commentReader = LoadComments(options);
                 var cmdletTypes = GetCmdletTypes(assembly);
+
+
                 Console.WriteLine("Cmdlet types:");
                 foreach (var type in cmdletTypes)
                 {
@@ -41,6 +43,21 @@ namespace XmlDoc2CmdletDoc.Core
             }
             try
             {
+                var assemblyDir = Path.GetDirectoryName(assemblyPath);
+                AppDomain.CurrentDomain.AssemblyResolve += // TODO: Really ought to track this handler and cleanly remove it.
+                    (sender, args) =>
+                    {
+                        var name = args.Name;
+                        var i = name.IndexOf(',');
+                        if (i != -1)
+                        {
+                            name = name.Substring(0, i);
+                        }
+                        name += ".dll";
+                        var path = Path.Combine(assemblyDir, name);
+                        return Assembly.LoadFrom(path);
+                    };
+
                 return Assembly.LoadFile(assemblyPath);
             }
             catch (Exception exception)
@@ -75,7 +92,7 @@ namespace XmlDoc2CmdletDoc.Core
         {
             return assembly.GetTypes()
                            .Where(type => type.IsPublic &&
-                                          type.IsAssignableFrom(typeof(Cmdlet)) &&
+                                          typeof(Cmdlet).IsAssignableFrom(type) &&
                                           type.GetCustomAttribute<CmdletAttribute>() != null)
                            .OrderBy(type => type.FullName);
         }
