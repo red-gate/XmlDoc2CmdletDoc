@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using Jolt;
 
 namespace XmlDoc2CmdletDoc.Core
@@ -18,12 +21,33 @@ namespace XmlDoc2CmdletDoc.Core
                 var commentReader = LoadComments(options);
                 var cmdletTypes = GetCmdletTypes(assembly);
 
+                var mshNs = XNamespace.Get("http://msh");
+                var mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
+                var commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
+                var devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
 
-                Console.WriteLine("Cmdlet types:");
+                var document = new XDocument(new XDeclaration("1.0", "utf-8", null));
+
+                var helpItemsElement = new XElement(mshNs + "helpItems",
+                                                    new XAttribute("schema", "maml"));
+
                 foreach (var type in cmdletTypes)
                 {
-                    Console.WriteLine("    " + type.FullName);
+                    var commandElement = new XElement(commandNs + "command",
+                                                      new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
+                                                      new XAttribute(XNamespace.Xmlns + "command", commandNs),
+                                                      new XAttribute(XNamespace.Xmlns + "dev", devNs));
+                    helpItemsElement.Add(commandElement);
                 }
+
+                document.Add(helpItemsElement);
+
+                using (var stream = new FileStream(options.OutputHelpFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (var writer = new StreamWriter(stream, Encoding.UTF8))
+                {
+                    document.Save(writer);
+                }
+
                 return EngineErrorCode.Success;
             }
             catch (EngineException exception)
