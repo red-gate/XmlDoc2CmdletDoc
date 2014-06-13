@@ -13,6 +13,12 @@ namespace XmlDoc2CmdletDoc.Core
 {
     public class Engine
     {
+        private readonly XNamespace mshNs = XNamespace.Get("http://msh");
+        private readonly XNamespace mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
+        private readonly XNamespace commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
+        private readonly XNamespace devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
+
+
         public EngineErrorCode GenerateHelp(Options options)
         {
             try
@@ -21,25 +27,13 @@ namespace XmlDoc2CmdletDoc.Core
                 var commentReader = LoadComments(options);
                 var cmdletTypes = GetCmdletTypes(assembly);
 
-                var mshNs = XNamespace.Get("http://msh");
-                var mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
-                var commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
-                var devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
-
                 var document = new XDocument(new XDeclaration("1.0", "utf-8", null));
-
-                var helpItemsElement = new XElement(mshNs + "helpItems",
-                                                    new XAttribute("schema", "maml"));
-
+                var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
                 foreach (var type in cmdletTypes)
                 {
-                    var commandElement = new XElement(commandNs + "command",
-                                                      new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
-                                                      new XAttribute(XNamespace.Xmlns + "command", commandNs),
-                                                      new XAttribute(XNamespace.Xmlns + "dev", devNs));
+                    var commandElement = GenerateCommandElement(type);
                     helpItemsElement.Add(commandElement);
                 }
-
                 document.Add(helpItemsElement);
 
                 using (var stream = new FileStream(options.OutputHelpFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -119,6 +113,43 @@ namespace XmlDoc2CmdletDoc.Core
                                           typeof(Cmdlet).IsAssignableFrom(type) &&
                                           type.GetCustomAttribute<CmdletAttribute>() != null)
                            .OrderBy(type => type.FullName);
+        }
+
+        private XElement GenerateCommandElement(Type cmdletType)
+        {
+            var cmdletAttribute = cmdletType.GetCustomAttribute<CmdletAttribute>();
+            var verb = cmdletAttribute.VerbName;
+            var noun = cmdletAttribute.NounName;
+            var name = string.Format("{0}-{1}", verb, noun);
+
+            var commandElement = new XElement(commandNs + "command",
+                                              new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
+                                              new XAttribute(XNamespace.Xmlns + "command", commandNs),
+                                              new XAttribute(XNamespace.Xmlns + "dev", devNs));
+            var detailsElement = new XElement(commandNs + "details",
+                                              new XElement(commandNs + "name", new XText(name)),
+                                              new XElement(commandNs + "verb", new XText(verb)),
+                                              new XElement(commandNs + "noun", new XText(noun)));
+            commandElement.Add(detailsElement);
+            commandElement.Add(GenerateReturnValueElement(cmdletType));
+            return commandElement;
+        }
+
+        private XElement GenerateReturnValueElement(Type cmdletType)
+        {
+            var returnValueElement = new XElement(commandNs + "returnValues");
+            foreach (var outputTypeAttribute in cmdletType.GetCustomAttributes<OutputTypeAttribute>())
+            {
+                returnValueElement.Add(new XElement(commandNs + "returnValue",
+                                                    GenerateTypeElement(outputTypeAttribute.Type.First())));
+            }
+            return returnValueElement;
+        }
+
+        private XElement GenerateTypeElement(PSTypeName type)
+        {
+            return new XElement(devNs + "type",
+                                new XElement(mamlNs + "name", type.Name));
         }
     }
 }
