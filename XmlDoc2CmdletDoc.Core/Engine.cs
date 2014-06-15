@@ -27,14 +27,8 @@ namespace XmlDoc2CmdletDoc.Core
                 var commentReader = LoadComments(options);
                 var cmdletTypes = GetCmdletTypes(assembly);
 
-                var document = new XDocument(new XDeclaration("1.0", "utf-8", null));
-                var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
-                foreach (var type in cmdletTypes)
-                {
-                    var commandElement = GenerateCommandElement(type);
-                    helpItemsElement.Add(commandElement);
-                }
-                document.Add(helpItemsElement);
+                var document = new XDocument(new XDeclaration("1.0", "utf-8", null),
+                                             GenerateHelpItemsElement(cmdletTypes));
 
                 using (var stream = new FileStream(options.OutputHelpFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 using (var writer = new StreamWriter(stream, Encoding.UTF8))
@@ -115,6 +109,16 @@ namespace XmlDoc2CmdletDoc.Core
                            .OrderBy(type => type.FullName);
         }
 
+        private XElement GenerateHelpItemsElement(IEnumerable<Type> cmdletTypes)
+        {
+            var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
+            foreach (var type in cmdletTypes)
+            {
+                helpItemsElement.Add(GenerateCommandElement(type));
+            }
+            return helpItemsElement;
+        }
+
         private XElement GenerateCommandElement(Type cmdletType)
         {
             var cmdletAttribute = cmdletType.GetCustomAttribute<CmdletAttribute>();
@@ -122,20 +126,58 @@ namespace XmlDoc2CmdletDoc.Core
             var noun = cmdletAttribute.NounName;
             var name = string.Format("{0}-{1}", verb, noun);
 
-            var commandElement = new XElement(commandNs + "command",
-                                              new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
-                                              new XAttribute(XNamespace.Xmlns + "command", commandNs),
-                                              new XAttribute(XNamespace.Xmlns + "dev", devNs));
-            var detailsElement = new XElement(commandNs + "details",
-                                              new XElement(commandNs + "name", new XText(name)),
-                                              new XElement(commandNs + "verb", new XText(verb)),
-                                              new XElement(commandNs + "noun", new XText(noun)));
-            commandElement.Add(detailsElement);
-            commandElement.Add(GenerateReturnValueElement(cmdletType));
-            return commandElement;
+            return new XElement(commandNs + "command",
+                                new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
+                                new XAttribute(XNamespace.Xmlns + "command", commandNs),
+                                new XAttribute(XNamespace.Xmlns + "dev", devNs),
+                                GenerateDetailsElement(name, verb, noun),
+                                GenerateDescriptionElement(),
+                                GenerateSyntaxElement(),
+                                GenerateParametersElement(),
+                                GenerateInputTypesElement(),
+                                GenerateReturnValuesElement(cmdletType),
+                                GenerateAlertSetElement(),
+                                GenerateExamplesElement(),
+                                GenerateRelatedLinksElement());
         }
 
-        private XElement GenerateReturnValueElement(Type cmdletType)
+        private XElement GenerateDetailsElement(string name, string verb, string noun)
+        {
+            return new XElement(commandNs + "details",
+                                new XElement(commandNs + "name", name),
+                                new XElement(commandNs + "verb", verb),
+                                new XElement(commandNs + "noun", noun),
+                                new XElement(mamlNs + "description",
+                                             new XElement(mamlNs + "para",
+                                                          "TODO: Insert the SYNOPSIS text here.")));
+        }
+
+        private XElement GenerateDescriptionElement()
+        {
+            return new XElement(mamlNs + "description",
+                                new XElement(mamlNs + "para",
+                                             "TODO: Insert the DESCRIPTION here."));
+        }
+
+        private XElement GenerateSyntaxElement()
+        {
+            var syntaxElement = new XElement(commandNs + "syntax", "TODO: Insert syntaxItem elements here.");
+            return syntaxElement;
+        }
+
+        private XElement GenerateParametersElement()
+        {
+            var parametersElement = new XElement(commandNs + "parameters", "TODO: Insert parameter elements here.");
+            return parametersElement;
+        }
+
+        private XElement GenerateInputTypesElement()
+        {
+            var parametersElement = new XElement(commandNs + "inputTypes", "TODO: Insert inputType elements here.");
+            return parametersElement;
+        }
+
+        private XElement GenerateReturnValuesElement(Type cmdletType)
         {
             var returnValueElement = new XElement(commandNs + "returnValues");
             foreach (var outputTypeAttribute in cmdletType.GetCustomAttributes<OutputTypeAttribute>())
@@ -144,6 +186,24 @@ namespace XmlDoc2CmdletDoc.Core
                                                     GenerateTypeElement(outputTypeAttribute.Type.First())));
             }
             return returnValueElement;
+        }
+
+        private XElement GenerateAlertSetElement()
+        {
+            var alertSetElement = new XElement(mamlNs + "alertSet", "TODO: Insert title and alert elements here.");
+            return alertSetElement;
+        }
+
+        private XElement GenerateExamplesElement()
+        {
+            var examplesElement = new XElement(commandNs + "examples", "TODO: Insert example elements here.");
+            return examplesElement;
+        }
+
+        private XElement GenerateRelatedLinksElement()
+        {
+            var relatedLinksElement = new XElement(mamlNs + "relatedLinks", "TODO: Insert navigationLink elements here.");
+            return relatedLinksElement;
         }
 
         private XElement GenerateTypeElement(PSTypeName type)
