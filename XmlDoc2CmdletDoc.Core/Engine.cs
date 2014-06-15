@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Jolt;
+using XmlDoc2CmdletDoc.Core.Domain;
 
 namespace XmlDoc2CmdletDoc.Core
 {
@@ -18,14 +19,13 @@ namespace XmlDoc2CmdletDoc.Core
         private readonly XNamespace commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
         private readonly XNamespace devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
 
-
         public EngineErrorCode GenerateHelp(Options options)
         {
             try
             {
                 var assembly = LoadAssembly(options);
                 var commentReader = LoadComments(options);
-                var cmdletTypes = GetCmdletTypes(assembly);
+                var cmdletTypes = GetCommands(assembly);
 
                 var document = new XDocument(new XDeclaration("1.0", "utf-8", null),
                                              GenerateHelpItemsElement(cmdletTypes));
@@ -100,116 +100,199 @@ namespace XmlDoc2CmdletDoc.Core
             }
         }
 
-        private static IEnumerable<Type> GetCmdletTypes(Assembly assembly)
+        private static IEnumerable<Command> GetCommands(Assembly assembly)
         {
             return assembly.GetTypes()
                            .Where(type => type.IsPublic &&
-                                          typeof(Cmdlet).IsAssignableFrom(type) &&
-                                          type.GetCustomAttribute<CmdletAttribute>() != null)
-                           .OrderBy(type => type.FullName);
+                               typeof(Cmdlet).IsAssignableFrom(type) &&
+                               type.GetCustomAttribute<CmdletAttribute>() != null)
+                           .Select(type => new Command(type))
+                           .OrderBy(command => command.Noun)
+                           .ThenBy(command => command.Verb);
         }
 
-        private XElement GenerateHelpItemsElement(IEnumerable<Type> cmdletTypes)
+        /// <summary>
+        /// Generates the root-level <em>&lt;helpItems&gt;</em> element.
+        /// </summary>
+        /// <param name="commands">All of the commands in the module being documented.</param>
+        /// <returns>The root-level <em>helpItems</em> element.</returns>
+        private XElement GenerateHelpItemsElement(IEnumerable<Command> commands)
         {
             var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
-            foreach (var type in cmdletTypes)
+            foreach (var command in commands)
             {
-                helpItemsElement.Add(GenerateCommandElement(type));
+                helpItemsElement.Add(GenerateCommandElement(command));
             }
             return helpItemsElement;
         }
 
-        private XElement GenerateCommandElement(Type cmdletType)
+        /// <summary>
+        /// Generates a <em>&lt;command:command&gt;</em> element for the specified command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:command&gt;</em> element that represents the <paramref name="command"/>.</returns>
+        private XElement GenerateCommandElement(Command command)
         {
-            var cmdletAttribute = cmdletType.GetCustomAttribute<CmdletAttribute>();
-            var verb = cmdletAttribute.VerbName;
-            var noun = cmdletAttribute.NounName;
-            var name = string.Format("{0}-{1}", verb, noun);
-
             return new XElement(commandNs + "command",
                                 new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
                                 new XAttribute(XNamespace.Xmlns + "command", commandNs),
                                 new XAttribute(XNamespace.Xmlns + "dev", devNs),
-                                GenerateDetailsElement(name, verb, noun),
-                                GenerateDescriptionElement(),
-                                GenerateSyntaxElement(),
-                                GenerateParametersElement(),
-                                GenerateInputTypesElement(),
-                                GenerateReturnValuesElement(cmdletType),
-                                GenerateAlertSetElement(),
-                                GenerateExamplesElement(),
-                                GenerateRelatedLinksElement());
+                                GenerateDetailsElement(command),
+                                GenerateDescriptionElement(command),
+                                GenerateSyntaxElement(command),
+                                GenerateParametersElement(command),
+                                GenerateInputTypesElement(command),
+                                GenerateReturnValuesElement(command),
+                                GenerateAlertSetElement(command),
+                                GenerateExamplesElement(command),
+                                GenerateRelatedLinksElement(command));
         }
 
-        private XElement GenerateDetailsElement(string name, string verb, string noun)
+        /// <summary>
+        /// Generates the <em>&lt;command:details&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:details&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateDetailsElement(Command command)
         {
             return new XElement(commandNs + "details",
-                                new XElement(commandNs + "name", name),
-                                new XElement(commandNs + "verb", verb),
-                                new XElement(commandNs + "noun", noun),
+                                new XElement(commandNs + "name", command.Name),
+                                new XElement(commandNs + "verb", command.Verb),
+                                new XElement(commandNs + "noun", command.Noun),
                                 new XElement(mamlNs + "description",
                                              new XElement(mamlNs + "para",
                                                           "TODO: Insert the SYNOPSIS text here.")));
         }
 
-        private XElement GenerateDescriptionElement()
+        /// <summary>
+        /// Generates the <em>&lt;maml:description&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;maml:description&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateDescriptionElement(Command command)
         {
             return new XElement(mamlNs + "description",
                                 new XElement(mamlNs + "para",
                                              "TODO: Insert the DESCRIPTION here."));
         }
 
-        private XElement GenerateSyntaxElement()
+        /// <summary>
+        /// Generates the <em>&lt;command:syntax&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:syntax&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateSyntaxElement(Command command)
         {
             var syntaxElement = new XElement(commandNs + "syntax", "TODO: Insert syntaxItem elements here.");
             return syntaxElement;
         }
 
-        private XElement GenerateParametersElement()
+        /// <summary>
+        /// Generates the <em>&lt;command:parameters&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:parameters&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateParametersElement(Command command)
         {
-            var parametersElement = new XElement(commandNs + "parameters", "TODO: Insert parameter elements here.");
+            var parametersElement = new XElement(commandNs + "parameters");
+            foreach (var parameter in command.Parameters)
+            {
+                parametersElement.Add(GenerateParameterElement(parameter));
+            }
             return parametersElement;
         }
 
-        private XElement GenerateInputTypesElement()
+        private XElement GenerateParameterElement(Parameter parameter)
+        {
+            var parameterElement = new XElement(commandNs + "parameter",
+                                                        new XAttribute("required", parameter.IsRequired),
+                                                        new XAttribute("globbing", parameter.SupportsGlobbing),
+                                                        new XAttribute("pipelineInput", parameter.IsPipeline),
+                                                        new XAttribute("position", parameter.Position.HasValue ? parameter.Position.ToString() : "named"),
+                                                        new XElement(mamlNs + "name", parameter.Name),
+                                                        new XElement(mamlNs + "description",
+                                                                     new XElement(mamlNs + "para", "TODO: Insert parameter description here.")),
+                                                        GenerateTypeElement(parameter.ParameterType));
+            var defaultValue = parameter.DefaultValue; // TODO: Get the default value from the doc comments?
+            if (defaultValue != null)
+            {
+                parameterElement.Add(new XElement(devNs + "defaultValue", defaultValue.ToString()));
+            }
+            return parameterElement;
+        }
+
+        /// <summary>
+        /// Generates the <em>&lt;command:inputTypes&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:inputTypes&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateInputTypesElement(Command command)
         {
             var parametersElement = new XElement(commandNs + "inputTypes", "TODO: Insert inputType elements here.");
             return parametersElement;
         }
 
-        private XElement GenerateReturnValuesElement(Type cmdletType)
+        /// <summary>
+        /// Generates the <em>&lt;command:returnValues&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:returnValues&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateReturnValuesElement(Command command)
         {
             var returnValueElement = new XElement(commandNs + "returnValues");
-            foreach (var outputTypeAttribute in cmdletType.GetCustomAttributes<OutputTypeAttribute>())
+            foreach (var type in command.OutputTypes)
             {
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
-                                                    GenerateTypeElement(outputTypeAttribute.Type.First())));
+                                                    GenerateTypeElement(type),
+                                                    new XElement(mamlNs + "description"))); // TODO: Attach a brief description to the output type.
             }
             return returnValueElement;
         }
 
-        private XElement GenerateAlertSetElement()
+        /// <summary>
+        /// Generates the <em>&lt;maml:alertSet&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateAlertSetElement(Command command)
         {
             var alertSetElement = new XElement(mamlNs + "alertSet", "TODO: Insert title and alert elements here.");
             return alertSetElement;
         }
 
-        private XElement GenerateExamplesElement()
+        /// <summary>
+        /// Generates the <em>&lt;command:examples&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;command:examples&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateExamplesElement(Command command)
         {
             var examplesElement = new XElement(commandNs + "examples", "TODO: Insert example elements here.");
             return examplesElement;
         }
 
-        private XElement GenerateRelatedLinksElement()
+        /// <summary>
+        /// Generates the <em>&lt;maml:relatedLinks&gt;</em> element for a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;maml:relatedLinks&gt;</em> element for the <paramref name="command"/>.</returns>
+        private XElement GenerateRelatedLinksElement(Command command)
         {
             var relatedLinksElement = new XElement(mamlNs + "relatedLinks", "TODO: Insert navigationLink elements here.");
             return relatedLinksElement;
         }
 
-        private XElement GenerateTypeElement(PSTypeName type)
+        /// <summary>
+        /// Generates a <em>&lt;dev:type&gt;</em> element for a type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private XElement GenerateTypeElement(Type type)
         {
             return new XElement(devNs + "type",
-                                new XElement(mamlNs + "name", type.Name));
+                                new XElement(mamlNs + "name", type.FullName),
+                                new XElement(mamlNs + "uri"),
+                                new XElement(mamlNs + "description"));
         }
     }
 }

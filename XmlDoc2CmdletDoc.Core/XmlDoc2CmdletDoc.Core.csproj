@@ -45,6 +45,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Command.cs" />
+    <Compile Include="Domain\Parameter.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineErrorCode.cs" />
     <Compile Include="EngineException.cs" />
