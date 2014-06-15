@@ -73,5 +73,17 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                     .Select(member => new Parameter(CmdletType, member));
             }
         }
+
+        public IEnumerable<Parameter> GetParameters(string parameterSetName)
+        {
+            return parameterSetName == ParameterAttribute.AllParameterSets
+                       ? Parameters
+                       : Parameters.Where(p => p.ParameterSetNames.Contains(parameterSetName));
+        }
+
+        /// <summary>
+        /// The names of the parameter sets that the parameters belongs to.
+        /// </summary>
+        public IEnumerable<string> ParameterSetNames { get { return Parameters.SelectMany(p => p.ParameterSetNames).Distinct(); } }
     }
 }

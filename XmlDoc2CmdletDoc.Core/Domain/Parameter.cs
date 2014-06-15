@@ -52,30 +52,53 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         }
 
         /// <summary>
+        /// The names of the parameter sets that the parameter belongs to.
+        /// </summary>
+        public IEnumerable<string> ParameterSetNames
+        {
+            get { return _attributes.Select(attr => attr.ParameterSetName); }
+        }
+
+        private IEnumerable<ParameterAttribute> GetAttributes(string parameterSetName)
+        {
+            return parameterSetName == ParameterAttribute.AllParameterSets
+                       ? _attributes
+                       : _attributes.Where(attr => attr.ParameterSetName == parameterSetName ||
+                                                   attr.ParameterSetName == ParameterAttribute.AllParameterSets);
+        }
+
+        /// <summary>
         /// Indicates whether or not the parameter is mandatory.
         /// </summary>
-        public bool IsRequired { get { return _attributes.Any(attr => attr.Mandatory); } }
+        public bool IsRequired(string parameterSetName)
+        {
+            return GetAttributes(parameterSetName).Any(attr => attr.Mandatory);
+        }
 
         /// <summary>
         /// Indicates whether or not the parameter supports globbing. Currently always returns false.
         /// </summary>
-        public bool SupportsGlobbing { get { return false; } } // TODO: How do we determine this correctly?
+        public bool SupportsGlobbing(string parameterSetName)
+        {
+            return false; // TODO: How do we determine this correctly?
+        }
 
         /// <summary>
         /// Indicates whether or not the parameter takes its value from the pipeline input.
         /// </summary>
-        public bool IsPipeline { get { return _attributes.Any(attr => attr.ValueFromPipeline || attr.ValueFromPipelineByPropertyName); } }
+        public bool IsPipeline(string parameterSetName)
+        {
+            return GetAttributes(parameterSetName).Any(attr => attr.ValueFromPipeline || attr.ValueFromPipelineByPropertyName);
+        }
 
         /// <summary>
         /// The position of the parameter, or <em>null</em> if no position is defined.
         /// </summary>
-        public int? Position
+        public string GetPosition(string parameterSetName)
         {
-            get
-            {
-                var position = _attributes.First().Position;
-                return position == int.MinValue ? (int?) null : position;
-            }
+            var attribute = GetAttributes(parameterSetName).FirstOrDefault();
+            if (attribute == null) return null;
+            return attribute.Position == int.MinValue ? "named" : Convert.ToString(attribute.Position);
         }
 
         /// <summary>

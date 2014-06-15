@@ -202,13 +202,13 @@ namespace XmlDoc2CmdletDoc.Core
             return parametersElement;
         }
 
-        private XElement GenerateParameterElement(Parameter parameter)
+        private XElement GenerateParameterElement(Parameter parameter, string parameterSetName = ParameterAttribute.AllParameterSets)
         {
             var parameterElement = new XElement(commandNs + "parameter",
-                                                        new XAttribute("required", parameter.IsRequired),
-                                                        new XAttribute("globbing", parameter.SupportsGlobbing),
-                                                        new XAttribute("pipelineInput", parameter.IsPipeline),
-                                                        new XAttribute("position", parameter.Position.HasValue ? parameter.Position.ToString() : "named"),
+                                                        new XAttribute("required", parameter.IsRequired(parameterSetName)),
+                                                        new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
+                                                        new XAttribute("pipelineInput", parameter.IsPipeline(parameterSetName)),
+                                                        new XAttribute("position", parameter.GetPosition(parameterSetName)),
                                                         new XElement(mamlNs + "name", parameter.Name),
                                                         new XElement(mamlNs + "description",
                                                                      new XElement(mamlNs + "para", "TODO: Insert parameter description here.")),
