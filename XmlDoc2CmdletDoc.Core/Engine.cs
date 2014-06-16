@@ -38,10 +38,13 @@ namespace XmlDoc2CmdletDoc.Core
 
                 return EngineErrorCode.Success;
             }
-            catch (EngineException exception)
+            catch (Exception exception)
             {
                 Console.Error.WriteLine(exception);
-                return exception.ErrorCode;
+                var engineException = exception as EngineException;
+                return engineException == null
+                           ? EngineErrorCode.UnhandledException
+                           : engineException.ErrorCode;
             }
         }
 
@@ -100,6 +103,11 @@ namespace XmlDoc2CmdletDoc.Core
             }
         }
 
+        /// <summary>
+        /// Retrieves a sequence of <see cref="Command"/> instances, one for each cmdlet defined in the specified <paramref name="assembly"/>.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
+        /// <returns>A sequence of commands, one for each cmdlet defined in the <paramref name="assembly"/>.</returns>
         private static IEnumerable<Command> GetCommands(Assembly assembly)
         {
             return assembly.GetTypes()
@@ -198,6 +206,12 @@ namespace XmlDoc2CmdletDoc.Core
             return syntaxElement;
         }
 
+        /// <summary>
+        /// Generates the <em>&lt;command:syntaxItem&gt;</em> element for a specific parameter set of a command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="parameterSetName">The parameter set name.</param>
+        /// <returns>A <em>&lt;command:syntaxItem&gt;</em> element for the specific <paramref name="parameterSetName"/> of the <paramref name="command"/>.</returns>
         private XElement GenerateSyntaxItemElement(Command command, string parameterSetName)
         {
             var syntaxItemElement = new XElement(commandNs + "syntaxItem",
@@ -326,6 +340,11 @@ namespace XmlDoc2CmdletDoc.Core
                                 new XElement(mamlNs + "description"));
         }
 
+        /// <summary>
+        /// Creates a comment.
+        /// </summary>
+        /// <param name="text">The text of the comment.</param>
+        /// <returns>An <see cref="XComment"/> instance based on the specified <paramref name="text"/>.</returns>
         private XComment Comment(string text) { return new XComment(string.Format(" {0} ", text)); }
     }
 }
