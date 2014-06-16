@@ -78,7 +78,8 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             return parameterSetName == ParameterAttribute.AllParameterSets
                        ? Parameters
-                       : Parameters.Where(p => p.ParameterSetNames.Contains(parameterSetName));
+                       : Parameters.Where(p => p.ParameterSetNames.Contains(parameterSetName) ||
+                                               p.ParameterSetNames.Contains(ParameterAttribute.AllParameterSets));
         }
 
         /// <summary>

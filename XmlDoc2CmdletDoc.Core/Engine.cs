@@ -121,6 +121,7 @@ namespace XmlDoc2CmdletDoc.Core
             var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
             foreach (var command in commands)
             {
+                helpItemsElement.Add(Comment("Cmdlet: " + command.Name));
                 helpItemsElement.Add(GenerateCommandElement(command));
             }
             return helpItemsElement;
@@ -183,8 +184,30 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;command:syntax&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateSyntaxElement(Command command)
         {
-            var syntaxElement = new XElement(commandNs + "syntax", "TODO: Insert syntaxItem elements here.");
+            var syntaxElement = new XElement(commandNs + "syntax");
+            IEnumerable<string> parameterSetNames = command.ParameterSetNames.ToList();
+            if (parameterSetNames.Count() > 1)
+            {
+                parameterSetNames = parameterSetNames.Where(name => name != ParameterAttribute.AllParameterSets);
+            }
+            foreach (var parameterSetName in parameterSetNames)
+            {
+                syntaxElement.Add(Comment("Parameter set: " + parameterSetName));
+                syntaxElement.Add(GenerateSyntaxItemElement(command, parameterSetName));
+            }
             return syntaxElement;
+        }
+
+        private XElement GenerateSyntaxItemElement(Command command, string parameterSetName)
+        {
+            var syntaxItemElement = new XElement(commandNs + "syntaxItem",
+                                                 new XElement(mamlNs + "name", command.Name));
+            foreach (var parameter in command.GetParameters(parameterSetName))
+            {
+                syntaxItemElement.Add(Comment("Parameter: " + parameter.Name));
+                syntaxItemElement.Add(GenerateParameterElement(parameter, parameterSetName));
+            }
+            return syntaxItemElement;
         }
 
         /// <summary>
@@ -197,11 +220,18 @@ namespace XmlDoc2CmdletDoc.Core
             var parametersElement = new XElement(commandNs + "parameters");
             foreach (var parameter in command.Parameters)
             {
+                parametersElement.Add(Comment("Parameter: " + parameter.Name));
                 parametersElement.Add(GenerateParameterElement(parameter));
             }
             return parametersElement;
         }
 
+        /// <summary>
+        /// Generates a <em>&lt;command:parameter&gt;</em> element for a single parameter.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <param name="parameterSetName">The specific parameter set name, or <see cref="ParameterAttribute.AllParameterSets"/>.</param>
+        /// <returns>A <em>&lt;command:parameter&gt;</em> element for the <paramref name="parameter"/>.</returns>
         private XElement GenerateParameterElement(Parameter parameter, string parameterSetName = ParameterAttribute.AllParameterSets)
         {
             var parameterElement = new XElement(commandNs + "parameter",
@@ -228,8 +258,8 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;command:inputTypes&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateInputTypesElement(Command command)
         {
-            var parametersElement = new XElement(commandNs + "inputTypes", "TODO: Insert inputType elements here.");
-            return parametersElement;
+            var inputTypesElement = new XElement(commandNs + "inputTypes", "TODO: Insert inputType elements here.");
+            return inputTypesElement;
         }
 
         /// <summary>
@@ -242,6 +272,7 @@ namespace XmlDoc2CmdletDoc.Core
             var returnValueElement = new XElement(commandNs + "returnValues");
             foreach (var type in command.OutputTypes)
             {
+                returnValueElement.Add(Comment("OutputType: " + type.Name));
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
                                                     GenerateTypeElement(type),
                                                     new XElement(mamlNs + "description"))); // TODO: Attach a brief description to the output type.
@@ -294,5 +325,7 @@ namespace XmlDoc2CmdletDoc.Core
                                 new XElement(mamlNs + "uri"),
                                 new XElement(mamlNs + "description"));
         }
+
+        private XComment Comment(string text) { return new XComment(string.Format(" {0} ", text)); }
     }
 }
