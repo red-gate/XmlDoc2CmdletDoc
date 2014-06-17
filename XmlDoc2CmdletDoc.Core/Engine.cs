@@ -256,7 +256,7 @@ namespace XmlDoc2CmdletDoc.Core
                                                         new XAttribute("position", parameter.GetPosition(parameterSetName)),
                                                         new XElement(mamlNs + "name", parameter.Name),
                                                         commentReader.GetParameterDescriptionElement(parameter),
-                                                        GenerateTypeElement(parameter.ParameterType),
+                                                        GenerateTypeElement(commentReader, parameter.ParameterType),
                                                         commentReader.GetParameterDefaultValueElement(parameter));
             return parameterElement;
         }
@@ -284,7 +284,7 @@ namespace XmlDoc2CmdletDoc.Core
             {
                 returnValueElement.Add(Comment("OutputType: " + type.Name));
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
-                                                    GenerateTypeElement(type),
+                                                    GenerateTypeElement(commentReader, type),
                                                     commentReader.GetTypeDescriptionElement(type)));
             }
             return returnValueElement;
@@ -328,12 +328,12 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private XElement GenerateTypeElement(Type type)
+        private XElement GenerateTypeElement(XmlDocCommentReader commentReader, Type type)
         {
             return new XElement(devNs + "type",
                                 new XElement(mamlNs + "name", type.FullName),
                                 new XElement(mamlNs + "uri"),
-                                new XElement(mamlNs + "description"));
+                                commentReader.GetTypeDescriptionElement(type));
         }
 
         /// <summary>
