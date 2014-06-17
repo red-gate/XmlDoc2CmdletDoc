@@ -12,8 +12,12 @@ namespace XmlDoc2CmdletDoc.Core.Domain
     public class Parameter
     {
         private readonly Type _cmdletType;
-        private readonly MemberInfo _memberInfo;
         private readonly IEnumerable<ParameterAttribute> _attributes;
+
+        /// <summary>
+        /// The <see cref="PropertyInfo"/> or <see cref="FieldInfo"/> that defines the property.
+        /// </summary>
+        public readonly MemberInfo MemberInfo;
 
         /// <summary>
         /// Creates a new instance.
@@ -23,14 +27,14 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         public Parameter(Type cmdletType, MemberInfo memberInfo)
         {
             _cmdletType = cmdletType;
-            _memberInfo = memberInfo;
+            MemberInfo = memberInfo;
             _attributes = memberInfo.GetCustomAttributes<ParameterAttribute>();
         }
 
         /// <summary>
         /// The name of the parameter.
         /// </summary>
-        public string Name { get { return _memberInfo.Name; } }
+        public string Name { get { return MemberInfo.Name; } }
 
         /// <summary>
         /// The type of the parameter.
@@ -39,14 +43,14 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
-                switch (_memberInfo.MemberType)
+                switch (MemberInfo.MemberType)
                 {
                     case MemberTypes.Property:
-                        return ((PropertyInfo) _memberInfo).PropertyType;
+                        return ((PropertyInfo) MemberInfo).PropertyType;
                     case MemberTypes.Field:
-                        return ((FieldInfo) _memberInfo).FieldType;
+                        return ((FieldInfo) MemberInfo).FieldType;
                     default:
-                        throw new NotSupportedException("Unsupported type: " + _memberInfo);
+                        throw new NotSupportedException("Unsupported type: " + MemberInfo);
                 }
             }
         }
@@ -110,14 +114,14 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             get
             {
                 var cmdlet = Activator.CreateInstance(_cmdletType);
-                switch (_memberInfo.MemberType)
+                switch (MemberInfo.MemberType)
                 {
                     case MemberTypes.Property:
-                        return ((PropertyInfo) _memberInfo).GetValue(cmdlet);
+                        return ((PropertyInfo) MemberInfo).GetValue(cmdlet);
                     case MemberTypes.Field:
-                        return ((FieldInfo) _memberInfo).GetValue(cmdlet);
+                        return ((FieldInfo) MemberInfo).GetValue(cmdlet);
                     default:
-                        throw new NotSupportedException("Unsupported type: " + _memberInfo);
+                        throw new NotSupportedException("Unsupported type: " + MemberInfo);
                 }
             }
         }
