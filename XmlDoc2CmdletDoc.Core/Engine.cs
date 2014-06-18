@@ -130,7 +130,7 @@ namespace XmlDoc2CmdletDoc.Core
             var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
             foreach (var command in commands)
             {
-                helpItemsElement.Add(Comment("Cmdlet: " + command.Name));
+                helpItemsElement.Add(GenerateComment("Cmdlet: " + command.Name));
                 helpItemsElement.Add(GenerateCommandElement(commentReader, command));
             }
             return helpItemsElement;
@@ -152,7 +152,7 @@ namespace XmlDoc2CmdletDoc.Core
                                 GenerateDescriptionElement(commentReader, command),
                                 GenerateSyntaxElement(commentReader, command),
                                 GenerateParametersElement(commentReader, command),
-                                GenerateInputTypesElement(command),
+                                GenerateInputTypesElement(commentReader, command),
                                 GenerateReturnValuesElement(commentReader, command),
                                 GenerateAlertSetElement(command),
                                 GenerateExamplesElement(command),
@@ -200,7 +200,7 @@ namespace XmlDoc2CmdletDoc.Core
             }
             foreach (var parameterSetName in parameterSetNames)
             {
-                syntaxElement.Add(Comment("Parameter set: " + parameterSetName));
+                syntaxElement.Add(GenerateComment("Parameter set: " + parameterSetName));
                 syntaxElement.Add(GenerateSyntaxItemElement(commentReader, command, parameterSetName));
             }
             return syntaxElement;
@@ -218,7 +218,7 @@ namespace XmlDoc2CmdletDoc.Core
                                                  new XElement(mamlNs + "name", command.Name));
             foreach (var parameter in command.GetParameters(parameterSetName))
             {
-                syntaxItemElement.Add(Comment("Parameter: " + parameter.Name));
+                syntaxItemElement.Add(GenerateComment("Parameter: " + parameter.Name));
                 syntaxItemElement.Add(GenerateParameterElement(commentReader, parameter, parameterSetName));
             }
             return syntaxItemElement;
@@ -234,7 +234,7 @@ namespace XmlDoc2CmdletDoc.Core
             var parametersElement = new XElement(commandNs + "parameters");
             foreach (var parameter in command.Parameters)
             {
-                parametersElement.Add(Comment("Parameter: " + parameter.Name));
+                parametersElement.Add(GenerateComment("Parameter: " + parameter.Name));
                 parametersElement.Add(GenerateParameterElement(commentReader, parameter));
             }
             return parametersElement;
@@ -266,10 +266,28 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:inputTypes&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateInputTypesElement(Command command)
+        private XElement GenerateInputTypesElement(XmlDocCommentReader commentReader, Command command)
         {
-            var inputTypesElement = new XElement(commandNs + "inputTypes", "TODO: Insert inputType elements here.");
+            var inputTypesElement = new XElement(commandNs + "inputTypes");
+            var pipelineParameters = command.GetParameters(ParameterAttribute.AllParameterSets)
+                                            .Where(p => p.IsPipeline(ParameterAttribute.AllParameterSets));
+            foreach (var parameter in pipelineParameters)
+            {
+                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameter));
+            }
             return inputTypesElement;
+        }
+
+        /// <summary>
+        /// Generates the <em>&lt;command:inputType&gt;</em> element for a pipeline parameter.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameter"/>.</returns>
+        private XElement GenerateInputTypeElement(XmlDocCommentReader commentReader, Parameter parameter)
+        {
+            return new XElement(commandNs + "inputType",
+                                GenerateTypeElement(commentReader, parameter.ParameterType),
+                                commentReader.GetTypeDescriptionElement(parameter.ParameterType));
         }
 
         /// <summary>
@@ -282,7 +300,7 @@ namespace XmlDoc2CmdletDoc.Core
             var returnValueElement = new XElement(commandNs + "returnValues");
             foreach (var type in command.OutputTypes)
             {
-                returnValueElement.Add(Comment("OutputType: " + type.Name));
+                returnValueElement.Add(GenerateComment("OutputType: " + type.Name));
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
                                                     GenerateTypeElement(commentReader, type),
                                                     commentReader.GetTypeDescriptionElement(type)));
@@ -341,6 +359,6 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="text">The text of the comment.</param>
         /// <returns>An <see cref="XComment"/> instance based on the specified <paramref name="text"/>.</returns>
-        private XComment Comment(string text) { return new XComment(string.Format(" {0} ", text)); }
+        private XComment GenerateComment(string text) { return new XComment(string.Format(" {0} ", text)); }
     }
 }
