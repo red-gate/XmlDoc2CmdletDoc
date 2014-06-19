@@ -58,12 +58,104 @@ namespace XmlDoc2CmdletDoc.Core
         }
 
         /// <summary>
+        /// Obtains a <em>&lt;command:examples&gt;</em> element for a cmdlet's examples.
+        /// </summary>
+        /// <param name="commentReader">The comment reader.</param>
+        /// <param name="command">The command.</param>
+        /// <returns>An examples element for the cmdlet.</returns>
+        public static XElement GetCommandExamplesElement(this XmlDocCommentReader commentReader, Command command)
+        {
+            var comments = commentReader.GetComments(command.CmdletType);
+            if (comments == null) return null;
+
+            var xmlDocExamples = comments.XPathSelectElements("example").ToList();
+            if (!xmlDocExamples.Any()) return null;
+
+            var examples = new XElement(commandNs + "examples");
+            int exampleNumber = 1;
+            foreach (var xmlDocExample in xmlDocExamples)
+            {
+                var example = GetCommandExampleElement(xmlDocExample, exampleNumber);
+                if (example != null)
+                {
+                    examples.Add(example);
+                    exampleNumber++;
+                }
+            }
+            return exampleNumber == 1 ? null : examples;
+        }
+
+        /// <summary>
+        /// Obtains a <em>&lt;command:example&gt;</em> element based on an <em>&lt;example&gt;</em> XML doc comment element.
+        /// </summary>
+        /// <param name="exampleElement">The XML doc comment example element.</param>
+        /// <param name="exampleNumber">The number of the example.</param>
+        /// <returns>An example element.</returns>
+        private static XElement GetCommandExampleElement(XElement exampleElement, int exampleNumber)
+        {
+            var items = exampleElement.XPathSelectElements("para | code");
+            var intros = items.TakeWhile(x => x.Name == "para").ToList();
+            var code = items.SkipWhile(x => x.Name == "para").TakeWhile(x => x.Name == "code").FirstOrDefault();
+            var paras = items.SkipWhile(x => x.Name == "para").SkipWhile(x => x.Name == "code").ToList();
+
+            var example = new XElement(commandNs + "example",
+                           new XElement(mamlNs + "title", string.Format("----------  EXAMPLE {0}  ----------", exampleNumber)));
+            if (intros.Any())
+            {
+                var introduction = new XElement(mamlNs + "introduction");
+                intros.ForEach(intro => introduction.Add(new XElement(mamlNs + "para", Tidy(intro.Value))));
+                example.Add(introduction);
+            }
+            if (code != null)
+            {
+                example.Add(new XElement(devNs + "code", code.Value));
+            }
+            if (paras.Any())
+            {
+                var remarks = new XElement(devNs + "remarks");
+                paras.ForEach(para => remarks.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
+                example.Add(remarks);
+            }
+
+            return example;
+        }
+
+        /// <summary>
+        /// Obtains a <em>&lt;command:relatedLinks&gt;</em> element for a cmdlet's related links.
+        /// </summary>
+        /// <param name="commentReader">The comment reader.</param>
+        /// <param name="command">The command.</param>
+        /// <returns>An relatedLinks element for the cmdlet.</returns>
+        public static XElement GetCommandRelatedLinksElement(this XmlDocCommentReader commentReader, Command command)
+        {
+            var comments = commentReader.GetComments(command.CmdletType);
+            if (comments == null) return null;
+
+            var paras = comments.XPathSelectElements("para[@type='link']").ToList();
+            if (!paras.Any()) return null;
+
+            var relatedLinks = new XElement(mamlNs + "relatedLinks");
+            foreach (var para in paras)
+            {
+                var navigationLink = new XElement(mamlNs + "navigationLink",
+                                                  new XElement(mamlNs + "linkText", para.Value));
+                var uri = para.Attribute("uri");
+                if (uri != null)
+                {
+                    navigationLink.Add(new XElement(mamlNs + "uri", uri.Value));
+                }
+                return navigationLink;
+            }
+            return relatedLinks;
+        }
+
+        /// <summary>
         /// Obtains a <em>&lt;maml:alertSet&gt;</em> element for a cmdlet's notes.
         /// </summary>
         /// <param name="commentReader">The comment reader.</param>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the cmdlet's notes.</returns>
-        public static XElement GetAlertSetElement(this XmlDocCommentReader commentReader, Command command)
+        public static XElement GetCommandAlertSetElement(this XmlDocCommentReader commentReader, Command command)
         {
             var comments = commentReader.GetComments(command.CmdletType);
             if (comments == null)
@@ -72,14 +164,14 @@ namespace XmlDoc2CmdletDoc.Core
             }
 
             // First see if there's an alertSet element in the comments
-            var alertSet = comments.XPathSelectElement("//maml:alertSet", resolver);
+            var alertSet = comments.XPathSelectElement("maml:alertSet", resolver);
             if (alertSet != null)
             {
                 return alertSet;
             }
 
             // Next, search for a list element of type <em>alertSet</em>.
-            var list = comments.XPathSelectElement("//list[@type='alertSet']");
+            var list = comments.XPathSelectElement("list[@type='alertSet']");
             if (list == null)
             {
                 return null;
@@ -121,7 +213,7 @@ namespace XmlDoc2CmdletDoc.Core
             var commentsElement = commentReader.GetComments(parameter.MemberInfo);
             return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description");
         }
-
+        
         /// <summary>
         /// Obtains a <em>&lt;dev:defaultValue&gt;</em> element for a parameter.
         /// </summary>
@@ -187,7 +279,7 @@ namespace XmlDoc2CmdletDoc.Core
             if (commentsElement != null)
             {
                 // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("//maml:description[@type='{0}']", typeAttribute), resolver);
+                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("maml:description[@type='{0}']", typeAttribute), resolver);
                 if (mamlDescriptionElement != null)
                 {
                     mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
@@ -195,8 +287,8 @@ namespace XmlDoc2CmdletDoc.Core
                     return mamlDescriptionElement;
                 }
 
-                // Next try <para type="typeAttribuyt"> elements.
-                var paraElements = commentsElement.XPathSelectElements(string.Format("//para[@type='{0}']", typeAttribute)).ToList();
+                // Next try <para type="typeAttribute"> elements.
+                var paraElements = commentsElement.XPathSelectElements(string.Format("para[@type='{0}']", typeAttribute)).ToList();
                 if (paraElements.Any())
                 {
                     var descriptionElement = new XElement(mamlNs + "description");

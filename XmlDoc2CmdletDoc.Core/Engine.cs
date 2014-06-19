@@ -314,7 +314,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateAlertSetElement(XmlDocCommentReader commentReader, Command command)
         {
-            return commentReader.GetAlertSetElement(command);
+            return commentReader.GetCommandAlertSetElement(command);
         }
 
         /// <summary>
@@ -324,8 +324,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;command:examples&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateExamplesElement(XmlDocCommentReader commentReader, Command command)
         {
-            var examplesElement = new XElement(commandNs + "examples", "TODO: Insert example elements here.");
-            return examplesElement;
+            return commentReader.GetCommandExamplesElement(command);
         }
 
         /// <summary>
@@ -335,8 +334,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;maml:relatedLinks&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateRelatedLinksElement(XmlDocCommentReader commentReader, Command command)
         {
-            var relatedLinksElement = new XElement(mamlNs + "relatedLinks", "TODO: Insert navigationLink elements here.");
-            return relatedLinksElement;
+            return commentReader.GetCommandRelatedLinksElement(command);
         }
 
         /// <summary>
