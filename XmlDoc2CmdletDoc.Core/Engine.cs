@@ -14,10 +14,10 @@ namespace XmlDoc2CmdletDoc.Core
 {
     public class Engine
     {
-        private readonly XNamespace mshNs = XNamespace.Get("http://msh");
-        private readonly XNamespace mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
-        private readonly XNamespace commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
-        private readonly XNamespace devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
+        private static readonly XNamespace mshNs = XNamespace.Get("http://msh");
+        private static readonly XNamespace mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
+        private static readonly XNamespace commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
+        private static readonly XNamespace devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
 
         public EngineErrorCode GenerateHelp(Options options)
         {
@@ -154,9 +154,9 @@ namespace XmlDoc2CmdletDoc.Core
                                 GenerateParametersElement(commentReader, command),
                                 GenerateInputTypesElement(commentReader, command),
                                 GenerateReturnValuesElement(commentReader, command),
-                                GenerateAlertSetElement(command),
-                                GenerateExamplesElement(command),
-                                GenerateRelatedLinksElement(command));
+                                GenerateAlertSetElement(commentReader, command),
+                                GenerateExamplesElement(commentReader, command),
+                                GenerateRelatedLinksElement(commentReader, command));
         }
 
         /// <summary>
@@ -249,16 +249,15 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;command:parameter&gt;</em> element for the <paramref name="parameter"/>.</returns>
         private XElement GenerateParameterElement(XmlDocCommentReader commentReader, Parameter parameter, string parameterSetName = ParameterAttribute.AllParameterSets)
         {
-            var parameterElement = new XElement(commandNs + "parameter",
-                                                        new XAttribute("required", parameter.IsRequired(parameterSetName)),
-                                                        new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
-                                                        new XAttribute("pipelineInput", parameter.IsPipeline(parameterSetName)),
-                                                        new XAttribute("position", parameter.GetPosition(parameterSetName)),
-                                                        new XElement(mamlNs + "name", parameter.Name),
-                                                        commentReader.GetParameterDescriptionElement(parameter),
-                                                        GenerateTypeElement(commentReader, parameter.ParameterType),
-                                                        commentReader.GetParameterDefaultValueElement(parameter));
-            return parameterElement;
+            return new XElement(commandNs + "parameter",
+                                new XAttribute("required", parameter.IsRequired(parameterSetName)),
+                                new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
+                                new XAttribute("pipelineInput", parameter.IsPipeline(parameterSetName)),
+                                new XAttribute("position", parameter.GetPosition(parameterSetName)),
+                                new XElement(mamlNs + "name", parameter.Name),
+                                commentReader.GetParameterDescriptionElement(parameter),
+                                GenerateTypeElement(commentReader, parameter.ParameterType),
+                                commentReader.GetParameterDefaultValueElement(parameter));
         }
 
         /// <summary>
@@ -313,10 +312,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateAlertSetElement(Command command)
+        private XElement GenerateAlertSetElement(XmlDocCommentReader commentReader, Command command)
         {
-            var alertSetElement = new XElement(mamlNs + "alertSet", "TODO: Insert title and alert elements here.");
-            return alertSetElement;
+            return commentReader.GetAlertSetElement(command);
         }
 
         /// <summary>
@@ -324,7 +322,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:examples&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateExamplesElement(Command command)
+        private XElement GenerateExamplesElement(XmlDocCommentReader commentReader, Command command)
         {
             var examplesElement = new XElement(commandNs + "examples", "TODO: Insert example elements here.");
             return examplesElement;
@@ -335,7 +333,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;maml:relatedLinks&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateRelatedLinksElement(Command command)
+        private XElement GenerateRelatedLinksElement(XmlDocCommentReader commentReader, Command command)
         {
             var relatedLinksElement = new XElement(mamlNs + "relatedLinks", "TODO: Insert navigationLink elements here.");
             return relatedLinksElement;

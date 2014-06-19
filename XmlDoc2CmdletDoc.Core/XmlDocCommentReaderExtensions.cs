@@ -58,6 +58,59 @@ namespace XmlDoc2CmdletDoc.Core
         }
 
         /// <summary>
+        /// Obtains a <em>&lt;maml:alertSet&gt;</em> element for a cmdlet's notes.
+        /// </summary>
+        /// <param name="commentReader">The comment reader.</param>
+        /// <param name="command">The command.</param>
+        /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the cmdlet's notes.</returns>
+        public static XElement GetAlertSetElement(this XmlDocCommentReader commentReader, Command command)
+        {
+            var comments = commentReader.GetComments(command.CmdletType);
+            if (comments == null)
+            {
+                return null;
+            }
+
+            // First see if there's an alertSet element in the comments
+            var alertSet = comments.XPathSelectElement("//maml:alertSet", resolver);
+            if (alertSet != null)
+            {
+                return alertSet;
+            }
+
+            // Next, search for a list element of type <em>alertSet</em>.
+            var list = comments.XPathSelectElement("//list[@type='alertSet']");
+            if (list == null)
+            {
+                return null;
+            }
+            alertSet = new XElement(mamlNs + "alertSet");
+            foreach (var item in list.XPathSelectElements("item"))
+            {
+                var term = item.XPathSelectElement("term");
+                var description = item.XPathSelectElement("description");
+                if (term != null && description != null)
+                {
+                    var alertTitle = new XElement(mamlNs + "title", Tidy(term.Value));
+
+                    var alert = new XElement(mamlNs + "alert");
+                    var paras = description.XPathSelectElements("para").ToList();
+                    if (paras.Any())
+                    {
+                        paras.ForEach(para => alert.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
+                    }
+                    else
+                    {
+                        alert.Add(new XElement(mamlNs + "para", Tidy(description.Value)));
+                    }
+
+                    alertSet.Add(alertTitle, alert);
+                }
+            }
+            return alertSet;
+        }
+
+        /// <summary>
         /// Obtains a <em>&lt;maml:description&gt;</em> element for a parameter.
         /// </summary>
         /// <param name="commentReader">The comment reader.</param>
@@ -66,7 +119,7 @@ namespace XmlDoc2CmdletDoc.Core
         public static XElement GetParameterDescriptionElement(this XmlDocCommentReader commentReader, Parameter parameter)
         {
             var commentsElement = commentReader.GetComments(parameter.MemberInfo);
-            return GetMamlDescriptionElementFromXmlDocComment(commentsElement);
+            return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description");
         }
 
         /// <summary>
@@ -94,7 +147,7 @@ namespace XmlDoc2CmdletDoc.Core
         public static XElement GetTypeDescriptionElement(this XmlDocCommentReader commentReader, Type type)
         {
             var commentsElement = commentReader.GetComments(type);
-            return GetMamlDescriptionElementFromXmlDocComment(commentsElement);
+            return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description");
         }
 
         /// <summary>
@@ -121,52 +174,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// Obtains a <em>&lt;maml:description&gt;</em> from an XML doc comment.
         /// </summary>
         /// <param name="commentsElement">The XML doc comments element as retrieved from an <see cref="XmlDocCommentReader"/>. May be <c>null</c>.</param>
-        /// <returns>A description element derived from the XML doc comment, or an empty description element if a description could not be obtained.</returns>
-        private static XElement GetMamlDescriptionElementFromXmlDocComment(XElement commentsElement)
-        {
-            if (commentsElement != null)
-            {
-                // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement("maml:description", resolver);
-                if (mamlDescriptionElement != null)
-                {
-                    mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
-                    mamlDescriptionElement.RemoveAttributes(); // Intended to remove the xmlns:maml namespace declaration attribute. Assumes there aren't any further attributes.
-                    return mamlDescriptionElement;
-                }
-
-                // Next try the <summary> element.
-                var summaryElement = commentsElement.XPathSelectElement("summary", resolver);
-                if (summaryElement != null)
-                {
-                    var descriptionElement = new XElement(mamlNs + "description");
-
-                    // Retrieve any <para> elements in the summary.
-                    var paraElements = summaryElement.XPathSelectElements("para").ToList();
-                    if (paraElements.Any())
-                    {
-                        // If there are one or more <para> elements, add a corresponding <maml:para> element for each one to the description.
-                        paraElements.ForEach(para => descriptionElement.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
-                    }
-                    else
-                    {
-                        // Otherwise add a single <maml:para> element to the description based on the summary text.
-                        descriptionElement.Add(new XElement(mamlNs + "para", Tidy(summaryElement.Value)));
-                    }
-                    return descriptionElement;
-                }
-            }
-
-            // At this point, we've failed to provide a description from the XML doc commment.
-            return new XElement(mamlNs + "description",
-                                new XElement(mamlNs + "para"));
-        }
-
-        /// <summary>
-        /// Obtains a <em>&lt;maml:description&gt;</em> from an XML doc comment.
-        /// </summary>
-        /// <param name="commentsElement">The XML doc comments element as retrieved from an <see cref="XmlDocCommentReader"/>. May be <c>null</c>.</param>
-        /// <param name="identifier">
+        /// <param name="typeAttribute">
         /// <para>An identifier used to select specific content from the XML doc comment.</para>
         /// <para>The XML doc comment may contain multiple <em>&lt;maml:description&gt;</em> elements, but only one with an
         /// <em>id=&quot;identifier&quot;</em> attribute will be used.</para>
@@ -174,12 +182,12 @@ namespace XmlDoc2CmdletDoc.Core
         /// starting with <em>IDENTIFIER:</em> (the identifier must be upper-cased) will be used to provide content for the description.</para>
         /// </param>
         /// <returns>A description element derived from the XML doc comment, or an empty description element if a description could not be obtained.</returns>
-        private static XElement GetMamlDescriptionElementFromXmlDocComment(XElement commentsElement, string identifier)
+        private static XElement GetMamlDescriptionElementFromXmlDocComment(XElement commentsElement, string typeAttribute)
         {
             if (commentsElement != null)
             {
                 // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("maml:description[@id='{0}']", identifier), resolver);
+                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("//maml:description[@type='{0}']", typeAttribute), resolver);
                 if (mamlDescriptionElement != null)
                 {
                     mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
@@ -187,26 +195,17 @@ namespace XmlDoc2CmdletDoc.Core
                     return mamlDescriptionElement;
                 }
 
-                // Next try the <summary> element.
-                var summaryElement = commentsElement.XPathSelectElement("summary", resolver);
-                if (summaryElement != null)
+                // Next try <para type="typeAttribuyt"> elements.
+                var paraElements = commentsElement.XPathSelectElements(string.Format("//para[@type='{0}']", typeAttribute)).ToList();
+                if (paraElements.Any())
                 {
                     var descriptionElement = new XElement(mamlNs + "description");
-
-                    // Retrieve the <para> elements in the summary that start with the identifier token.
-                    var token = identifier.ToUpperInvariant() + ":";
-                    var paraElements = summaryElement.XPathSelectElements("para")
-                                                     .Where(para => para.Value.Trim().StartsWith(token))
-                                                     .ToList();
-
-                    // Add a corresponding <maml:para> element for each one to the description, stripping out the token.
-                    paraElements.ForEach(para => descriptionElement.Add(new XElement(mamlNs + "para", Tidy(para.Value.Replace(token, "")))));
-
+                    paraElements.ForEach(para => descriptionElement.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
                     return descriptionElement;
                 }
             }
 
-            // At this point, we've failed to provide a description from the XML doc commment.
+            // At this point, we've failed to provide a description from the XML doc commment, so return an empty description.
             return new XElement(mamlNs + "description",
                                 new XElement(mamlNs + "para"));
         }
