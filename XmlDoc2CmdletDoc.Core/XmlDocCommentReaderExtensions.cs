@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -68,7 +67,7 @@ namespace XmlDoc2CmdletDoc.Core
             var comments = commentReader.GetComments(command.CmdletType);
             if (comments == null) return null;
 
-            var xmlDocExamples = comments.XPathSelectElements("example").ToList();
+            var xmlDocExamples = comments.XPathSelectElements("//example").ToList();
             if (!xmlDocExamples.Any()) return null;
 
             var examples = new XElement(commandNs + "examples");
@@ -131,7 +130,7 @@ namespace XmlDoc2CmdletDoc.Core
             var comments = commentReader.GetComments(command.CmdletType);
             if (comments == null) return null;
 
-            var paras = comments.XPathSelectElements("para[@type='link']").ToList();
+            var paras = comments.XPathSelectElements("//para[@type='link']").ToList();
             if (!paras.Any()) return null;
 
             var relatedLinks = new XElement(mamlNs + "relatedLinks");
@@ -164,14 +163,14 @@ namespace XmlDoc2CmdletDoc.Core
             }
 
             // First see if there's an alertSet element in the comments
-            var alertSet = comments.XPathSelectElement("maml:alertSet", resolver);
+            var alertSet = comments.XPathSelectElement("//maml:alertSet", resolver);
             if (alertSet != null)
             {
                 return alertSet;
             }
 
             // Next, search for a list element of type <em>alertSet</em>.
-            var list = comments.XPathSelectElement("list[@type='alertSet']");
+            var list = comments.XPathSelectElement("//list[@type='alertSet']");
             if (list == null)
             {
                 return null;
@@ -279,7 +278,7 @@ namespace XmlDoc2CmdletDoc.Core
             if (commentsElement != null)
             {
                 // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("maml:description[@type='{0}']", typeAttribute), resolver);
+                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("//maml:description[@type='{0}']", typeAttribute), resolver);
                 if (mamlDescriptionElement != null)
                 {
                     mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
@@ -288,7 +287,7 @@ namespace XmlDoc2CmdletDoc.Core
                 }
 
                 // Next try <para type="typeAttribute"> elements.
-                var paraElements = commentsElement.XPathSelectElements(string.Format("para[@type='{0}']", typeAttribute)).ToList();
+                var paraElements = commentsElement.XPathSelectElements(string.Format("//para[@type='{0}']", typeAttribute)).ToList();
                 if (paraElements.Any())
                 {
                     var descriptionElement = new XElement(mamlNs + "description");
