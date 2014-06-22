@@ -270,9 +270,9 @@ namespace XmlDoc2CmdletDoc.Core
             var inputTypesElement = new XElement(commandNs + "inputTypes");
             var pipelineParameters = command.GetParameters(ParameterAttribute.AllParameterSets)
                                             .Where(p => p.IsPipeline(ParameterAttribute.AllParameterSets));
-            foreach (var parameter in pipelineParameters)
+            foreach (var parameterType in pipelineParameters.Select(p => p.ParameterType).Distinct())
             {
-                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameter));
+                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameterType));
             }
             return inputTypesElement;
         }
@@ -282,11 +282,11 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameter"/>.</returns>
-        private XElement GenerateInputTypeElement(XmlDocCommentReader commentReader, Parameter parameter)
+        private XElement GenerateInputTypeElement(XmlDocCommentReader commentReader, Type parameterType)
         {
             return new XElement(commandNs + "inputType",
-                                GenerateTypeElement(commentReader, parameter.ParameterType),
-                                commentReader.GetTypeDescriptionElement(parameter.ParameterType));
+                                GenerateTypeElement(commentReader, parameterType),
+                                commentReader.GetTypeDescriptionElement(parameterType));
         }
 
         /// <summary>

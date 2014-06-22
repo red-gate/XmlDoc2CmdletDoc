@@ -278,7 +278,7 @@ namespace XmlDoc2CmdletDoc.Core
             if (commentsElement != null)
             {
                 // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format("//maml:description[@type='{0}']", typeAttribute), resolver);
+                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format(".//maml:description[@type='{0}']", typeAttribute), resolver);
                 if (mamlDescriptionElement != null)
                 {
                     mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
@@ -287,7 +287,7 @@ namespace XmlDoc2CmdletDoc.Core
                 }
 
                 // Next try <para type="typeAttribute"> elements.
-                var paraElements = commentsElement.XPathSelectElements(string.Format("//para[@type='{0}']", typeAttribute)).ToList();
+                var paraElements = commentsElement.XPathSelectElements(string.Format(".//para[@type='{0}']", typeAttribute)).ToList();
                 if (paraElements.Any())
                 {
                     var descriptionElement = new XElement(mamlNs + "description");
