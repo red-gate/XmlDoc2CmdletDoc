@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Maml\MamlClass.cs" />
+    <Compile Include="Maml\TestMamlElementsCommand.cs" />
     <Compile Include="Manual\ManualClass.cs" />
     <Compile Include="Manual\TestManualElementsCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,11 +4,11 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
 {
     /// <summary>
     /// Example dummy comdlet. This text shouldn't appear in the cmdlet help.
-    /// <para type="synopsis">This is part of the Test-ManualElement synopsis.</para>
-    /// <para type="description">This is part of the Test-ManualElement description.</para>
+    /// <para type="synopsis">This is part of the Test-ManualElements synopsis.</para>
+    /// <para type="description">This is part of the Test-ManualElements description.</para>
     /// </summary>
-    /// <para type="synopsis">This is also part of the Test-ManualElement synopsis.</para>
-    /// <para type="description">This is also part of the Test-ManualElement description.</para>
+    /// <para type="synopsis">This is also part of the Test-ManualElements synopsis.</para>
+    /// <para type="description">This is also part of the Test-ManualElements description.</para>
     [Cmdlet(VerbsDiagnostic.Test, "ManualElements")]
     [OutputType(typeof(ManualClass))]
     public class TestManualElementsCommand : Cmdlet
