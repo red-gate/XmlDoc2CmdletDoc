@@ -1,4 +1,4 @@
-﻿namespace XmlDoc2CmdletDoc.TestModule
+﻿namespace XmlDoc2CmdletDoc.TestModule.Manual
 {
     /// <summary>
     /// <para type="description">This is part of the ManualClass description.</para>

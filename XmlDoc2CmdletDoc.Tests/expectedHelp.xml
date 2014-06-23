@@ -34,18 +34,18 @@
             </maml:description>
           </dev:type>
         </command:parameter>
-        <!-- Parameter: ManualClassParameter -->
-        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
-          <maml:name>ManualClassParameter</maml:name>
+        <!-- Parameter: PositionedParameter -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="1">
+          <maml:name>PositionedParameter</maml:name>
           <maml:description>
-            <maml:para />
+            <maml:para>This is part of the PositionedParameter description.</maml:para>
+            <maml:para>This is also part of the PositionedParameter description.</maml:para>
           </maml:description>
           <dev:type>
-            <maml:name>XmlDoc2CmdletDoc.TestModule.ManualClass</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
             <maml:description>
-              <maml:para>This is part of the ManualClass description.</maml:para>
-              <maml:para>This is also part of the ManualClass description.</maml:para>
+              <maml:para />
             </maml:description>
           </dev:type>
         </command:parameter>
@@ -53,7 +53,8 @@
         <command:parameter required="false" globbing="false" pipelineInput="true" position="named">
           <maml:name>ValueFromPipelineParameter</maml:name>
           <maml:description>
-            <maml:para />
+            <maml:para>This is part of the ValueFromPipelineParameter description.</maml:para>
+            <maml:para>This is also part of the ValueFromPipelineParameter description.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>System.String</maml:name>
@@ -67,7 +68,8 @@
         <command:parameter required="false" globbing="false" pipelineInput="true" position="named">
           <maml:name>ValueFromPipelineByPropertyNameParameter</maml:name>
           <maml:description>
-            <maml:para />
+            <maml:para>This is part of the ValueFromPipelineParameterByPropertyName description.</maml:para>
+            <maml:para>This is also part of the ValueFromPipelineParameterByPropertyName description.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>System.String</maml:name>
@@ -95,18 +97,18 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <!-- Parameter: ManualClassParameter -->
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
-        <maml:name>ManualClassParameter</maml:name>
+      <!-- Parameter: PositionedParameter -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="1">
+        <maml:name>PositionedParameter</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>This is part of the PositionedParameter description.</maml:para>
+          <maml:para>This is also part of the PositionedParameter description.</maml:para>
         </maml:description>
         <dev:type>
-          <maml:name>XmlDoc2CmdletDoc.TestModule.ManualClass</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
           <maml:description>
-            <maml:para>This is part of the ManualClass description.</maml:para>
-            <maml:para>This is also part of the ManualClass description.</maml:para>
+            <maml:para />
           </maml:description>
         </dev:type>
       </command:parameter>
@@ -114,7 +116,8 @@
       <command:parameter required="false" globbing="false" pipelineInput="true" position="named">
         <maml:name>ValueFromPipelineParameter</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>This is part of the ValueFromPipelineParameter description.</maml:para>
+          <maml:para>This is also part of the ValueFromPipelineParameter description.</maml:para>
         </maml:description>
         <dev:type>
           <maml:name>System.String</maml:name>
@@ -128,7 +131,8 @@
       <command:parameter required="false" globbing="false" pipelineInput="true" position="named">
         <maml:name>ValueFromPipelineByPropertyNameParameter</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>This is part of the ValueFromPipelineParameterByPropertyName description.</maml:para>
+          <maml:para>This is also part of the ValueFromPipelineParameterByPropertyName description.</maml:para>
         </maml:description>
         <dev:type>
           <maml:name>System.String</maml:name>
@@ -157,7 +161,7 @@
       <!-- OutputType: ManualClass -->
       <command:returnValue>
         <dev:type>
-          <maml:name>XmlDoc2CmdletDoc.TestModule.ManualClass</maml:name>
+          <maml:name>XmlDoc2CmdletDoc.TestModule.Manual.ManualClass</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para>This is part of the ManualClass description.</maml:para>

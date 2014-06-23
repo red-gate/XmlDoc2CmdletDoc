@@ -2,6 +2,7 @@
 using System.IO;
 using NUnit.Framework;
 using XmlDoc2CmdletDoc.TestModule;
+using XmlDoc2CmdletDoc.TestModule.Manual;
 
 namespace XmlDoc2CmdletDoc.Tests
 {

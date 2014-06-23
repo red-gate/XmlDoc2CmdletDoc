@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
 
-namespace XmlDoc2CmdletDoc.TestModule
+namespace XmlDoc2CmdletDoc.TestModule.Manual
 {
     /// <summary>
     /// Example dummy comdlet. This text shouldn't appear in the cmdlet help.
@@ -15,17 +15,29 @@ namespace XmlDoc2CmdletDoc.TestModule
     {
         /// <summary>
         /// <para type="description">This is part of the MandatoryParameter description.</para>
-        /// <para type="description">This is also part of the MandatoryParameter description.</para>
         /// </summary>
+        /// <para type="description">This is also part of the MandatoryParameter description.</para>
         [Parameter(Mandatory = true)]
         public string MandatoryParameter { get; set; }
 
-        [Parameter]
-        public ManualClass ManualClassParameter { get; set; }
+        /// <summary>
+        /// <para type="description">This is part of the PositionedParameter description.</para>
+        /// </summary>
+        /// <para type="description">This is also part of the PositionedParameter description.</para>
+        [Parameter(Position = 1)]
+        public string PositionedParameter { get; set; }
 
+        /// <summary>
+        /// <para type="description">This is part of the ValueFromPipelineParameter description.</para>
+        /// </summary>
+        /// <para type="description">This is also part of the ValueFromPipelineParameter description.</para>
         [Parameter(ValueFromPipeline = true)]
         public string ValueFromPipelineParameter { get; set; }
 
+        /// <summary>
+        /// <para type="description">This is part of the ValueFromPipelineParameterByPropertyName description.</para>
+        /// </summary>
+        /// <para type="description">This is also part of the ValueFromPipelineParameterByPropertyName description.</para>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string ValueFromPipelineByPropertyNameParameter { get; set; }
     }

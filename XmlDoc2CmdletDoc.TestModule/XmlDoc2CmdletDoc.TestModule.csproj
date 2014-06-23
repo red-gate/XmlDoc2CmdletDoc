@@ -45,8 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ManualClass.cs" />
-    <Compile Include="TestManualElementsCommand.cs" />
+    <Compile Include="Manual\ManualClass.cs" />
+    <Compile Include="Manual\TestManualElementsCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
