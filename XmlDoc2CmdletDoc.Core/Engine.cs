@@ -12,6 +12,16 @@ using XmlDoc2CmdletDoc.Core.Domain;
 
 namespace XmlDoc2CmdletDoc.Core
 {
+    /// <summary>
+    /// <para>Does all the work of generating the XML help file for an assembly. See <see cref="GenerateHelp"/>.</para>
+    /// <para>This class is stateless, so you can call <see cref="GenerateHelp"/> multitple times on multiple threads.</para>
+    /// </summary>
+    /// <remarks>
+    /// A lot of the detailed help generation is also delegated to <see cref="XmlDocCommentReaderExtensions"/>.
+    /// This class is generally responsible for generating the overall structure of the XML help file, whilst
+    /// <see cref="XmlDocCommentReaderExtensions"/> is resonsible for generating specific items of documentation,
+    /// such as command synopses, and command and parameter descriptions.
+    /// </remarks>
     public class Engine
     {
         private static readonly XNamespace mshNs = XNamespace.Get("http://msh");
@@ -19,6 +29,12 @@ namespace XmlDoc2CmdletDoc.Core
         private static readonly XNamespace commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
         private static readonly XNamespace devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
 
+        /// <summary>
+        /// Public entry point that triggers the creation of the cmdlet XML help file for a single assembly.
+        /// </summary>
+        /// <param name="options">Defines the locations of the input assembly, the input XML doc comments file for the
+        /// assembly, and where the cmdlet XML help file should be written to.</param>
+        /// <returns>A code indicating the result of the help generation.</returns>
         public EngineErrorCode GenerateHelp(Options options)
         {
             try
@@ -48,6 +64,11 @@ namespace XmlDoc2CmdletDoc.Core
             }
         }
 
+        /// <summary>
+        /// Loads the assembly indicated in the specified <paramref name="options"/>.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <returns>The assembly indicated in the <paramref name="options"/>.</returns>
         private Assembly LoadAssembly(Options options)
         {
             var assemblyPath = options.AssemblyPath;
@@ -83,6 +104,11 @@ namespace XmlDoc2CmdletDoc.Core
             }
         }
 
+        /// <summary>
+        /// Obtains an XML Doc comment reader for the assembly in the specified <paramref name="options"/>.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <returns>A comment reader for the assembly in the <paramref name="options"/>.</returns>
         private XmlDocCommentReader LoadComments(Options options)
         {
             var docCommentsPath = options.DocCommentsPath;

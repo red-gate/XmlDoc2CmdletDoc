@@ -32,7 +32,6 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement rootElement;
         private XElement testManualElementsCommandElement;
 
-
         [TestFixtureSetUp]
         public void SetUp()
         {
@@ -59,13 +58,13 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void ContainsACommandEntrryForTestManualElements()
+        public void ThereShouldBeACommandEntry_ForTheTestManualElementsCmdlet()
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
         }
 
         [Test]
-        public void Manual_TestSynopsis()
+        public void ThereShouldBeACmdletSynopsis_ForTheTestManualElementsCmdlet()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -82,7 +81,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Manual_TestDescription()
+        public void ThereShouldBeACmdletDescription_ForTheTestManualElementsCmdlet()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -99,7 +98,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Manual_WhenThereAreNoParameterSets_ThereShouldBeOnlyOneCommandSyntaxItem()
+        public void WhenThereAreNoParameterSets_ThereShouldBeOnlyOneCommandSyntaxItem_ForTheTestManualElementsCmdlet()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
