@@ -60,19 +60,19 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void ThereShouldBeACommandEntry_ForTestManualElements()
+        public void Command_ForTestManualElements()
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
         }
 
         [Test]
-        public void ThereShouldBeACommandEntry_ForTestMamlElements()
+        public void Command_ForTestMamlElements()
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
         }
 
         [Test]
-        public void ThereShouldBeACmdletSynopsis_ForTestManualElements()
+        public void Command_Details_Synopsis_ForTestManualElements()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -89,7 +89,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void ThereShouldBeACmdletSynopsis_ForTestMamlElements()
+        public void Command_Details_Synopsis_ForTestMamlElements()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -105,7 +105,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void ThereShouldBeACmdletDescription_ForTestManualElements()
+        public void Command_Description_ForTestManualElements()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -122,7 +122,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void ThereShouldBeACmdletDescription_ForTestMamlElements()
+        public void Command_Description_ForTestMamlElements()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -138,7 +138,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void WhenThereAreNoParameterSets_ThereShouldBeOnlyOneCommandSyntaxItem()
+        public void Command_Syntax_WhenThereAreNoParameterSets_ThereShouldBeOnlyOneCommandSyntaxItem()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -149,7 +149,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void WhenThereAreMultipleParameterSetNames_ThereShouldBeACommandSyntaxItemForEachOne()
+        public void Command_Syntax_WhenThereAreMultipleParameterSetNames_ThereShouldBeACommandSyntaxItemForEachOne()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -160,7 +160,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void WhenThereAreMultipleParameterSetNames_EachSyntaxItemShouldContainParametersForOnlyASingleParameterSetName()
+        public void Command_Syntax_WhenThereAreMultipleParameterSetNames_EachSyntaxItemShouldContainParametersForOnlyASingleParameterSetName()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -180,6 +180,64 @@ namespace XmlDoc2CmdletDoc.Tests
                 var names = syntaxItemTwo.XPathSelectElements("command:parameter/maml:name", resolver).Select(x => x.Value);
                 Assume.That(names, Is.EqualTo(new [] {"CommonParameter", "ParameterTwo"}));
             }
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_ForTestManualEvents_MandatoryParameter()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_RequiredAttribute_ForTestManualEvents_MandatoryParameter()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var attribute = parameter.Attribute("required");
+            Assert.That(attribute.Value, Is.EqualTo("true"));
+        }
+
+        [Test]
+        public void Command_Parmeters_Parameter_Description_ForTestManualEvents_MandatoryParameter()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var description = parameter.XPathSelectElement("maml:description", resolver);
+            Assert.That(description, Is.Not.Null);
+
+            var expectedXml =
+@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+  <para>This is part of the MandatoryParameter description.</para>
+  <para>This is also part of the MandatoryParameter description.</para>
+</description>";
+            Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
+        }
+
+        [Test]
+        public void Command_Parmeters_Parameter_Description_ForTestMamlEvents_CommonParameter()
+        {
+            Assume.That(testMamlElementsCommandElement, Is.Not.Null);
+
+            var parameter = testMamlElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'CommonParameter']", resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var description = parameter.XPathSelectElement("maml:description", resolver);
+            Assert.That(description, Is.Not.Null);
+
+            var expectedXml =
+@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+  <para>This is the CommonParameter description.</para>
+</description>";
+            Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
     }
 }

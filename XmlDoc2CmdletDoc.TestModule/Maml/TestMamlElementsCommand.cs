@@ -16,6 +16,12 @@ namespace XmlDoc2CmdletDoc.TestModule.Maml
     [OutputType(typeof(ManualClass))]
     public class TestMamlElementsCommand : Cmdlet
     {
+        /// <summary>
+        /// This text shouldn't appear in the cmldet help.
+        /// <description type="description" xmlns="http://schemas.microsoft.com/maml/2004/10">
+        ///   <para>This is the CommonParameter description.</para>
+        /// </description>
+        /// </summary>
         [Parameter]
         public string CommonParameter { get; set; }
 
