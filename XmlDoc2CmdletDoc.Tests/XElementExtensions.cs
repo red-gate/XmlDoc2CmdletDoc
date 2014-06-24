@@ -12,23 +12,24 @@ namespace XmlDoc2CmdletDoc.Tests
 
         private static XElement Simplify(this XElement element)
         {
-            var newElement = new XElement(element.Name);
-            foreach (var attribute in element.Attributes())
-            {
-                newElement.Add(attribute);
-            }
-            foreach (var node in element.Nodes().Where(x => x is XElement || x is XText))
+            foreach (var node in element.Nodes().ToList())
             {
                 if (node is XElement)
                 {
-                    newElement.Add(((XElement) node).Simplify());
+                    var xElement = (XElement) node;
+                    Simplify(xElement);
+                }
+                else if (node is XText)
+                {
+                    var text = (XText) node;
+                    text.Value = text.Value.Trim();
                 }
                 else
                 {
-                    newElement.Add(((XText) node).Value.Trim());
+                    node.Remove();
                 }
             }
-            return newElement;
+            return element;
         }
     }
 }

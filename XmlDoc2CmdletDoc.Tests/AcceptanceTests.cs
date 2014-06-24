@@ -82,10 +82,10 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(synopsis, Is.Not.Null);
 
             var expectedXml =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is part of the Test-ManualElements synopsis.</para>
-  <para>This is also part of the Test-ManualElements synopsis.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is part of the Test-ManualElements synopsis.</maml:para>
+  <maml:para>This is also part of the Test-ManualElements synopsis.</maml:para>
+</maml:description>";
             Assert.That(synopsis.ToSimpleString(), Is.EqualTo(expectedXml));
         }
 
@@ -99,9 +99,9 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(synopsis, Is.Not.Null);
 
             var expectedXml =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is the Test-MamlElements synopsis.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is the Test-MamlElements synopsis.</maml:para>
+</maml:description>";
             Assert.That(synopsis.ToSimpleString(), Is.EqualTo(expectedXml));
         }
 
@@ -115,10 +115,10 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(description, Is.Not.Null);
 
             var expectedXml =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is part of the Test-ManualElements description.</para>
-  <para>This is also part of the Test-ManualElements description.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is part of the Test-ManualElements description.</maml:para>
+  <maml:para>This is also part of the Test-ManualElements description.</maml:para>
+</maml:description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
 
@@ -132,9 +132,9 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(description, Is.Not.Null);
 
             var expectedXml =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is the Test-MamlElements description.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is the Test-MamlElements description.</maml:para>
+</maml:description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
 
@@ -270,10 +270,10 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(description, Is.Not.Null);
 
             var expectedXml =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is part of the MandatoryParameter description.</para>
-  <para>This is also part of the MandatoryParameter description.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is part of the MandatoryParameter description.</maml:para>
+  <maml:para>This is also part of the MandatoryParameter description.</maml:para>
+</maml:description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
 
@@ -289,9 +289,9 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(description, Is.Not.Null);
 
             var expectedXml =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is the CommonParameter description.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is the CommonParameter description.</maml:para>
+</maml:description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
 
@@ -456,17 +456,17 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         private const string AlertSet =
-@"<alertSet xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <title>First Note</title>
-  <alert>
-    <para>This is the description for the first note.</para>
-  </alert>
-  <title>Second Note</title>
-  <alert>
-    <para>This is part of the description for the second note.</para>
-    <para>This is also part of the description for the second note.</para>
-  </alert>
-</alertSet>";
+@"<maml:alertSet xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:title>First Note</maml:title>
+  <maml:alert>
+    <maml:para>This is the description for the first note.</maml:para>
+  </maml:alert>
+  <maml:title>Second Note</maml:title>
+  <maml:alert>
+    <maml:para>This is part of the description for the second note.</maml:para>
+    <maml:para>This is also part of the description for the second note.</maml:para>
+  </maml:alert>
+</maml:alertSet>";
 
         [Test]
         public void Command_Examples_ForTestManualElements()
@@ -475,53 +475,54 @@ namespace XmlDoc2CmdletDoc.Tests
 
             var examples = testManualElementsCommandElement.XPathSelectElement("command:examples", resolver);
             Assert.That(examples, Is.Not.Null);
-            Assert.That(examples.ToSimpleString(), Is.EqualTo(Examples));
+            var simpleString = examples.ToSimpleString();
+            Assert.That(simpleString, Is.EqualTo(Examples));
         }
 
         private const string Examples =
-@"<examples xmlns=""http://schemas.microsoft.com/maml/dev/command/2004/10"">
-  <example>
-    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 1  ----------</title>
-    <introduction xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-      <para>This is part of the first example's introduction.</para>
-      <para>This is also part of the first example's introduction.</para>
-    </introduction>
-    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</code>
-    <remarks xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">
-      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is part of the first example's remarks.</para>
-      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is also part of the first example's remarks.</para>
-    </remarks>
-  </example>
-  <example>
-    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 2  ----------</title>
-    <introduction xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-      <para>This is the second example's introduction.</para>
-    </introduction>
-    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">$thingy = New-Thingy
+@"<command:examples xmlns:command=""http://schemas.microsoft.com/maml/dev/command/2004/10"">
+  <command:example>
+    <maml:title xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 1  ----------</maml:title>
+    <maml:introduction xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+      <maml:para>This is part of the first example's introduction.</maml:para>
+      <maml:para>This is also part of the first example's introduction.</maml:para>
+    </maml:introduction>
+    <dev:code xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</dev:code>
+    <dev:remarks xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">
+      <maml:para xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">This is part of the first example's remarks.</maml:para>
+      <maml:para xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">This is also part of the first example's remarks.</maml:para>
+    </dev:remarks>
+  </command:example>
+  <command:example>
+    <maml:title xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 2  ----------</maml:title>
+    <maml:introduction xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+      <maml:para>This is the second example's introduction.</maml:para>
+    </maml:introduction>
+    <dev:code xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">$thingy = New-Thingy
 If ($thingy -eq $that) {
   Write-Host 'Same'
 } else {
   $thingy | Write-Host
-}</code>
-    <remarks xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">
-      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is the second example's remarks.</para>
-    </remarks>
-  </example>
-  <example>
-    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 3  ----------</title>
-    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</code>
-    <remarks xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">
-      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is the third example's remarks.</para>
-    </remarks>
-  </example>
-  <example>
-    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 4  ----------</title>
-    <introduction xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-      <para>This is the fourth example's introduction.</para>
-    </introduction>
-    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</code>
-  </example>
-</examples>";
+}</dev:code>
+    <dev:remarks xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">
+      <maml:para xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">This is the second example's remarks.</maml:para>
+    </dev:remarks>
+  </command:example>
+  <command:example>
+    <maml:title xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 3  ----------</maml:title>
+    <dev:code xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</dev:code>
+    <dev:remarks xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">
+      <maml:para xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">This is the third example's remarks.</maml:para>
+    </dev:remarks>
+  </command:example>
+  <command:example>
+    <maml:title xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 4  ----------</maml:title>
+    <maml:introduction xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+      <maml:para>This is the fourth example's introduction.</maml:para>
+    </maml:introduction>
+    <dev:code xmlns:dev=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</dev:code>
+  </command:example>
+</command:examples>";
 
         private void CheckManualClassType(XElement type)
         {
@@ -537,10 +538,10 @@ If ($thingy -eq $that) {
         }
 
         private const string ManualClassDescription =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is part of the ManualClass description.</para>
-  <para>This is also part of the ManualClass description.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is part of the ManualClass description.</maml:para>
+  <maml:para>This is also part of the ManualClass description.</maml:para>
+</maml:description>";
 
         private void CheckMamlClassType(XElement type)
         {
@@ -556,8 +557,8 @@ If ($thingy -eq $that) {
         }
 
         private const string MamlClassDescription =
-@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
-  <para>This is the MamlClass description.</para>
-</description>";
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is the MamlClass description.</maml:para>
+</maml:description>";
     }
 }
