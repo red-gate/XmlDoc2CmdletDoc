@@ -11,6 +11,7 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
     /// <para type="description">This is also part of the Test-ManualElements description.</para>
     [Cmdlet(VerbsDiagnostic.Test, "ManualElements")]
     [OutputType(typeof(ManualClass))]
+    [OutputType(typeof(string))]
     public class TestManualElementsCommand : Cmdlet
     {
         /// <summary>

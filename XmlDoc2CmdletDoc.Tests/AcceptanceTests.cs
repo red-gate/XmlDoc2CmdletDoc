@@ -139,7 +139,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Syntax_WhenThereAreNoParameterSets_ThereShouldBeOnlyOneCommandSyntaxItem()
+        public void Command_Syntax_NoParameterSetNames()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -150,7 +150,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Syntax_WhenThereAreMultipleParameterSetNames_ThereShouldBeACommandSyntaxItemForEachOne()
+        public void Command_Syntax_MultipleParameterSetNames_ThereShouldBeACommandSyntaxItemForEachOne()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -161,7 +161,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Syntax_WhenThereAreMultipleParameterSetNames_EachSyntaxItemShouldContainParametersForOnlyASingleParameterSetName()
+        public void Command_Syntax_MultipleParameterSetNames_EachSyntaxItemShouldContainParametersForOnlyASingleParameterSetName()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -319,6 +319,58 @@ namespace XmlDoc2CmdletDoc.Tests
             CheckMamlClassType(type);
         }
 
+        [Test]
+        public void Command_ReturnValues_ForTestManualElements()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var returnValues = testManualElementsCommandElement
+                .XPathSelectElements("command:returnValues/command:returnValue", resolver)
+                .ToList();
+            Assert.That(returnValues, Is.Not.Empty);
+            Assert.That(returnValues.Count, Is.EqualTo(2));
+
+            {
+                var returnValue = returnValues.First();
+                var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
+                Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
+            }
+
+            {
+                var returnValue = returnValues.Last();
+                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                CheckManualClassType(type);
+                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
+            }
+        }
+
+        [Test]
+        public void Command_ReturnValues_ForTestMamlElements()
+        {
+            Assume.That(testMamlElementsCommandElement, Is.Not.Null);
+
+            var returnValues = testMamlElementsCommandElement
+                .XPathSelectElements("command:returnValues/command:returnValue", resolver)
+                .ToList();
+            Assert.That(returnValues, Is.Not.Empty);
+            Assert.That(returnValues.Count, Is.EqualTo(2));
+
+            {
+                var returnValue = returnValues.First();
+                var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
+                Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
+            }
+
+            {
+                var returnValue = returnValues.Last();
+                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                CheckMamlClassType(type);
+                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
+            }
+        }
+
         private void CheckManualClassType(XElement type)
         {
             Assert.That(type, Is.Not.Null);
@@ -329,13 +381,14 @@ namespace XmlDoc2CmdletDoc.Tests
 
             var description = type.XPathSelectElement("maml:description", resolver);
             Assert.That(description, Is.Not.Null);
-            var expectedXml =
+            Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
+        }
+
+        private const string ManualClassDescription =
 @"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
   <para>This is part of the ManualClass description.</para>
   <para>This is also part of the ManualClass description.</para>
 </description>";
-            Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
-        }
 
         private void CheckMamlClassType(XElement type)
         {
@@ -347,11 +400,12 @@ namespace XmlDoc2CmdletDoc.Tests
 
             var description = type.XPathSelectElement("maml:description", resolver);
             Assert.That(description, Is.Not.Null);
-            var expectedXml =
+            Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
+        }
+
+        private const string MamlClassDescription =
 @"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
   <para>This is the MamlClass description.</para>
 </description>";
-            Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
-        }
     }
 }

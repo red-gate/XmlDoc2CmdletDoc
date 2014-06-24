@@ -13,7 +13,8 @@ namespace XmlDoc2CmdletDoc.TestModule.Maml
     /// </maml:description>
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "MamlElements")]
-    [OutputType(typeof(ManualClass))]
+    [OutputType(typeof(MamlClass))]
+    [OutputType(typeof(string))]
     public class TestMamlElementsCommand : Cmdlet
     {
         /// <summary>
