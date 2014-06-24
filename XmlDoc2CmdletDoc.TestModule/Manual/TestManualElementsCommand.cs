@@ -18,26 +18,17 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         /// </summary>
         /// <para type="description">This is also part of the MandatoryParameter description.</para>
         [Parameter(Mandatory = true)]
-        public string MandatoryParameter { get; set; }
+        public ManualClass MandatoryParameter { get; set; }
 
-        /// <summary>
-        /// <para type="description">This is part of the PositionedParameter description.</para>
-        /// </summary>
-        /// <para type="description">This is also part of the PositionedParameter description.</para>
+        [Parameter(Mandatory = false)]
+        public string OptionalParameter { get; set; }
+
         [Parameter(Position = 1)]
         public string PositionedParameter { get; set; }
 
-        /// <summary>
-        /// <para type="description">This is part of the ValueFromPipelineParameter description.</para>
-        /// </summary>
-        /// <para type="description">This is also part of the ValueFromPipelineParameter description.</para>
         [Parameter(ValueFromPipeline = true)]
         public string ValueFromPipelineParameter { get; set; }
 
-        /// <summary>
-        /// <para type="description">This is part of the ValueFromPipelineParameterByPropertyName description.</para>
-        /// </summary>
-        /// <para type="description">This is also part of the ValueFromPipelineParameterByPropertyName description.</para>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string ValueFromPipelineByPropertyNameParameter { get; set; }
     }

@@ -183,28 +183,82 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Parameters_Parameter_ForTestManualEvents_MandatoryParameter()
+        [TestCase("MandatoryParameter")]
+        [TestCase("OptionalParameter")]
+        [TestCase("PositionedParameter")]
+        [TestCase("ValueFromPipelineParameter")]
+        [TestCase("ValueFromPipelineByPropertyNameParameter")]
+        public void Command_Parameters_Parameter(string parameterName)
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement(
+                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
             Assert.That(parameter, Is.Not.Null);
         }
 
         [Test]
-        public void Command_Parameters_Parameter_RequiredAttribute_ForTestManualEvents_MandatoryParameter()
+        [TestCase("MandatoryParameter", "true")]
+        [TestCase("OptionalParameter", "false")]
+        public void Command_Parameters_Parameter_RequiredAttribute(string parameterName, string expectedValue)
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement(
+                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
             Assume.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("required");
-            Assert.That(attribute.Value, Is.EqualTo("true"));
+            Assert.That(attribute.Value, Is.EqualTo(expectedValue));
         }
 
         [Test]
-        public void Command_Parmeters_Parameter_Description_ForTestManualEvents_MandatoryParameter()
+        [TestCase("MandatoryParameter", "named")]
+        [TestCase("PositionedParameter", "1")]
+        public void Command_Parameters_Parameter_PositionAttribute(string parameterName, string expectedValue)
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement(
+                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var attribute = parameter.Attribute("position");
+            Assert.That(attribute.Value, Is.EqualTo(expectedValue));
+        }
+
+        [Test]
+        [TestCase("MandatoryParameter", "false")]
+        [TestCase("ValueFromPipelineParameter", "true")]
+        [TestCase("ValueFromPipelineByPropertyNameParameter", "true")]
+        public void Command_Parameters_Parameter_PipelineInputAttribute(string parameterName, string expectedValue)
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement(
+                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var attribute = parameter.Attribute("pipelineInput");
+            Assert.That(attribute.Value, Is.EqualTo(expectedValue));
+        }
+
+        [Test]
+        [TestCase("MandatoryParameter", "false")] // TODO: Globbing is always false. Once we add support for it, update this test.
+        public void Command_Parameters_Parameter_GlobbingInputAttribute(string parameterName, string expectedValue)
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement(
+                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var attribute = parameter.Attribute("globbing");
+            Assert.That(attribute.Value, Is.EqualTo(expectedValue));
+        }
+
+        [Test]
+        public void Command_Parmeters_Parameter_Description_ForTestManualEvents()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -223,7 +277,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Parmeters_Parameter_Description_ForTestMamlEvents_CommonParameter()
+        public void Command_Parmeters_Parameter_Description_ForTestMamlEvents()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -236,6 +290,36 @@ namespace XmlDoc2CmdletDoc.Tests
             var expectedXml =
 @"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
   <para>This is the CommonParameter description.</para>
+</description>";
+            Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
+        }
+
+        [Test]
+        public void Command_Parmeters_Parameter_Type_ForTestManualEvents()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            Assume.That(parameter, Is.Not.Null);
+
+            var type = parameter.XPathSelectElement("dev:type", resolver);
+            CheckManualClassType(type);
+        }
+
+        private void CheckManualClassType(XElement type)
+        {
+            Assert.That(type, Is.Not.Null);
+
+            var name = type.XPathSelectElement("maml:name", resolver);
+            Assert.That(name, Is.Not.Null);
+            Assert.That(name.Value, Is.EqualTo(typeof(ManualClass).FullName));
+
+            var description = type.XPathSelectElement("maml:description", resolver);
+            Assert.That(description, Is.Not.Null);
+            var expectedXml =
+@"<description xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+  <para>This is part of the ManualClass description.</para>
+  <para>This is also part of the ManualClass description.</para>
 </description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
