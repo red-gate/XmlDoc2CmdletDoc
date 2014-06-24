@@ -340,6 +340,9 @@ namespace XmlDoc2CmdletDoc.Tests
                 var returnValue = returnValues.Last();
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
                 CheckManualClassType(type);
+
+                // Currently the returnValue description is the same as the type description. If we provide another
+                // means to specify the description, the following assertion should be changed.
                 var description = returnValue.XPathSelectElement("maml:description", resolver);
                 Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
             }
@@ -366,6 +369,9 @@ namespace XmlDoc2CmdletDoc.Tests
                 var returnValue = returnValues.Last();
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
                 CheckMamlClassType(type);
+
+                // Currently the returnValue description is the same as the type description. If we provide another
+                // means to specify the description, the following assertion should be changed.
                 var description = returnValue.XPathSelectElement("maml:description", resolver);
                 Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
             }
