@@ -26,10 +26,10 @@ namespace XmlDoc2CmdletDoc.TestModule.Maml
         [Parameter]
         public MamlClass CommonParameter { get; set; }
 
-        [Parameter(ParameterSetName = "One")]
+        [Parameter(ParameterSetName = "One", ValueFromPipeline = true)]
         public string ParameterOne { get; set; }
 
-        [Parameter(ParameterSetName = "Two")]
-        public string ParameterTwo { get; set; }
+        [Parameter(ParameterSetName = "Two", ValueFromPipelineByPropertyName = true)]
+        public MamlClass ParameterTwo { get; set; }
     }
 }

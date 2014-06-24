@@ -31,6 +31,6 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         public string ValueFromPipelineParameter { get; set; }
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public string ValueFromPipelineByPropertyNameParameter { get; set; }
+        public ManualClass ValueFromPipelineByPropertyNameParameter { get; set; }
     }
 }

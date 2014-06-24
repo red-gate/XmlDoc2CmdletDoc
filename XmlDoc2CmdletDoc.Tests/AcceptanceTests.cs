@@ -320,6 +320,64 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
+        public void Command_InputTypes_ForTestManualElements()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var inputTypes = testManualElementsCommandElement
+                .XPathSelectElements("command:inputTypes/command:inputType", resolver)
+                .ToList();
+            Assert.That(inputTypes, Is.Not.Empty);
+            Assert.That(inputTypes.Count, Is.EqualTo(2));
+
+            {
+                var inputType = inputTypes.First();
+                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+                Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
+            }
+
+            {
+                var returnValue = inputTypes.Last();
+                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                CheckManualClassType(type);
+
+                // Currently the returnValue description is the same as the type description. If we provide another
+                // means to specify the description, the following assertion should be changed.
+                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
+            }
+        }
+
+        [Test]
+        public void Command_InputTypes_ForTestMamlElements()
+        {
+            Assume.That(testMamlElementsCommandElement, Is.Not.Null);
+
+            var inputTypes = testMamlElementsCommandElement
+                .XPathSelectElements("command:inputTypes/command:inputType", resolver)
+                .ToList();
+            Assert.That(inputTypes, Is.Not.Empty);
+            Assert.That(inputTypes.Count, Is.EqualTo(2));
+
+            {
+                var inputType = inputTypes.First();
+                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+                Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
+            }
+
+            {
+                var returnValue = inputTypes.Last();
+                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                CheckMamlClassType(type);
+
+                // Currently the returnValue description is the same as the type description. If we provide another
+                // means to specify the description, the following assertion should be changed.
+                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
+            }
+        }
+
+        [Test]
         public void Command_ReturnValues_ForTestManualElements()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
