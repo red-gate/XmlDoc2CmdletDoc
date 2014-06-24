@@ -24,6 +24,33 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
     ///     </description>
     ///   </item>
     /// </list>
+    /// <example>
+    ///   <para>This is part of the first example's introduction.</para>
+    ///   <para>This is also part of the first example's introduction.</para>
+    ///   <code>New-Thingy | Write-Host</code>
+    ///   <para>This is part of the first example's remarks.</para>
+    ///   <para>This is also part of the first example's remarks.</para>
+    /// </example>
+    /// <example>
+    ///   <para>This is the second example's introduction.</para>
+    ///   <code>
+    ///       $thingy = New-Thingy
+    ///       If ($thingy -eq $that) {
+    ///         Write-Host 'Same'
+    ///       } else {
+    ///         $thingy | Write-Host
+    ///       }
+    ///   </code>
+    ///   <para>This is the second example's remarks.</para>
+    /// </example>
+    /// <example>
+    ///   <code>New-Thingy | Write-Host</code>
+    ///   <para>This is the third example's remarks.</para>
+    /// </example>
+    /// <example>
+    ///   <para>This is the fourth example's introduction.</para>
+    ///   <code>New-Thingy | Write-Host</code>
+    /// </example>
     [Cmdlet(VerbsDiagnostic.Test, "ManualElements")]
     [OutputType(typeof(ManualClass))]
     [OutputType(typeof(string))]

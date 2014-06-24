@@ -436,7 +436,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_ALertSet_ForTestManualElements()
+        public void Command_AlertSet_ForTestManualElements()
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);
 
@@ -446,7 +446,7 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_ALertSet_ForTestMamlElements()
+        public void Command_AlertSet_ForTestMamlElements()
         {
             Assume.That(testMamlElementsCommandElement, Is.Not.Null);
 
@@ -467,6 +467,61 @@ namespace XmlDoc2CmdletDoc.Tests
     <para>This is also part of the description for the second note.</para>
   </alert>
 </alertSet>";
+
+        [Test]
+        public void Command_Examples_ForTestManualElements()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var examples = testManualElementsCommandElement.XPathSelectElement("command:examples", resolver);
+            Assert.That(examples, Is.Not.Null);
+            Assert.That(examples.ToSimpleString(), Is.EqualTo(Examples));
+        }
+
+        private const string Examples =
+@"<examples xmlns=""http://schemas.microsoft.com/maml/dev/command/2004/10"">
+  <example>
+    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 1  ----------</title>
+    <introduction xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+      <para>This is part of the first example's introduction.</para>
+      <para>This is also part of the first example's introduction.</para>
+    </introduction>
+    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</code>
+    <remarks xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">
+      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is part of the first example's remarks.</para>
+      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is also part of the first example's remarks.</para>
+    </remarks>
+  </example>
+  <example>
+    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 2  ----------</title>
+    <introduction xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+      <para>This is the second example's introduction.</para>
+    </introduction>
+    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">$thingy = New-Thingy
+If ($thingy -eq $that) {
+  Write-Host 'Same'
+} else {
+  $thingy | Write-Host
+}</code>
+    <remarks xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">
+      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is the second example's remarks.</para>
+    </remarks>
+  </example>
+  <example>
+    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 3  ----------</title>
+    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</code>
+    <remarks xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">
+      <para xmlns=""http://schemas.microsoft.com/maml/2004/10"">This is the third example's remarks.</para>
+    </remarks>
+  </example>
+  <example>
+    <title xmlns=""http://schemas.microsoft.com/maml/2004/10"">----------  EXAMPLE 4  ----------</title>
+    <introduction xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+      <para>This is the fourth example's introduction.</para>
+    </introduction>
+    <code xmlns=""http://schemas.microsoft.com/maml/dev/2004/10"">New-Thingy | Write-Host</code>
+  </example>
+</examples>";
 
         private void CheckManualClassType(XElement type)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -107,7 +108,7 @@ namespace XmlDoc2CmdletDoc.Core
             }
             if (code != null)
             {
-                example.Add(new XElement(devNs + "code", code.Value));
+                example.Add(new XElement(devNs + "code", TidyCode(code.Value)));
             }
             if (paras.Any())
             {
@@ -310,6 +311,31 @@ namespace XmlDoc2CmdletDoc.Core
         private static string Tidy(string value)
         {
             return new Regex(@"\s{2,}").Replace(value, " ").Trim();
+        }
+
+        private static string TidyCode(string value)
+        {
+            // Split the value into separate lines, and eliminate leading and trailing empty lines.
+            IEnumerable<string> lines = value.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None)
+                             .SkipWhile(string.IsNullOrWhiteSpace)
+                             .Reverse()
+                             .SkipWhile(string.IsNullOrWhiteSpace)
+                             .Reverse()
+                             .ToList();
+
+            // If all of the non-empty lines start with leading whitespace, remove it. (i.e. dedent the code).
+            var pattern = new Regex(@"^\s*");
+            var nonEmptyLines = lines.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+            if (nonEmptyLines.Any())
+            {
+                var shortestPrefixLength = nonEmptyLines.Min(s => pattern.Match(s).Value.Length);
+                if (shortestPrefixLength > 0)
+                {
+                    lines = lines.Select(s => s.Length <= shortestPrefixLength ? "" : s.Substring(shortestPrefixLength));
+                }
+            }
+
+            return string.Join(Environment.NewLine, lines);
         }
     }
 }
