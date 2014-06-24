@@ -435,6 +435,39 @@ namespace XmlDoc2CmdletDoc.Tests
             }
         }
 
+        [Test]
+        public void Command_ALertSet_ForTestManualElements()
+        {
+            Assume.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var alertSet = testManualElementsCommandElement.XPathSelectElement("maml:alertSet", resolver);
+            Assert.That(alertSet, Is.Not.Null);
+            Assert.That(alertSet.ToSimpleString(), Is.EqualTo(AlertSet));
+        }
+
+        [Test]
+        public void Command_ALertSet_ForTestMamlElements()
+        {
+            Assume.That(testMamlElementsCommandElement, Is.Not.Null);
+
+            var alertSet = testMamlElementsCommandElement.XPathSelectElement("maml:alertSet", resolver);
+            Assert.That(alertSet, Is.Not.Null);
+            Assert.That(alertSet.ToSimpleString(), Is.EqualTo(AlertSet));
+        }
+
+        private const string AlertSet =
+@"<alertSet xmlns=""http://schemas.microsoft.com/maml/2004/10"">
+  <title>First Note</title>
+  <alert>
+    <para>This is the description for the first note.</para>
+  </alert>
+  <title>Second Note</title>
+  <alert>
+    <para>This is part of the description for the second note.</para>
+    <para>This is also part of the description for the second note.</para>
+  </alert>
+</alertSet>";
+
         private void CheckManualClassType(XElement type)
         {
             Assert.That(type, Is.Not.Null);

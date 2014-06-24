@@ -9,6 +9,21 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
     /// </summary>
     /// <para type="synopsis">This is also part of the Test-ManualElements synopsis.</para>
     /// <para type="description">This is also part of the Test-ManualElements description.</para>
+    /// <list type="alertSet">
+    ///   <item>
+    ///     <term>First Note</term>
+    ///     <description>
+    ///     This is the description for the first note.
+    ///     </description>
+    ///   </item>
+    ///   <item>
+    ///     <term>Second Note</term>
+    ///     <description>
+    ///       <para>This is part of the description for the second note.</para>
+    ///       <para>This is also part of the description for the second note.</para>
+    ///     </description>
+    ///   </item>
+    /// </list>
     [Cmdlet(VerbsDiagnostic.Test, "ManualElements")]
     [OutputType(typeof(ManualClass))]
     [OutputType(typeof(string))]
