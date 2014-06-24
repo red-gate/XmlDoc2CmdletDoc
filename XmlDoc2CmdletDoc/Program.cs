@@ -21,8 +21,6 @@ namespace XmlDoc2CmdletDoc
                 Console.WriteLine("Error code: " + errorCode);
                 Environment.ExitCode = (int)errorCode;
             }
-
-            Console.ReadLine();
         }
     }
 }
