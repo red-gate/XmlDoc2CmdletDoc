@@ -23,7 +23,7 @@ namespace XmlDoc2CmdletDoc.TestModule.Maml
         /// </description>
         /// </summary>
         [Parameter]
-        public string CommonParameter { get; set; }
+        public MamlClass CommonParameter { get; set; }
 
         [Parameter(ParameterSetName = "One")]
         public string ParameterOne { get; set; }
