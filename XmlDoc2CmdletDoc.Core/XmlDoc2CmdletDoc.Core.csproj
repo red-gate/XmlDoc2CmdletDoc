@@ -45,6 +45,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Domain\Command.cs" />
     <Compile Include="Domain\Parameter.cs" />
     <Compile Include="Engine.cs" />
