@@ -475,8 +475,7 @@ namespace XmlDoc2CmdletDoc.Tests
 
             var examples = testManualElementsCommandElement.XPathSelectElement("command:examples", resolver);
             Assert.That(examples, Is.Not.Null);
-            var simpleString = examples.ToSimpleString();
-            Assert.That(simpleString, Is.EqualTo(Examples));
+            Assert.That(examples.ToSimpleString(), Is.EqualTo(Examples));
         }
 
         private const string Examples =
