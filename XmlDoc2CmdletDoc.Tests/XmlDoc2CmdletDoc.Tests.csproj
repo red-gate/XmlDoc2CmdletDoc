@@ -54,6 +54,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\XmlDoc2CmdletDoc.Core\XmlDoc2CmdletDoc.Core.csproj">
+      <Project>{D59BC007-3898-4556-9D8F-6C951BB3E50E}</Project>
+      <Name>XmlDoc2CmdletDoc.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XmlDoc2CmdletDoc.TestModule\XmlDoc2CmdletDoc.TestModule.csproj">
       <Project>{5FADA979-0FB5-4A14-A1BD-93AFB62D7B44}</Project>
       <Name>XmlDoc2CmdletDoc.TestModule</Name>

@@ -10,7 +10,7 @@ namespace XmlDoc2CmdletDoc
             if (args.Length != 1)
             {
                 Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe assemblyPath");
-                Environment.ExitCode = -1;
+                Environment.Exit(-1);
             }
             else
             {
@@ -18,8 +18,8 @@ namespace XmlDoc2CmdletDoc
                 Console.WriteLine(options);
                 var engine = new Engine();
                 var errorCode = engine.GenerateHelp(options);
-                Console.WriteLine("Error code: " + errorCode);
-                Environment.ExitCode = (int)errorCode;
+                Console.WriteLine("GenerateHelp completed with error code '{0}'", errorCode);
+                Environment.Exit((int)errorCode);
             }
         }
     }

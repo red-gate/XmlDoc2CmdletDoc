@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using XmlDoc2CmdletDoc.Core;
 using XmlDoc2CmdletDoc.TestModule.Maml;
 using XmlDoc2CmdletDoc.TestModule.Manual;
 
@@ -46,7 +47,9 @@ namespace XmlDoc2CmdletDoc.Tests
             }
 
             // ACT
-            Program.Main(new[] { assemblyPath });
+            var options = new Options(assemblyPath);
+            var engine = new Engine();
+            engine.GenerateHelp(options);
 
             // ASSERT
             Assert.That(File.Exists(cmdletXmlHelpPath));
