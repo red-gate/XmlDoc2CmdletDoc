@@ -16,14 +16,14 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// <summary>
         /// Creates a new instance based on the specified cmdlet type.
         /// </summary>
-        /// <param name="cmdletCmdletType">The type of the cmdlet. Must be a sub-class of <see cref="Cmdlet"/>
+        /// <param name="cmdletType">The type of the cmdlet. Must be a sub-class of <see cref="Cmdlet"/>
         /// and have a <see cref="CmdletAttribute"/>.</param>
-        public Command(Type cmdletCmdletType)
+        public Command(Type cmdletType)
         {
-            if (cmdletCmdletType == null) throw new ArgumentNullException("cmdletCmdletType");
-            CmdletType = cmdletCmdletType;
+            if (cmdletType == null) throw new ArgumentNullException("cmdletType");
+            CmdletType = cmdletType;
             _attribute = CmdletType.GetCustomAttribute<CmdletAttribute>();
-            if (_attribute == null) throw new ArgumentException("Missing CmdletAttribute", "cmdletCmdletType");
+            if (_attribute == null) throw new ArgumentException("Missing CmdletAttribute", "cmdletType");
         }
 
         /// <summary>
