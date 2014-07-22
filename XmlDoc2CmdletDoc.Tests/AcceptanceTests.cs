@@ -233,8 +233,8 @@ namespace XmlDoc2CmdletDoc.Tests
 
         [Test]
         [TestCase("MandatoryParameter", "false")]
-        [TestCase("ValueFromPipelineParameter", "true")]
-        [TestCase("ValueFromPipelineByPropertyNameParameter", "true")]
+        [TestCase("ValueFromPipelineParameter", "true (ByValue)")]
+        [TestCase("ValueFromPipelineByPropertyNameParameter", "true (ByPropertyName)")]
         public void Command_Parameters_Parameter_PipelineInputAttribute(string parameterName, string expectedValue)
         {
             Assume.That(testManualElementsCommandElement, Is.Not.Null);

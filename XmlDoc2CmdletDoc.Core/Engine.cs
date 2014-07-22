@@ -341,10 +341,11 @@ namespace XmlDoc2CmdletDoc.Core
             return new XElement(commandNs + "parameter",
                                 new XAttribute("required", parameter.IsRequired(parameterSetName)),
                                 new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
-                                new XAttribute("pipelineInput", parameter.IsPipeline(parameterSetName)),
+                                new XAttribute("pipelineInput", parameter.GetIsPipelineAttribute(parameterSetName)),
                                 new XAttribute("position", parameter.GetPosition(parameterSetName)),
                                 new XElement(mamlNs + "name", parameter.Name),
                                 commentReader.GetParameterDescriptionElement(parameter, reportWarning),
+                                commentReader.GetParameterValueElement(parameter, reportWarning),
                                 GenerateTypeElement(commentReader, parameter.ParameterType, reportWarning),
                                 commentReader.GetParameterDefaultValueElement(parameter));
         }

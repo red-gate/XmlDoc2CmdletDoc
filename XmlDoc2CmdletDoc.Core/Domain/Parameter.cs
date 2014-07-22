@@ -96,6 +96,23 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         }
 
         /// <summary>
+        /// Indicates whether or not the parameter takes its value from the pipeline input.
+        /// </summary>
+        public string GetIsPipelineAttribute(string parameterSetName)
+        {
+            var attributes = GetAttributes(parameterSetName).ToList();
+            bool byValue = attributes.Any(attr => attr.ValueFromPipeline);
+            bool byParameterName = attributes.Any(attr => attr.ValueFromPipelineByPropertyName);
+            return byValue
+                       ? byParameterName
+                             ? "true (ByValue, ByPropertyName)"
+                             : "true (ByValue)"
+                       : byParameterName
+                             ? "true (ByPropertyName)"
+                             : "false";
+        }
+
+        /// <summary>
         /// The position of the parameter, or <em>null</em> if no position is defined.
         /// </summary>
         public string GetPosition(string parameterSetName)

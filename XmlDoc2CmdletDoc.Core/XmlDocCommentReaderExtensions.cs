@@ -247,6 +247,20 @@ namespace XmlDoc2CmdletDoc.Core
             var commentsElement = commentReader.GetComments(memberInfo, reportWarning);
             return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description", warningText => reportWarning(memberInfo, warningText));
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="commentReader">The comment reader.</param>
+        /// <param name="parameter">The parameter.</param>
+        /// <param name="reportWarning">Used to record warnings.</param>
+        /// <returns>A description element for the parameter.</returns>
+        public static XElement GetParameterValueElement(this XmlDocCommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
+        {
+            return new XElement(commandNs + "parameterValue",
+                                new XAttribute("required", true),
+                                GetSimpleTypeName(parameter.ParameterType));
+        }
         
         /// <summary>
         /// Obtains a <em>&lt;dev:defaultValue&gt;</em> element for a parameter.
@@ -384,5 +398,38 @@ namespace XmlDoc2CmdletDoc.Core
 
             return string.Join(Environment.NewLine, lines);
         }
+
+        private static string GetSimpleTypeName(Type type)
+        {
+            if (type.IsArray)
+            {
+                return GetSimpleTypeName(type.GetElementType()) + "[]";
+            }
+
+            string result;
+            if (PredefinedSimpleTypeNames.TryGetValue(type, out result))
+            {
+                return result;
+            }
+            return type.Name;
+        }
+
+        private static readonly IDictionary<Type, string> PredefinedSimpleTypeNames =
+            new Dictionary<Type, string>
+            {
+                {typeof(object), "object"},
+                {typeof(string), "string"},
+                {typeof(bool), "bool"},
+                {typeof(byte), "byte"},
+                {typeof(char), "char"},
+                {typeof(short), "short"},
+                {typeof(ushort), "ushort"},
+                {typeof(int), "int"},
+                {typeof(uint), "uint"},
+                {typeof(long), "long"},
+                {typeof(ulong), "ulong"},
+                {typeof(float), "float"},
+                {typeof(double), "double"},
+            };
     }
 }
