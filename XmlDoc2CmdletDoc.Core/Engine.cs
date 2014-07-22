@@ -13,6 +13,13 @@ using XmlDoc2CmdletDoc.Core.Domain;
 namespace XmlDoc2CmdletDoc.Core
 {
     /// <summary>
+    /// Delegate used when reporting a warning against a reflected member.
+    /// </summary>
+    /// <param name="target">The reflected meber to which the warning pertains.</param>
+    /// <param name="warningText">The warning message.</param>
+    public delegate void ReportWarning(MemberInfo target, string warningText);
+
+    /// <summary>
     /// <para>Does all the work of generating the XML help file for an assembly. See <see cref="GenerateHelp"/>.</para>
     /// <para>This class is stateless, so you can call <see cref="GenerateHelp"/> multitple times on multiple threads.</para>
     /// </summary>
@@ -43,8 +50,13 @@ namespace XmlDoc2CmdletDoc.Core
                 var commentReader = LoadComments(options);
                 var cmdletTypes = GetCommands(assembly);
 
+                var warnings = new List<Tuple<MemberInfo, string>>();
+                ReportWarning reportWarning = (target, warningText) => warnings.Add(Tuple.Create(target, warningText));
+
                 var document = new XDocument(new XDeclaration("1.0", "utf-8", null),
-                                             GenerateHelpItemsElement(commentReader, cmdletTypes));
+                                             GenerateHelpItemsElement(commentReader, cmdletTypes, reportWarning));
+
+                HandleWarnings(options, warnings, assembly);
 
                 using (var stream = new FileStream(options.OutputHelpFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 using (var writer = new StreamWriter(stream, Encoding.UTF8))
@@ -62,6 +74,57 @@ namespace XmlDoc2CmdletDoc.Core
                            ? EngineErrorCode.UnhandledException
                            : engineException.ErrorCode;
             }
+        }
+
+        /// <summary>
+        /// Handles the list of warnings generated once the cmdlet help XML document has been generated.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="warnings">The warnings generated during the creation of the cmdlet help XML document. Each tuple
+        /// consists of the type to which the warning pertains, and the text of the warning.</param>
+        /// <param name="targetAssembly">The assembly of the PowerShell module being documented.</param>
+        private static void HandleWarnings(Options options, IEnumerable<Tuple<MemberInfo, string>> warnings, Assembly targetAssembly)
+        {
+            var groups = warnings.Where(tuple =>
+                                        {
+                                            // Exclude warnings about types outside of the assembly being documented.
+                                            var type = tuple.Item1 as Type ?? tuple.Item1.DeclaringType;
+                                            return type != null && type.Assembly == targetAssembly;
+                                        })
+                                 .GroupBy(tuple => GetFullyQualifiedName(tuple.Item1), tuple => tuple.Item2)
+                                 .OrderBy(group => group.Key)
+                                 .ToList();
+            if (groups.Any())
+            {
+                var writer = options.TreatWarningsAsErrors ? Console.Error : Console.Out;
+                writer.WriteLine("Warnings:");
+                foreach (var group in groups)
+                {
+                    writer.WriteLine("    {0}:", group.Key);
+                    foreach (var warningText in group.Distinct())
+                    {
+                        writer.WriteLine("        {0}", warningText);
+                    }
+                }
+                if (options.TreatWarningsAsErrors)
+                {
+                    throw new EngineException(EngineErrorCode.WarningsAsErrors,
+                                              "Failing due to the occurence of one or more warnings");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the fully-qualified name of a type, property or field.
+        /// </summary>
+        /// <param name="memberInfo">The member.</param>
+        /// <returns>The fully qualified name of the mamber.</returns>
+        private static string GetFullyQualifiedName(MemberInfo memberInfo)
+        {
+            var type = memberInfo as Type;
+            return type != null
+                ? type.FullName
+                : string.Format("{0}.{1}", GetFullyQualifiedName(memberInfo.DeclaringType), memberInfo.Name);
         }
 
         /// <summary>
@@ -151,13 +214,13 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="commentReader"></param>
         /// <param name="commands">All of the commands in the module being documented.</param>
         /// <returns>The root-level <em>helpItems</em> element.</returns>
-        private XElement GenerateHelpItemsElement(XmlDocCommentReader commentReader, IEnumerable<Command> commands)
+        private XElement GenerateHelpItemsElement(XmlDocCommentReader commentReader, IEnumerable<Command> commands, ReportWarning reportWarning)
         {
             var helpItemsElement = new XElement(mshNs + "helpItems", new XAttribute("schema", "maml"));
             foreach (var command in commands)
             {
                 helpItemsElement.Add(GenerateComment("Cmdlet: " + command.Name));
-                helpItemsElement.Add(GenerateCommandElement(commentReader, command));
+                helpItemsElement.Add(GenerateCommandElement(commentReader, command, reportWarning));
             }
             return helpItemsElement;
         }
@@ -168,21 +231,21 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="commentReader"></param>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:command&gt;</em> element that represents the <paramref name="command"/>.</returns>
-        private XElement GenerateCommandElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateCommandElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             return new XElement(commandNs + "command",
                                 new XAttribute(XNamespace.Xmlns + "maml", mamlNs),
                                 new XAttribute(XNamespace.Xmlns + "command", commandNs),
                                 new XAttribute(XNamespace.Xmlns + "dev", devNs),
-                                GenerateDetailsElement(commentReader, command),
-                                GenerateDescriptionElement(commentReader, command),
-                                GenerateSyntaxElement(commentReader, command),
-                                GenerateParametersElement(commentReader, command),
-                                GenerateInputTypesElement(commentReader, command),
-                                GenerateReturnValuesElement(commentReader, command),
-                                GenerateAlertSetElement(commentReader, command),
-                                GenerateExamplesElement(commentReader, command),
-                                GenerateRelatedLinksElement(commentReader, command));
+                                GenerateDetailsElement(commentReader, command, reportWarning),
+                                GenerateDescriptionElement(commentReader, command, reportWarning),
+                                GenerateSyntaxElement(commentReader, command, reportWarning),
+                                GenerateParametersElement(commentReader, command, reportWarning),
+                                GenerateInputTypesElement(commentReader, command, reportWarning),
+                                GenerateReturnValuesElement(commentReader, command, reportWarning),
+                                GenerateAlertSetElement(commentReader, command, reportWarning),
+                                GenerateExamplesElement(commentReader, command, reportWarning),
+                                GenerateRelatedLinksElement(commentReader, command, reportWarning));
         }
 
         /// <summary>
@@ -191,13 +254,13 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="commentReader"></param>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:details&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateDetailsElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateDetailsElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             return new XElement(commandNs + "details",
                                 new XElement(commandNs + "name", command.Name),
                                 new XElement(commandNs + "verb", command.Verb),
                                 new XElement(commandNs + "noun", command.Noun),
-                                commentReader.GetCommandSynopsisElement(command));
+                                commentReader.GetCommandSynopsisElement(command, reportWarning));
         }
 
         /// <summary>
@@ -206,9 +269,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="commentReader"></param>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;maml:description&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateDescriptionElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateDescriptionElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
-            return commentReader.GetCommandDescriptionElement(command);
+            return commentReader.GetCommandDescriptionElement(command, reportWarning);
         }
 
         /// <summary>
@@ -216,7 +279,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:syntax&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateSyntaxElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateSyntaxElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var syntaxElement = new XElement(commandNs + "syntax");
             IEnumerable<string> parameterSetNames = command.ParameterSetNames.ToList();
@@ -227,7 +290,7 @@ namespace XmlDoc2CmdletDoc.Core
             foreach (var parameterSetName in parameterSetNames)
             {
                 syntaxElement.Add(GenerateComment("Parameter set: " + parameterSetName));
-                syntaxElement.Add(GenerateSyntaxItemElement(commentReader, command, parameterSetName));
+                syntaxElement.Add(GenerateSyntaxItemElement(commentReader, command, parameterSetName, reportWarning));
             }
             return syntaxElement;
         }
@@ -238,14 +301,14 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="command">The command.</param>
         /// <param name="parameterSetName">The parameter set name.</param>
         /// <returns>A <em>&lt;command:syntaxItem&gt;</em> element for the specific <paramref name="parameterSetName"/> of the <paramref name="command"/>.</returns>
-        private XElement GenerateSyntaxItemElement(XmlDocCommentReader commentReader, Command command, string parameterSetName)
+        private XElement GenerateSyntaxItemElement(XmlDocCommentReader commentReader, Command command, string parameterSetName, ReportWarning reportWarning)
         {
             var syntaxItemElement = new XElement(commandNs + "syntaxItem",
                                                  new XElement(mamlNs + "name", command.Name));
             foreach (var parameter in command.GetParameters(parameterSetName))
             {
                 syntaxItemElement.Add(GenerateComment("Parameter: " + parameter.Name));
-                syntaxItemElement.Add(GenerateParameterElement(commentReader, parameter, parameterSetName));
+                syntaxItemElement.Add(GenerateParameterElement(commentReader, parameter, parameterSetName, reportWarning));
             }
             return syntaxItemElement;
         }
@@ -255,13 +318,13 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:parameters&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateParametersElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateParametersElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var parametersElement = new XElement(commandNs + "parameters");
             foreach (var parameter in command.Parameters)
             {
                 parametersElement.Add(GenerateComment("Parameter: " + parameter.Name));
-                parametersElement.Add(GenerateParameterElement(commentReader, parameter));
+                parametersElement.Add(GenerateParameterElement(commentReader, parameter, ParameterAttribute.AllParameterSets, reportWarning));
             }
             return parametersElement;
         }
@@ -273,7 +336,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterSetName">The specific parameter set name, or <see cref="ParameterAttribute.AllParameterSets"/>.</param>
         /// <returns>A <em>&lt;command:parameter&gt;</em> element for the <paramref name="parameter"/>.</returns>
-        private XElement GenerateParameterElement(XmlDocCommentReader commentReader, Parameter parameter, string parameterSetName = ParameterAttribute.AllParameterSets)
+        private XElement GenerateParameterElement(XmlDocCommentReader commentReader, Parameter parameter, string parameterSetName, ReportWarning reportWarning)
         {
             return new XElement(commandNs + "parameter",
                                 new XAttribute("required", parameter.IsRequired(parameterSetName)),
@@ -281,8 +344,8 @@ namespace XmlDoc2CmdletDoc.Core
                                 new XAttribute("pipelineInput", parameter.IsPipeline(parameterSetName)),
                                 new XAttribute("position", parameter.GetPosition(parameterSetName)),
                                 new XElement(mamlNs + "name", parameter.Name),
-                                commentReader.GetParameterDescriptionElement(parameter),
-                                GenerateTypeElement(commentReader, parameter.ParameterType),
+                                commentReader.GetParameterDescriptionElement(parameter, reportWarning),
+                                GenerateTypeElement(commentReader, parameter.ParameterType, reportWarning),
                                 commentReader.GetParameterDefaultValueElement(parameter));
         }
 
@@ -291,14 +354,14 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:inputTypes&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateInputTypesElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateInputTypesElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var inputTypesElement = new XElement(commandNs + "inputTypes");
             var pipelineParameters = command.GetParameters(ParameterAttribute.AllParameterSets)
                                             .Where(p => p.IsPipeline(ParameterAttribute.AllParameterSets));
             foreach (var parameterType in pipelineParameters.Select(p => p.ParameterType).Distinct())
             {
-                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameterType));
+                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameterType, reportWarning));
             }
             return inputTypesElement;
         }
@@ -308,11 +371,11 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameter"/>.</returns>
-        private XElement GenerateInputTypeElement(XmlDocCommentReader commentReader, Type parameterType)
+        private XElement GenerateInputTypeElement(XmlDocCommentReader commentReader, Type parameterType, ReportWarning reportWarning)
         {
             return new XElement(commandNs + "inputType",
-                                GenerateTypeElement(commentReader, parameterType),
-                                commentReader.GetTypeDescriptionElement(parameterType));
+                                GenerateTypeElement(commentReader, parameterType, reportWarning),
+                                commentReader.GetTypeDescriptionElement(parameterType, reportWarning));
         }
 
         /// <summary>
@@ -320,15 +383,15 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:returnValues&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateReturnValuesElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateReturnValuesElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var returnValueElement = new XElement(commandNs + "returnValues");
             foreach (var type in command.OutputTypes)
             {
                 returnValueElement.Add(GenerateComment("OutputType: " + type.Name));
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
-                                                    GenerateTypeElement(commentReader, type),
-                                                    commentReader.GetTypeDescriptionElement(type)));
+                                                    GenerateTypeElement(commentReader, type, reportWarning),
+                                                    commentReader.GetTypeDescriptionElement(type, reportWarning)));
             }
             return returnValueElement;
         }
@@ -338,9 +401,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateAlertSetElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateAlertSetElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
-            return commentReader.GetCommandAlertSetElement(command);
+            return commentReader.GetCommandAlertSetElement(command, reportWarning);
         }
 
         /// <summary>
@@ -348,9 +411,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;command:examples&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateExamplesElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateExamplesElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
-            return commentReader.GetCommandExamplesElement(command);
+            return commentReader.GetCommandExamplesElement(command, reportWarning);
         }
 
         /// <summary>
@@ -358,9 +421,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A <em>&lt;maml:relatedLinks&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateRelatedLinksElement(XmlDocCommentReader commentReader, Command command)
+        private XElement GenerateRelatedLinksElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
-            return commentReader.GetCommandRelatedLinksElement(command);
+            return commentReader.GetCommandRelatedLinksElement(command, reportWarning);
         }
 
         /// <summary>
@@ -368,12 +431,12 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private XElement GenerateTypeElement(XmlDocCommentReader commentReader, Type type)
+        private XElement GenerateTypeElement(XmlDocCommentReader commentReader, Type type, ReportWarning reportWarning)
         {
             return new XElement(devNs + "type",
                                 new XElement(mamlNs + "name", type.FullName),
                                 new XElement(mamlNs + "uri"),
-                                commentReader.GetTypeDescriptionElement(type));
+                                commentReader.GetTypeDescriptionElement(type, reportWarning));
         }
 
         /// <summary>

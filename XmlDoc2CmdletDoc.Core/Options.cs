@@ -24,19 +24,29 @@ namespace XmlDoc2CmdletDoc.Core
         public readonly string DocCommentsPath;
 
         /// <summary>
+        /// Indicates whether or not the presence of warnings should be treated as a failure condition.
+        /// </summary>
+        public readonly bool TreatWarningsAsErrors;
+
+        /// <summary>
         /// Creates a new instance with the specified settings.
         /// </summary>
+        /// <param name="treatWarningsAsErrors">Indicates whether or not the presence of warnings should be treated as a failure condition.</param>
         /// <param name="assemblyPath">The path of the taget assembly whose XML Doc comments file is to be converted
         /// into a cmdlet XML Help file.</param>
         /// <param name="outputHelpFilePath">The output path of the cmdlet XML Help file.
         /// If <c>null</c>, an appropriate default is selected based on <paramref name="assemblyPath"/>.</param>
         /// <param name="docCommentsPath">The path of the XML Doc comments file for the target assembly.
         /// If <c>null</c>, an appropriate default is selected based on <paramref name="assemblyPath"/></param>
-        public Options(string assemblyPath,
+        public Options(bool treatWarningsAsErrors,
+                       string assemblyPath,
                        string outputHelpFilePath = null,
-                       string docCommentsPath = null)
+                       string docCommentsPath = null,
+            string xsltPath = null)
         {
             if (assemblyPath == null) throw new ArgumentNullException("assemblyPath");
+
+            TreatWarningsAsErrors = treatWarningsAsErrors;
 
             AssemblyPath = Path.GetFullPath(assemblyPath);
 
@@ -51,8 +61,8 @@ namespace XmlDoc2CmdletDoc.Core
 
         public override string ToString()
         {
-            return string.Format("AssemblyPath: {0}, OutputHelpFilePath: {1}, DocCommentsPath: {2}",
-                                 AssemblyPath, OutputHelpFilePath, DocCommentsPath);
+            return string.Format("AssemblyPath: {0}, OutputHelpFilePath: {1}, DocCommentsPath: {2}, TreatWarningsAsErrors {3}",
+                                 AssemblyPath, OutputHelpFilePath, DocCommentsPath, TreatWarningsAsErrors);
         }
     }
 }

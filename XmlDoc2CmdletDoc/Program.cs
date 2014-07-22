@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using XmlDoc2CmdletDoc.Core;
 
 namespace XmlDoc2CmdletDoc
@@ -7,14 +8,24 @@ namespace XmlDoc2CmdletDoc
     {
         public static void Main(string[] args)
         {
-            if (args.Length != 1)
+            const string StrictSwitch = "-strict";
+
+            bool treatWarningsAsErrors = false;
+            var arguments = args.ToList();
+            if (arguments.Contains(StrictSwitch))
             {
-                Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe assemblyPath");
+                treatWarningsAsErrors = true;
+                arguments.Remove(StrictSwitch);
+            }
+
+            if (arguments.Count != 1)
+            {
+                Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe [{0}] assemblyPath", StrictSwitch);
                 Environment.Exit(-1);
             }
             else
             {
-                var options = new Options(args[0]);
+                var options = new Options(treatWarningsAsErrors, arguments.First());
                 Console.WriteLine(options);
                 var engine = new Engine();
                 var errorCode = engine.GenerateHelp(options);

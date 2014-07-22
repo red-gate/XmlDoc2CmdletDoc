@@ -10,6 +10,7 @@ namespace XmlDoc2CmdletDoc.Core
         AssemblyLoadError = 2,
         AssemblyCommentsNotFound = 3,
         DocCommentsLoadError = 4,
-        UnhandledException = 5
+        UnhandledException = 5,
+        WarningsAsErrors = 6,
     }
 }
