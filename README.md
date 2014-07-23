@@ -56,7 +56,7 @@ Guidance on writing the parameter description can be found at http://msdn.micros
 
 ## Type description
 
-You can document the type of a parameter, or the output type of a cmdlet, by using \<para\> elements in the type's XML doc comment. Again, the relevant \<para\> elements should be tagged with a *type="description"* attribute. Only types defined in the PowerShell module can be documented in this way.
+You can document the input type of a parameter or the output type of a cmdlet, by using \<para\> elements in the type's XML doc comment. Again, the relevant \<para\> elements should be tagged with a *type="description"* attribute. Only types defined in the PowerShell module can be documented in this way.
 
 ```c#
 [Cmdlet("Test", "MyExample")]
@@ -77,6 +77,35 @@ public class MyType
     ...
 }
 ```
+
+## Cmdlet notes
+
+Notes can be added to a cmdlet's help section by using a \<list\> element with a *type="alertSet"* attribute. Each \<item\> sub-element corresponds to a single note. Within each \<item\> element, the note's title is specified using the \<term\> sub-element, and the note's body text is specified using the \<description\> sub-element. The \<description\> element can directly contain the text of the note's body. However, if you want to split the note's body text into multiple paragraphs, you can also use \<para\> elements.
+
+```c#
+/// <list type="alertSet">
+///   <item>
+///     <term>First note title</term>
+///     <description>
+///     This is the entire body text for the first note.
+///     </description>
+///   </item>
+///   <item>
+///     <term>Second note title</term>
+///     <description>
+///       <para>This the first paragraph of the body text for the second note.</para>
+///       <para>This the second paragraph of the body text for the second note.</para>
+///     </description>
+///   </item>
+/// </list>
+[Cmdlet("Test", "MyExample")]
+public class TestMyExampleCommand : Cmdlet
+{
+    ...
+}
+```
+
+Guidance on writing the cmdlet notes can be found at http://msdn.microsoft.com/en-us/library/bb736330.aspx.
 
 ## Cmdlet examples
 
