@@ -10,7 +10,7 @@ Here are some examples of how to document your cmdlets:
 
 The synopsis and description for a cmdlet are defined using \<para\> elements in the XML doc comment for the cmdlet class. The relevant \<para\> elements should be tagged with a *type="synopsis"* or *type="description"* attribute indicating whether the \<para\> is part of the synopsis or description. Multiple \<para\> elements can be used for both the synopsis and the description, though it's customary for a cmdlet synopsis to be a brief one line explanation of the cmdlet.
 
-```
+```c#
 /// <summary>
 /// <para type="synopsis">This is the cmdlet synopsis.</para>
 /// <para type="description">This is part of the cmdlet description.</para>
@@ -27,7 +27,7 @@ public class TestMyExampleCommand : Cmdlet
 
 The description for the parameter of a cmdlet is defined using \<para\> elements in the XML doc comment for the parameter's field or property. The relevant \<para\> elements should be tagged with a *type="description"* attribute.
 
-```
+```c#
 [Cmdlet("Test", "MyExample")]
 public class TestMyExampleCommand : Cmdlet
 {
