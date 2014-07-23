@@ -48,6 +48,30 @@ public class TestMyExampleCommand : Cmdlet
 }
 ```
 
+## Type description
+
+You can document the type of a parameter, or the output type of a cmdlet, by using \<para\> elements in the type's XML doc comment. Again, the relevant \<para\> elements should be tagged with a *type="description"* attribute. Only types defined in the PowerShell module can be documented in this way.
+
+```c#
+[Cmdlet("Test", "MyExample")]
+public class TestMyExampleCommand : Cmdlet
+{
+    [Parameter]
+    public MyType MyParameter {get; set;}
+    
+    ...
+}
+
+/// <summary>
+/// <para type="description">This is part of the type description.</para>
+/// <para type="description">This is also part of the type description.</para>
+/// </summary>
+public class MyType
+{
+    ...
+}
+```
+
 ## Cmdlet examples
 
 Cmdlet examples are defined using \<example\> elements in the XML doc comment for the cmdlet class. For each example, the introduction, code and remarks sections of the cmdlet example are derived from \<para\> and \<code\> sub-elements of the \<example\> element. The example's code body is taken from the \<code\> element. The example's introduction is taken from any \<para\> elements that occur before the \<code\> element, and the example's remarks are taken from any \<para\> elements following the \<code\> element. The introduction and remarks are both optional. For multiple cmdlet examples, use multiple \<example\> elements.
