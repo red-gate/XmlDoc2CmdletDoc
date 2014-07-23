@@ -105,7 +105,7 @@ public class TestMyExampleCommand : Cmdlet
 }
 ```
 
-Guidance on writing the cmdlet notes can be found at http://msdn.microsoft.com/en-us/library/bb736330.aspx.
+Guidance on writing cmdlet notes can be found at http://msdn.microsoft.com/en-us/library/bb736330.aspx.
 
 ## Cmdlet examples
 
