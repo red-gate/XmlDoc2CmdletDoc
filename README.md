@@ -93,8 +93,8 @@ Notes can be added to a cmdlet's help section by using a \<list\> element with a
 ///   <item>
 ///     <term>Second note title</term>
 ///     <description>
-///       <para>This the first paragraph of the body text for the second note.</para>
-///       <para>This the second paragraph of the body text for the second note.</para>
+///       <para>The first paragraph of the body text for the second note.</para>
+///       <para>The second paragraph of the body text for the second note.</para>
 ///     </description>
 ///   </item>
 /// </list>
