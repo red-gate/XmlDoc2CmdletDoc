@@ -35,6 +35,7 @@ public class TestMyExampleCommand : Cmdlet
     /// <para type="description">This is part of the parameter description.</para>
     /// <para type="description">This is also part of the parameter description.</para>
     /// </summary>
+    [Parameter]
     public string MyParameter {get; set;}
     
     ...
