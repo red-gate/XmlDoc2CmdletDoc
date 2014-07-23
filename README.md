@@ -78,7 +78,7 @@ public class MyType
 }
 ```
 
-## Cmdlet notes
+## Notes
 
 Notes can be added to a cmdlet's help section by using a \<list\> element with a *type="alertSet"* attribute. Each \<item\> sub-element corresponds to a single note. Within each \<item\> element, the note's title is specified using the \<term\> sub-element, and the note's body text is specified using the \<description\> sub-element. The \<description\> element can directly contain the text of the note's body. However, if you want to split the note's body text into multiple paragraphs, you can also use \<para\> elements.
 
@@ -107,7 +107,7 @@ public class TestMyExampleCommand : Cmdlet
 
 Guidance on writing cmdlet notes can be found at http://msdn.microsoft.com/en-us/library/bb736330.aspx.
 
-## Cmdlet examples
+## Examples
 
 Cmdlet examples are defined using \<example\> elements in the XML doc comment for the cmdlet class. For each example, the introduction, code and remarks sections of the cmdlet example are derived from \<para\> and \<code\> sub-elements of the \<example\> element. The example's code body is taken from the \<code\> element. The example's introduction is taken from any \<para\> elements that occur before the \<code\> element, and the example's remarks are taken from any \<para\> elements following the \<code\> element. The introduction and remarks are both optional. For multiple cmdlet examples, use multiple \<example\> elements.
 
@@ -127,3 +127,22 @@ public class TestMyExampleCommand : Cmdlet
 ```
 
 Guidance on writing cmdlet examples can be found at http://msdn.microsoft.com/en-us/library/bb736335.aspx.
+
+## Related links
+
+Related links are defined using \<para\> elements in the XML doc comment for the cmdlet class. The relevant \<para\> elements should be tagged with a *type="link"* attribute. The link text for each navigation link is derived from the body of the \<para\> element. If you also want to include a uri, you can do so by specifying a uri attribute in the \<para\> element.
+
+```c#
+/// <summary>
+///   <para type="link">This is the text of the first link.</para>
+///   <para type="link">This is the text of the second link.</para>
+///   <para type="link" uri="https://github.com/red-gate/XmlDoc2CmdletDoc/">The XmlDoc2CmdletDoc website.</para>
+/// </summary>
+[Cmdlet("Test", "MyExample")]
+public class TestMyExampleCommand : Cmdlet
+{
+    ...
+}
+```
+
+Guidance on writing related links can be found at http://msdn.microsoft.com/en-us/library/bb736334.aspx.
