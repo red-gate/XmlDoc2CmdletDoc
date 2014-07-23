@@ -29,6 +29,9 @@ public class TestMyExampleCommand : Cmdlet
 }
 ```
 
+Guidance on writing the cmdlet synopsis can be found at http://msdn.microsoft.com/en-us/library/bb525429.aspx.
+Guidance on writing the cmdlet description can be found at http://msdn.microsoft.com/en-us/library/bb736332.aspx.
+
 ## Parameter description
 
 The description for the parameter of a cmdlet is defined using \<para\> elements in the XML doc comment for the parameter's field or property. The relevant \<para\> elements should be tagged with a *type="description"* attribute.
@@ -46,7 +49,10 @@ public class TestMyExampleCommand : Cmdlet
     
     ...
 }
+
 ```
+
+Guidance on writing the parameter description can be found at http://msdn.microsoft.com/en-us/library/bb736339.aspx.
 
 ## Type description
 
@@ -91,3 +97,4 @@ public class TestMyExampleCommand : Cmdlet
 }
 ```
 
+Guidance on writing cmdlet examples can be found at http://msdn.microsoft.com/en-us/library/bb736335.aspx.
