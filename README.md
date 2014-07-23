@@ -42,3 +42,22 @@ public class TestMyExampleCommand : Cmdlet
 }
 ```
 
+## Cmdlet examples
+
+Cmdlet examples are defined using \<example\> elements in the XML doc comment for the cmdlet class. For each example, the introduction, code and remarks sections of the cmdlet example are derived from \<para\> and \<code\> sub-elements of the \<example\> element. The example's code body is taken from the \<code\> element. The example's introduction is taken from any \<para\> elements that occur before the \<code\> element, and the example's remarks are taken from any \<para\> elements following the \<code\> element. The introduction and remarks are both optional. For multiple cmdlet examples, use multiple \<example\> elements.
+
+```c#
+/// <example>
+///   <para>This is part of the example's introduction.</para>
+///   <para>This is also part of the example's introduction.</para>
+///   <code>Test-MyExample | Wrte-Host</code>
+///   <para>This is part of the example's remarks.</para>
+///   <para>This is also part of the example's remarks.</para>
+/// </example>
+[Cmdlet("Test", "MyExample")]
+public class TestMyExampleCommand : Cmdlet
+{
+    ...
+}
+```
+
