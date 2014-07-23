@@ -4,6 +4,12 @@ XmlDoc2CmdletDoc is a tool that can create a .dll-Help.xml help file for a binar
 
 XmlDoc2CmdletDoc has a handful of NuGet package dependencies, one of which is not available via the official public NuGet repository - RedGate.ThirdParty.JoltCore. Nonetheless, the NuGet packages are already included in this repository, and the source for RedGate.ThirdParty.JoltCore is publicly available at https://github.com/red-gate/JoltNet-core. Both Jolt.NET and XmlDoc2CmdletDoc are released under the same BSD licence.
 
+Usage of the tool is simple. To create the .dll-Help.xml file for your binary PowerShell module, simply call the following:
+
+```batchfile
+XmlDoc2CmdletDoc.exe C:\Full\Path\To\MyPowerShellModule.dll
+```
+
 Here are some examples of how to document your cmdlets:
 
 ## Cmdlet synopsis and description
