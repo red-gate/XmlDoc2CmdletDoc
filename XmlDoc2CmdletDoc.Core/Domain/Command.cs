@@ -69,7 +69,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             get
             {
                 return CmdletType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(member => member.GetCustomAttribute<ParameterAttribute>() != null)
+                    .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
                     .Select(member => new Parameter(CmdletType, member));
             }
         }
