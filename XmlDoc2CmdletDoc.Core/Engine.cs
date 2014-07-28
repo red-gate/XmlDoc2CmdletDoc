@@ -42,7 +42,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="options">Defines the locations of the input assembly, the input XML doc comments file for the
         /// assembly, and where the cmdlet XML help file should be written to.</param>
         /// <returns>A code indicating the result of the help generation.</returns>
-        public EngineErrorCode GenerateHelp(Options options)
+        public EngineExitCode GenerateHelp(Options options)
         {
             try
             {
@@ -64,15 +64,23 @@ namespace XmlDoc2CmdletDoc.Core
                     document.Save(writer);
                 }
 
-                return EngineErrorCode.Success;
+                return EngineExitCode.Success;
             }
             catch (Exception exception)
             {
                 Console.Error.WriteLine(exception);
+                var typeLoadException = exception as ReflectionTypeLoadException;
+                if (typeLoadException != null)
+                {
+                    foreach (var loaderException in typeLoadException.LoaderExceptions)
+                    {
+                        Console.Error.WriteLine("Loader exception: {0}", loaderException);
+                    }
+                }
                 var engineException = exception as EngineException;
                 return engineException == null
-                           ? EngineErrorCode.UnhandledException
-                           : engineException.ErrorCode;
+                           ? EngineExitCode.UnhandledException
+                           : engineException.ExitCode;
             }
         }
 
@@ -108,7 +116,7 @@ namespace XmlDoc2CmdletDoc.Core
                 }
                 if (options.TreatWarningsAsErrors)
                 {
-                    throw new EngineException(EngineErrorCode.WarningsAsErrors,
+                    throw new EngineException(EngineExitCode.WarningsAsErrors,
                                               "Failing due to the occurence of one or more warnings");
                 }
             }
@@ -137,7 +145,7 @@ namespace XmlDoc2CmdletDoc.Core
             var assemblyPath = options.AssemblyPath;
             if (!File.Exists(assemblyPath))
             {
-                throw new EngineException(EngineErrorCode.AssemblyNotFound,
+                throw new EngineException(EngineExitCode.AssemblyNotFound,
                                           "Assembly file not found: " + assemblyPath);
             }
             try
@@ -161,7 +169,7 @@ namespace XmlDoc2CmdletDoc.Core
             }
             catch (Exception exception)
             {
-                throw new EngineException(EngineErrorCode.AssemblyLoadError,
+                throw new EngineException(EngineExitCode.AssemblyLoadError,
                                           "Failed to load assembly from file: " + assemblyPath,
                                           exception);
             }
@@ -177,7 +185,7 @@ namespace XmlDoc2CmdletDoc.Core
             var docCommentsPath = options.DocCommentsPath;
             if (!File.Exists(docCommentsPath))
             {
-                throw new EngineException(EngineErrorCode.AssemblyCommentsNotFound,
+                throw new EngineException(EngineExitCode.AssemblyCommentsNotFound,
                                           "Assembly comments file not found: " + docCommentsPath);
             }
             try
@@ -186,7 +194,7 @@ namespace XmlDoc2CmdletDoc.Core
             }
             catch (Exception exception)
             {
-                throw new EngineException(EngineErrorCode.DocCommentsLoadError,
+                throw new EngineException(EngineExitCode.DocCommentsLoadError,
                                           "Failed to load XML Doc comments ffrom file: " + docCommentsPath,
                                           exception);
             }

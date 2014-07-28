@@ -51,7 +51,7 @@
     <Compile Include="Domain\Command.cs" />
     <Compile Include="Domain\Parameter.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="EngineErrorCode.cs" />
+    <Compile Include="EngineExitCode.cs" />
     <Compile Include="EngineException.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

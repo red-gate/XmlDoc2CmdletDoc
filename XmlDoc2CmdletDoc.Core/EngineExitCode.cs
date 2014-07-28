@@ -1,9 +1,9 @@
 namespace XmlDoc2CmdletDoc.Core
 {
     /// <summary>
-    /// Error codes for the <see cref="Engine"/>.
+    /// Exit codes for the <see cref="Engine"/>.
     /// </summary>
-    public enum EngineErrorCode
+    public enum EngineExitCode
     {
         Success = 0,
         AssemblyNotFound = 1,

@@ -28,9 +28,9 @@ namespace XmlDoc2CmdletDoc
                 var options = new Options(treatWarningsAsErrors, arguments.First());
                 Console.WriteLine(options);
                 var engine = new Engine();
-                var errorCode = engine.GenerateHelp(options);
-                Console.WriteLine("GenerateHelp completed with error code '{0}'", errorCode);
-                Environment.Exit((int)errorCode);
+                var exitCode = engine.GenerateHelp(options);
+                Console.WriteLine("GenerateHelp completed with exit code '{0}'", exitCode);
+                Environment.Exit((int)exitCode);
             }
         }
     }
