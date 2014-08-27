@@ -415,7 +415,7 @@ namespace XmlDoc2CmdletDoc.Core
             foreach (var type in command.OutputTypes)
             {
                 returnValueElement.Add(GenerateComment("OutputType: " + type.Name));
-                var returnValueDescription = commentReader.GetTypeDescriptionElement(type, reportWarning); // TODO: Get a more specific description
+                var returnValueDescription = commentReader.GetOutputTypeDescriptionElement(command, type, reportWarning);
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
                                                     GenerateTypeElement(commentReader, type, returnValueDescription == null, reportWarning),
                                                     returnValueDescription));

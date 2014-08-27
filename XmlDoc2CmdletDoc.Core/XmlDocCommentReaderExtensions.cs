@@ -278,6 +278,15 @@ namespace XmlDoc2CmdletDoc.Core
             return null;
         }
 
+        public static XElement GetOutputTypeDescriptionElement(this XmlDocCommentReader commentReader,
+                                                               Command command,
+                                                               Type outputType,
+                                                               ReportWarning reportWarning)
+        {
+            // TODO: Get the description from the <remarks type="outputType" cref="<type>"> element
+            return commentReader.GetTypeDescriptionElement(outputType, reportWarning);
+        }
+
         /// <summary>
         /// Obtains a <em>&lt;maml:description&gt;</em> element for a type.
         /// </summary>
