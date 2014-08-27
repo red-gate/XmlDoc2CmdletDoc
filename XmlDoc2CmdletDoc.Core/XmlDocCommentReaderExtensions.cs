@@ -357,10 +357,9 @@ namespace XmlDoc2CmdletDoc.Core
                 }
             }
 
-            // At this point, we've failed to provide a description from the XML doc commment, so return an empty description.
-            reportWarning(string.Format("No {0} found.", typeAttribute));
-            return new XElement(mamlNs + "description",
-                                new XElement(mamlNs + "para"));
+            // We've failed to provide a description from the XML doc commment.
+            reportWarning(string.Format("No {0} comment found.", typeAttribute));
+            return null;
         }
 
         /// <summary>

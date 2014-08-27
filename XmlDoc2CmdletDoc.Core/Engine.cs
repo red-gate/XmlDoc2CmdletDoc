@@ -5,7 +5,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using Jolt;
 using XmlDoc2CmdletDoc.Core.Domain;
@@ -221,6 +220,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="commentReader"></param>
         /// <param name="commands">All of the commands in the module being documented.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>The root-level <em>helpItems</em> element.</returns>
         private XElement GenerateHelpItemsElement(XmlDocCommentReader commentReader, IEnumerable<Command> commands, ReportWarning reportWarning)
         {
@@ -238,6 +238,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="commentReader"></param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:command&gt;</em> element that represents the <paramref name="command"/>.</returns>
         private XElement GenerateCommandElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -261,6 +262,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="commentReader"></param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:details&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateDetailsElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -276,6 +278,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="commentReader"></param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;maml:description&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateDescriptionElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -285,7 +288,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;command:syntax&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:syntax&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateSyntaxElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -306,8 +311,10 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;command:syntaxItem&gt;</em> element for a specific parameter set of a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
         /// <param name="parameterSetName">The parameter set name.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:syntaxItem&gt;</em> element for the specific <paramref name="parameterSetName"/> of the <paramref name="command"/>.</returns>
         private XElement GenerateSyntaxItemElement(XmlDocCommentReader commentReader, Command command, string parameterSetName, ReportWarning reportWarning)
         {
@@ -324,7 +331,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;command:parameters&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:parameters&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateParametersElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -340,9 +349,10 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates a <em>&lt;command:parameter&gt;</em> element for a single parameter.
         /// </summary>
-        /// <param name="commentReader"></param>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterSetName">The specific parameter set name, or <see cref="ParameterAttribute.AllParameterSets"/>.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:parameter&gt;</em> element for the <paramref name="parameter"/>.</returns>
         private XElement GenerateParameterElement(XmlDocCommentReader commentReader, Parameter parameter, string parameterSetName, ReportWarning reportWarning)
         {
@@ -354,14 +364,16 @@ namespace XmlDoc2CmdletDoc.Core
                                 new XElement(mamlNs + "name", parameter.Name),
                                 commentReader.GetParameterDescriptionElement(parameter, reportWarning),
                                 commentReader.GetParameterValueElement(parameter, reportWarning),
-                                GenerateTypeElement(commentReader, parameter.ParameterType, reportWarning),
+                                GenerateTypeElement(commentReader, parameter.ParameterType, true, reportWarning),
                                 commentReader.GetParameterDefaultValueElement(parameter));
         }
 
         /// <summary>
         /// Generates the <em>&lt;command:inputTypes&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:inputTypes&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateInputTypesElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -378,19 +390,24 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;command:inputType&gt;</em> element for a pipeline parameter.
         /// </summary>
-        /// <param name="parameter">The parameter.</param>
-        /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameter"/>.</returns>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
+        /// <param name="parameterType">The parameter.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
+        /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameterType"/>.</returns>
         private XElement GenerateInputTypeElement(XmlDocCommentReader commentReader, Type parameterType, ReportWarning reportWarning)
         {
+            var inputTypeDescription = commentReader.GetTypeDescriptionElement(parameterType, reportWarning); // TODO: Get a more specific description
             return new XElement(commandNs + "inputType",
-                                GenerateTypeElement(commentReader, parameterType, reportWarning),
-                                commentReader.GetTypeDescriptionElement(parameterType, reportWarning));
+                                GenerateTypeElement(commentReader, parameterType, inputTypeDescription == null, reportWarning),
+                                inputTypeDescription);
         }
 
         /// <summary>
         /// Generates the <em>&lt;command:returnValues&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:returnValues&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateReturnValuesElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -398,9 +415,10 @@ namespace XmlDoc2CmdletDoc.Core
             foreach (var type in command.OutputTypes)
             {
                 returnValueElement.Add(GenerateComment("OutputType: " + type.Name));
+                var returnValueDescription = commentReader.GetTypeDescriptionElement(type, reportWarning); // TODO: Get a more specific description
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
-                                                    GenerateTypeElement(commentReader, type, reportWarning),
-                                                    commentReader.GetTypeDescriptionElement(type, reportWarning)));
+                                                    GenerateTypeElement(commentReader, type, returnValueDescription == null, reportWarning),
+                                                    returnValueDescription));
             }
             return returnValueElement;
         }
@@ -408,7 +426,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;maml:alertSet&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateAlertSetElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -418,7 +438,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;command:examples&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;command:examples&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateExamplesElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -428,7 +450,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates the <em>&lt;maml:relatedLinks&gt;</em> element for a command.
         /// </summary>
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A <em>&lt;maml:relatedLinks&gt;</em> element for the <paramref name="command"/>.</returns>
         private XElement GenerateRelatedLinksElement(XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
         {
@@ -438,14 +462,19 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Generates a <em>&lt;dev:type&gt;</em> element for a type.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private XElement GenerateTypeElement(XmlDocCommentReader commentReader, Type type, ReportWarning reportWarning)
+        /// <param name="commentReader">Provides access to the XML Doc comments.</param>
+        /// <param name="type">The type for which a corresopnding <em>&lt;dev:type&gt;</em> element is required.</param>
+        /// <param name="includeMamlDescription">Indicates whether or not a <em>&lt;maml:description&gt;</em> element should be
+        /// included for the type. A description can be obtained from the type's XML Doc comment, but it is useful to suppress it if
+        /// a more context-specific description is available where the <em>&lt;dev:type&gt;</em> element is actually used.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
+        /// <returns>A <em>&lt;dev:type&gt;</em> element for the specified <paramref name="type"/>.</returns>
+        private XElement GenerateTypeElement(XmlDocCommentReader commentReader, Type type, bool includeMamlDescription, ReportWarning reportWarning)
         {
             return new XElement(devNs + "type",
                                 new XElement(mamlNs + "name", type.FullName),
                                 new XElement(mamlNs + "uri"),
-                                commentReader.GetTypeDescriptionElement(type, reportWarning));
+                                includeMamlDescription ? commentReader.GetTypeDescriptionElement(type, reportWarning) : null);
         }
 
         /// <summary>

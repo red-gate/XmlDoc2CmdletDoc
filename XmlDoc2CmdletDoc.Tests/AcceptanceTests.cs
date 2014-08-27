@@ -307,7 +307,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assume.That(parameter, Is.Not.Null);
 
             var type = parameter.XPathSelectElement("dev:type", resolver);
-            CheckManualClassType(type);
+            CheckManualClassType(type, true);
         }
 
         [Test]
@@ -319,7 +319,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assume.That(parameter, Is.Not.Null);
 
             var type = parameter.XPathSelectElement("dev:type", resolver);
-            CheckMamlClassType(type);
+            CheckMamlClassType(type, true);
         }
 
         [Test]
@@ -342,7 +342,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = inputTypes.Last();
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
-                CheckManualClassType(type);
+                CheckManualClassType(type, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
@@ -371,7 +371,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = inputTypes.Last();
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
-                CheckMamlClassType(type);
+                CheckMamlClassType(type, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
@@ -400,7 +400,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = returnValues.Last();
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
-                CheckManualClassType(type);
+                CheckManualClassType(type, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
@@ -429,7 +429,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = returnValues.Last();
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
-                CheckMamlClassType(type);
+                CheckMamlClassType(type, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
@@ -526,7 +526,7 @@ If ($thingy -eq $that) {
   </command:example>
 </command:examples>";
 
-        private void CheckManualClassType(XElement type)
+        private void CheckManualClassType(XElement type, bool expectADescription)
         {
             Assert.That(type, Is.Not.Null);
 
@@ -535,8 +535,15 @@ If ($thingy -eq $that) {
             Assert.That(name.Value, Is.EqualTo(typeof(ManualClass).FullName));
 
             var description = type.XPathSelectElement("maml:description", resolver);
-            Assert.That(description, Is.Not.Null);
-            Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
+            if (expectADescription)
+            {
+                Assert.That(description, Is.Not.Null);
+                Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
+            }
+            else
+            {
+                Assert.That(description, Is.Null);
+            }
         }
 
         private const string ManualClassDescription =
@@ -545,7 +552,7 @@ If ($thingy -eq $that) {
   <maml:para>This is also part of the ManualClass description.</maml:para>
 </maml:description>";
 
-        private void CheckMamlClassType(XElement type)
+        private void CheckMamlClassType(XElement type, bool expectADescription)
         {
             Assert.That(type, Is.Not.Null);
 
@@ -554,8 +561,15 @@ If ($thingy -eq $that) {
             Assert.That(name.Value, Is.EqualTo(typeof(MamlClass).FullName));
 
             var description = type.XPathSelectElement("maml:description", resolver);
-            Assert.That(description, Is.Not.Null);
-            Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
+            if (expectADescription)
+            {
+                Assert.That(description, Is.Not.Null);
+                Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
+            }
+            else
+            {
+                Assert.That(description, Is.Null);
+            }
         }
 
         private const string MamlClassDescription =
