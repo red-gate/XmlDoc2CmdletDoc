@@ -50,6 +50,7 @@
     <Compile Include="Manual\ManualClass.cs" />
     <Compile Include="Manual\TestManualElementsCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="References\TestReferencesCommand.cs" />
     <Compile Include="Undocumented\TestUndocumentedCommand.cs" />
     <Compile Include="Undocumented\UndocumentedClass.cs" />
   </ItemGroup>

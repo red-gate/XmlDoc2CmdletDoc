@@ -48,6 +48,9 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Comments\ICommentReader.cs" />
+    <Compile Include="Comments\RewritingCommentReader.cs" />
+    <Compile Include="Comments\JoltCommentReader.cs" />
     <Compile Include="Domain\Command.cs" />
     <Compile Include="Domain\Parameter.cs" />
     <Compile Include="Engine.cs" />
@@ -55,7 +58,7 @@
     <Compile Include="EngineException.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XmlDocCommentReaderExtensions.cs" />
+    <Compile Include="Comments\CommentReaderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

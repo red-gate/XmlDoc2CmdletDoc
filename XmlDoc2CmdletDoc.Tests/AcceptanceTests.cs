@@ -34,6 +34,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement rootElement;
         private XElement testManualElementsCommandElement;
         private XElement testMamlElementsCommandElement;
+        private XElement testReferencesCommandElement;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -61,6 +62,7 @@ namespace XmlDoc2CmdletDoc.Tests
             }
             testManualElementsCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-ManualElements']", resolver);
             testMamlElementsCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-MamlElements']", resolver);
+            testReferencesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-References']", resolver);
         }
 
         [Test]
@@ -137,6 +139,22 @@ namespace XmlDoc2CmdletDoc.Tests
             var expectedXml =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
   <maml:para>This is the Test-MamlElements description.</maml:para>
+</maml:description>";
+            Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
+        }
+
+        [Test]
+        public void Command_Description_ForReferencesElement_ContainingSeeElements()
+        {
+            Assert.That(testReferencesCommandElement, Is.Not.Null);
+
+            var description = testReferencesCommandElement.XPathSelectElement("maml:description", resolver);
+
+            Assert.That(description, Is.Not.Null);
+
+            var expectedXml =
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This description for TestReferencesCommand references ParameterOne and the second parameter.</maml:para>
 </maml:description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }

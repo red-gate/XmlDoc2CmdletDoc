@@ -9,12 +9,12 @@ using System.Xml.XPath;
 using Jolt;
 using XmlDoc2CmdletDoc.Core.Domain;
 
-namespace XmlDoc2CmdletDoc.Core
+namespace XmlDoc2CmdletDoc.Core.Comments
 {
     /// <summary>
-    /// Extension methods for <see cref="XmlDocCommentReader"/>.
+    /// Extension methods for <see cref="ICommentReader"/>.
     /// </summary>
-    public static class XmlDocCommentReaderExtensions
+    public static class CommentReaderExtensions
     {
         private static readonly XNamespace mshNs = XNamespace.Get("http://msh");
         private static readonly XNamespace mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
@@ -23,7 +23,7 @@ namespace XmlDoc2CmdletDoc.Core
 
         private static readonly IXmlNamespaceResolver resolver;
 
-        static XmlDocCommentReaderExtensions()
+        static CommentReaderExtensions()
         {
             var manager = new XmlNamespaceManager(new NameTable());
             manager.AddNamespace("", mshNs.NamespaceName);
@@ -40,7 +40,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="command">The command.</param>
         /// <param name="reportWarning">Used to record warnings.</param>
         /// <returns>A description element for the cmdlet's synopsis.</returns>
-        public static XElement GetCommandSynopsisElement(this XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
+        public static XElement GetCommandSynopsisElement(this ICommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var cmdletType = command.CmdletType;
             var commentsElement = commentReader.GetComments(cmdletType);
@@ -54,7 +54,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="command">The command.</param>
         /// <param name="reportWarning">Used to record warnings.</param>
         /// <returns>A description element for the cmdlet's full description.</returns>
-        public static XElement GetCommandDescriptionElement(this XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
+        public static XElement GetCommandDescriptionElement(this ICommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var cmdletType = command.CmdletType;
             var commentsElement = commentReader.GetComments(cmdletType);
@@ -68,7 +68,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="command">The command.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>An examples element for the cmdlet.</returns>
-        public static XElement GetCommandExamplesElement(this XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
+        public static XElement GetCommandExamplesElement(this ICommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var cmdletType = command.CmdletType;
             var comments = commentReader.GetComments(cmdletType);
@@ -152,7 +152,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="command">The command.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>An relatedLinks element for the cmdlet.</returns>
-        public static XElement GetCommandRelatedLinksElement(this XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
+        public static XElement GetCommandRelatedLinksElement(this ICommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var cmdletType = command.CmdletType;
             var comments = commentReader.GetComments(cmdletType);
@@ -174,7 +174,7 @@ namespace XmlDoc2CmdletDoc.Core
                 {
                     navigationLink.Add(new XElement(mamlNs + "uri", uri.Value));
                 }
-                return navigationLink;
+                relatedLinks.Add(navigationLink);
             }
             return relatedLinks;
         }
@@ -186,7 +186,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="command">The command.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>A <em>&lt;maml:alertSet&gt;</em> element for the cmdlet's notes.</returns>
-        public static XElement GetCommandAlertSetElement(this XmlDocCommentReader commentReader, Command command, ReportWarning reportWarning)
+        public static XElement GetCommandAlertSetElement(this ICommentReader commentReader, Command command, ReportWarning reportWarning)
         {
             var cmdletType = command.CmdletType;
             var comments = commentReader.GetComments(cmdletType);
@@ -241,7 +241,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="parameter">The parameter.</param>
         /// <param name="reportWarning">Used to record warnings.</param>
         /// <returns>A description element for the parameter.</returns>
-        public static XElement GetParameterDescriptionElement(this XmlDocCommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
+        public static XElement GetParameterDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
             var memberInfo = parameter.MemberInfo;
             var commentsElement = commentReader.GetComments(memberInfo, reportWarning);
@@ -255,7 +255,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="parameter">The parameter.</param>
         /// <param name="reportWarning">Used to record warnings.</param>
         /// <returns>A description element for the parameter.</returns>
-        public static XElement GetParameterValueElement(this XmlDocCommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
+        public static XElement GetParameterValueElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
             return new XElement(commandNs + "parameterValue",
                                 new XAttribute("required", true),
@@ -268,7 +268,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="commentReader">The comment reader.</param>
         /// <param name="parameter">The parameter.</param>
         /// <returns>A default value element for the parameter's default value, or <em>null</em> if a default value could not be obtained.</returns>
-        public static XElement GetParameterDefaultValueElement(this XmlDocCommentReader commentReader, Parameter parameter)
+        public static XElement GetParameterDefaultValueElement(this ICommentReader commentReader, Parameter parameter)
         {
             var defaultValue = parameter.DefaultValue; // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
@@ -278,7 +278,7 @@ namespace XmlDoc2CmdletDoc.Core
             return null;
         }
 
-        public static XElement GetOutputTypeDescriptionElement(this XmlDocCommentReader commentReader,
+        public static XElement GetOutputTypeDescriptionElement(this ICommentReader commentReader,
                                                                Command command,
                                                                Type outputType,
                                                                ReportWarning reportWarning)
@@ -294,7 +294,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="type">The type for which a description is required.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>A description for the type, or an empty description element if no description is available.</returns>
-        public static XElement GetTypeDescriptionElement(this XmlDocCommentReader commentReader, Type type, ReportWarning reportWarning)
+        public static XElement GetTypeDescriptionElement(this ICommentReader commentReader, Type type, ReportWarning reportWarning)
         {
             var commentsElement = commentReader.GetComments(type);
             return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description", warningText => reportWarning(type, warningText));
@@ -307,7 +307,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="memberInfo">The member whose comments are to be retrieved.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>The XML doc commments for the <paramref name="memberInfo"/>, or<em>null</em> if they are not available.</returns>
-        private static XElement GetComments(this XmlDocCommentReader commentReader, MemberInfo memberInfo, ReportWarning reportWarning)
+        private static XElement GetComments(this ICommentReader commentReader, MemberInfo memberInfo, ReportWarning reportWarning)
         {
             XElement element;
             switch (memberInfo.MemberType)
@@ -332,7 +332,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Obtains a <em>&lt;maml:description&gt;</em> from an XML doc comment.
         /// </summary>
-        /// <param name="commentsElement">The XML doc comments element as retrieved from an <see cref="XmlDocCommentReader"/>. May be <c>null</c>.</param>
+        /// <param name="commentsElement">The XML doc comments element as retrieved from an <see cref="ICommentReader"/>. May be <c>null</c>.</param>
         /// <param name="typeAttribute">
         /// <para>An identifier used to select specific content from the XML doc comment.</para>
         /// <para>The first <em>&lt;maml:description&gt;</em> element with a <em>type=&quot;&lt;<paramref name="typeAttribute"/>&gt;&quot;</em>
