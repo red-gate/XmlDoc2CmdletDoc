@@ -190,7 +190,10 @@ namespace XmlDoc2CmdletDoc.Core
             }
             try
             {
-                return new RewritingCommentReader(new JoltCommentReader(new XmlDocCommentReader(docCommentsPath)));
+                return new CachingCommentReader(
+                    new RewritingCommentReader(
+                        new JoltCommentReader(
+                            new XmlDocCommentReader(docCommentsPath))));
             }
             catch (Exception exception)
             {

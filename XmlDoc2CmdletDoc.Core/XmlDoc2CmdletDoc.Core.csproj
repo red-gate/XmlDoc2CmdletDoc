@@ -48,6 +48,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Comments\CachingCommentReader.cs" />
     <Compile Include="Comments\ICommentReader.cs" />
     <Compile Include="Comments\RewritingCommentReader.cs" />
     <Compile Include="Comments\JoltCommentReader.cs" />
