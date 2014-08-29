@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using Jolt;
 using XmlDoc2CmdletDoc.Core.Comments;
 using XmlDoc2CmdletDoc.Core.Domain;
+using XmlDoc2CmdletDoc.Core.Extensions;
 
 namespace XmlDoc2CmdletDoc.Core
 {
@@ -190,10 +191,9 @@ namespace XmlDoc2CmdletDoc.Core
             }
             try
             {
-                return new CachingCommentReader(
-                    new RewritingCommentReader(
-                        new JoltCommentReader(
-                            new XmlDocCommentReader(docCommentsPath))));
+                return new RewritingCommentReader(
+                    new JoltCommentReader(
+                        new XmlDocCommentReader(docCommentsPath)));
             }
             catch (Exception exception)
             {
@@ -384,9 +384,9 @@ namespace XmlDoc2CmdletDoc.Core
             var inputTypesElement = new XElement(commandNs + "inputTypes");
             var pipelineParameters = command.GetParameters(ParameterAttribute.AllParameterSets)
                                             .Where(p => p.IsPipeline(ParameterAttribute.AllParameterSets));
-            foreach (var parameterType in pipelineParameters.Select(p => p.ParameterType).Distinct())
+            foreach (var parameter in pipelineParameters.Distinct(p => p.ParameterType))
             {
-                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameterType, reportWarning));
+                inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameter, reportWarning));
             }
             return inputTypesElement;
         }
@@ -395,14 +395,14 @@ namespace XmlDoc2CmdletDoc.Core
         /// Generates the <em>&lt;command:inputType&gt;</em> element for a pipeline parameter.
         /// </summary>
         /// <param name="commentReader">Provides access to the XML Doc comments.</param>
-        /// <param name="parameterType">The parameter.</param>
+        /// <param name="parameter">The parameter.</param>
         /// <param name="reportWarning">Function used to log warnings.</param>
-        /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameterType"/>.</returns>
-        private XElement GenerateInputTypeElement(ICommentReader commentReader, Type parameterType, ReportWarning reportWarning)
+        /// <returns>A <em>&lt;command:inputType&gt;</em> element for the <paramref name="parameter"/>'s type.</returns>
+        private XElement GenerateInputTypeElement(ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
-            var inputTypeDescription = commentReader.GetTypeDescriptionElement(parameterType, reportWarning); // TODO: Get a more specific description
+            var inputTypeDescription = commentReader.GetInputTypeDescriptionElement(parameter, reportWarning);
             return new XElement(commandNs + "inputType",
-                                GenerateTypeElement(commentReader, parameterType, inputTypeDescription == null, reportWarning),
+                                GenerateTypeElement(commentReader, parameter.ParameterType, inputTypeDescription == null, reportWarning),
                                 inputTypeDescription);
         }
 

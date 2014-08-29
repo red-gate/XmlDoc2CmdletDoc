@@ -6,10 +6,10 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Jolt;
+using XmlDoc2CmdletDoc.Core.Comments;
 using XmlDoc2CmdletDoc.Core.Domain;
 
-namespace XmlDoc2CmdletDoc.Core.Comments
+namespace XmlDoc2CmdletDoc.Core.Extensions
 {
     /// <summary>
     /// Extension methods for <see cref="ICommentReader"/>.
@@ -276,6 +276,13 @@ namespace XmlDoc2CmdletDoc.Core.Comments
                 return new XElement(devNs + "defaultValue", defaultValue.ToString());
             }
             return null;
+        }
+
+        public static XElement GetInputTypeDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
+        {
+            var parameterMemberInfo = parameter.MemberInfo;
+            var commentsElement = commentReader.GetComments(parameterMemberInfo, reportWarning);
+            return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "inputType", warningText => reportWarning(parameterMemberInfo, warningText));
         }
 
         public static XElement GetOutputTypeDescriptionElement(this ICommentReader commentReader,

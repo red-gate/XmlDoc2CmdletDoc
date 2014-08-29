@@ -57,9 +57,10 @@
     <Compile Include="Engine.cs" />
     <Compile Include="EngineExitCode.cs" />
     <Compile Include="EngineException.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Comments\CommentReaderExtensions.cs" />
+    <Compile Include="Extensions\CommentReaderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
