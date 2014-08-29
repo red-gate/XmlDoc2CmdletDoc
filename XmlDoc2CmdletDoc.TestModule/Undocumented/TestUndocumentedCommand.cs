@@ -5,7 +5,7 @@ namespace XmlDoc2CmdletDoc.TestModule.Undocumented
     /// <summary>
     /// This cmdlet has no cmdlet help documentation.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "MamlElements")]
+    [Cmdlet(VerbsDiagnostic.Test, "Undocumented")]
     [OutputType(typeof(UndocumentedClass))]
     [OutputType(typeof(string))]
     public class TestUndocumentedCommand : Cmdlet
