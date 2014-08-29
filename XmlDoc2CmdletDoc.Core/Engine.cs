@@ -198,7 +198,7 @@ namespace XmlDoc2CmdletDoc.Core
             catch (Exception exception)
             {
                 throw new EngineException(EngineExitCode.DocCommentsLoadError,
-                                          "Failed to load XML Doc comments ffrom file: " + docCommentsPath,
+                                          "Failed to load XML Doc comments from file: " + docCommentsPath,
                                           exception);
             }
         }
