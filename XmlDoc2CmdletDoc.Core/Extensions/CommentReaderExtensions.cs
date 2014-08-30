@@ -278,6 +278,14 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             return null;
         }
 
+        /// <summary>
+        /// Obtains a <em>&lt;maml:description&gt;</em> for an <em>&lt;command:inputType&gt;</em> coresponding to a specified parameter that accepts pipeline input.
+        /// </summary>
+        /// <param name="commentReader">The comment reader.</param>
+        /// <param name="parameter">The parameter.</param>
+        /// <param name="reportWarning">Used to log any warnings.</param>
+        /// <returns>A <em>&lt;maml:description&gt;</em> for an <em>&lt;command:inputType&gt;</em> for the parameter, or null if no explicit description is available
+        /// for the input type.</returns>
         public static XElement GetInputTypeDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
             var parameterMemberInfo = parameter.MemberInfo;
@@ -300,7 +308,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// <param name="commentReader">The comment reader.</param>
         /// <param name="type">The type for which a description is required.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
-        /// <returns>A description for the type, or an empty description element if no description is available.</returns>
+        /// <returns>A description for the type, or null if no description is available.</returns>
         public static XElement GetTypeDescriptionElement(this ICommentReader commentReader, Type type, ReportWarning reportWarning)
         {
             var commentsElement = commentReader.GetComments(type);
@@ -349,7 +357,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// with the <em>type=&quot;&lt;<paramref name="typeAttribute"/>&gt;&quot;</em> attribute will be used to provide content for the description.</para>
         /// </param>
         /// <param name="reportWarning">Used to log any warnings.</param>
-        /// <returns>A description element derived from the XML doc comment, or an empty description element if a description could not be obtained.</returns>
+        /// <returns>A description element derived from the XML doc comment, or null if a description could not be obtained.</returns>
         private static XElement GetMamlDescriptionElementFromXmlDocComment(XElement commentsElement, string typeAttribute, Action<string> reportWarning)
         {
             if (commentsElement != null)
