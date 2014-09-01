@@ -16,5 +16,11 @@ namespace XmlDoc2CmdletDoc.TestModule.InputTypes
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public InputTypeClass2 ParameterTwo { get; set; }
+
+        /// <summary>
+        /// <para type="description">This is the fallback description for ParameterThree.</para>
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public InputTypeClass3 ParameterThree { get; set; }
     }
 }
