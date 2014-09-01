@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\sqlrelease\source\packages\XmlDoc2CmdletDoc.0.1.0.6\tools\</OutputPath>
+    <OutputPath>..\..\sqlrelease\source\packages\XmlDoc2CmdletDoc.0.1.0.7\tools\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

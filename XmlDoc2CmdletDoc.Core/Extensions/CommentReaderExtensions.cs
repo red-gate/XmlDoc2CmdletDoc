@@ -290,7 +290,21 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         {
             var parameterMemberInfo = parameter.MemberInfo;
             var commentsElement = commentReader.GetComments(parameterMemberInfo);
-            return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "inputType", warningText => reportWarning(parameterMemberInfo, warningText));
+
+            // First try to read the explicit inputType description.
+            var inputTypeDescription = GetMamlDescriptionElementFromXmlDocComment(commentsElement, "inputType", _ => { });
+            if (inputTypeDescription != null)
+            {
+                return inputTypeDescription;
+            }
+
+            // Then fall back to using the parameter description.
+            var parameterDescription = commentReader.GetParameterDescriptionElement(parameter, reportWarning);
+            if (parameterDescription == null)
+            {
+                reportWarning(parameterMemberInfo, "No inputType comment found and no fallback description comment found.");
+            }
+            return parameterDescription;
         }
 
         public static XElement GetOutputTypeDescriptionElement(this ICommentReader commentReader,

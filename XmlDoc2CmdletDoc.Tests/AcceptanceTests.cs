@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -397,8 +398,7 @@ namespace XmlDoc2CmdletDoc.Tests
             }
         }
 
-        [Test]
-        public void Command_InputTypes()
+        private List<XElement> Command_InputTypes_Setup()
         {
             Assert.That(testInputTypesCommandElement, Is.Not.Null);
 
@@ -406,52 +406,88 @@ namespace XmlDoc2CmdletDoc.Tests
                 .XPathSelectElements("command:inputTypes/command:inputType", resolver)
                 .ToList();
             Assert.That(inputTypes, Is.Not.Empty);
-            Assert.That(inputTypes.Count, Is.EqualTo(2));
+            Assert.That(inputTypes.Count, Is.EqualTo(3));
+            return inputTypes;
+        }
+
+        [Test]
+        public void Command_InputTypes_ExplicitHelpText()
+        {
+            var inputTypes = Command_InputTypes_Setup();
 
             // The first input type, ParameterOne is of type InputTypeClass1 and should have an explicit inputType description.
-            {
-                var inputType = inputTypes.First();
+            var inputType = inputTypes[0];
 
-                // Check we've got the right one.
-                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
-                Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass1).FullName));
+            // Check we've got the right one.
+            var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+            Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass1).FullName));
 
-                // Check that there's an explicit description.
-                var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
-                Assert.That(explicitDescription, Is.Not.Null);
-                var expectedDescription =
+            // Check that there's an explicit description.
+            var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
+            Assert.That(explicitDescription, Is.Not.Null);
+            var expectedDescription =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
   <maml:para>This is the explicit inputType description for ParameterOne.</maml:para>
 </maml:description>";
-                Assert.That(explicitDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
+            Assert.That(explicitDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
 
-                // Check that there's no generic type descrition taken from the InputTypeClass1 comment.
-                var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
-                Assert.That(genericDescription, Is.Null);
-            }
+            // Check that there's no generic type descrition taken from the InputTypeClass1 comment.
+            var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
+            Assert.That(genericDescription, Is.Null);
+        }
+
+        [Test]
+        public void Command_InputTypes_FallBackToTypeDescription()
+        {
+            var inputTypes = Command_InputTypes_Setup();
 
             // The second input type, ParameterTwo is of type InputTypeClass2 and doesn't have an explicit inputType description
-            // so should adopt the generic type description instead.
-            {
-                var inputType = inputTypes.Skip(1).First();
+            // or a parameter description, so should adopt the generic type description instead.
+            var inputType = inputTypes[1];
 
-                // Check we've got the right one.
-                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
-                Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass2).FullName));
+            // Check we've got the right one.
+            var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+            Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass2).FullName));
 
-                // Check that there's no explicit description.
-                var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
-                Assert.That(explicitDescription, Is.Null);
+            // Check that there's no explicit description.
+            var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
+            Assert.That(explicitDescription, Is.Null);
 
-                // Check that there's a generic type descrition taken from the InputTypeClass2 comment.
-                var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
-                Assert.That(genericDescription, Is.Not.Null);
-                var expectedDescription =
+            // Check that there's a generic type descrition taken from the InputTypeClass2 comment.
+            var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
+            Assert.That(genericDescription, Is.Not.Null);
+            var expectedDescription =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
   <maml:para>InputTypeClass2 description.</maml:para>
 </maml:description>";
-                Assert.That(genericDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
-            }
+            Assert.That(genericDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
+        }
+
+        [Test]
+        public void Command_InputTypes_InheritedParameterDescription()
+        {
+            var inputTypes = Command_InputTypes_Setup();
+
+            // The third input type, ParameterThree is of type InputTypeClass3 and doesn't have an explicit inputType description,
+            // but it can inherit the parameter description instead.
+            var inputType = inputTypes[2];
+
+            // Check we've got the right one.
+            var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+            Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass3).FullName));
+
+            // Check that there's an explicit description inherited from the parameter description.
+            var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
+            Assert.That(explicitDescription, Is.Not.Null);
+            var expectedDescription =
+@"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
+  <maml:para>This is the fallback description for ParameterThree.</maml:para>
+</maml:description>";
+            Assert.That(explicitDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
+
+            // Check that there's no generic type descrition taken from the InputTypeClass3 comment.
+            var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
+            Assert.That(genericDescription, Is.Null);
         }
 
         [Test]
