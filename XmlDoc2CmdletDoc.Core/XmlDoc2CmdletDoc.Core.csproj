@@ -50,6 +50,7 @@
     </Compile>
     <Compile Include="Comments\CachingCommentReader.cs" />
     <Compile Include="Comments\ICommentReader.cs" />
+    <Compile Include="Comments\LoggingCommentReader.cs" />
     <Compile Include="Comments\RewritingCommentReader.cs" />
     <Compile Include="Comments\JoltCommentReader.cs" />
     <Compile Include="Domain\Command.cs" />

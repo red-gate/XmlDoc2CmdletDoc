@@ -47,12 +47,13 @@ namespace XmlDoc2CmdletDoc.Core
         {
             try
             {
-                var assembly = LoadAssembly(options);
-                var commentReader = LoadComments(options);
-                var cmdletTypes = GetCommands(assembly);
-
                 var warnings = new List<Tuple<MemberInfo, string>>();
                 ReportWarning reportWarning = (target, warningText) => warnings.Add(Tuple.Create(target, warningText));
+
+                var assembly = LoadAssembly(options);
+                var commentReader = LoadComments(options, reportWarning);
+                var cmdletTypes = GetCommands(assembly);
+
 
                 var document = new XDocument(new XDeclaration("1.0", "utf-8", null),
                                              GenerateHelpItemsElement(commentReader, cmdletTypes, reportWarning));
@@ -180,8 +181,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// Obtains an XML Doc comment reader for the assembly in the specified <paramref name="options"/>.
         /// </summary>
         /// <param name="options">The options.</param>
+        /// <param name="reportWarning">Function used to log warnings.</param>
         /// <returns>A comment reader for the assembly in the <paramref name="options"/>.</returns>
-        private ICommentReader LoadComments(Options options)
+        private ICommentReader LoadComments(Options options, ReportWarning reportWarning)
         {
             var docCommentsPath = options.DocCommentsPath;
             if (!File.Exists(docCommentsPath))
@@ -191,9 +193,10 @@ namespace XmlDoc2CmdletDoc.Core
             }
             try
             {
-                return new RewritingCommentReader(
-                    new JoltCommentReader(
-                        new XmlDocCommentReader(docCommentsPath)));
+                return new CachingCommentReader(
+                    new RewritingCommentReader(
+                        new LoggingCommentReader(
+                            new JoltCommentReader(docCommentsPath), reportWarning)));
             }
             catch (Exception exception)
             {

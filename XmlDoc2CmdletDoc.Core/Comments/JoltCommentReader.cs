@@ -13,13 +13,13 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         private readonly XmlDocCommentReader _proxy;
 
         /// <summary>
-        /// Creates a new instances that delegates to the specified <paramref name="proxy"/>.
+        /// Creates a new instances that reads comments from the specified XML Doc comments file.
         /// </summary>
-        /// <param name="proxy">The <see cref="XmlDocCommentReader"/> used to supply XML Doc comments.</param>
-        public JoltCommentReader(XmlDocCommentReader proxy)
+        /// <param name="docCommentsFullPath">The full path of the XML Doc comments file.</param>
+        public JoltCommentReader(string docCommentsFullPath)
         {
-            if (proxy == null) throw new ArgumentNullException("proxy");
-            _proxy = proxy;
+            if (docCommentsFullPath == null) throw new ArgumentNullException("docCommentsFullPath");
+            _proxy = new XmlDocCommentReader(docCommentsFullPath);
         }
 
         public XElement GetComments(Type type) { return _proxy.GetComments(type); }

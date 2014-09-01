@@ -244,7 +244,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         public static XElement GetParameterDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
             var memberInfo = parameter.MemberInfo;
-            var commentsElement = commentReader.GetComments(memberInfo, reportWarning);
+            var commentsElement = commentReader.GetComments(memberInfo);
             return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description", warningText => reportWarning(memberInfo, warningText));
         }
 
@@ -289,7 +289,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         public static XElement GetInputTypeDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
             var parameterMemberInfo = parameter.MemberInfo;
-            var commentsElement = commentReader.GetComments(parameterMemberInfo, reportWarning);
+            var commentsElement = commentReader.GetComments(parameterMemberInfo);
             return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "inputType", warningText => reportWarning(parameterMemberInfo, warningText));
         }
 
@@ -322,26 +322,19 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// <param name="memberInfo">The member whose comments are to be retrieved.</param>
         /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>The XML doc commments for the <paramref name="memberInfo"/>, or<em>null</em> if they are not available.</returns>
-        private static XElement GetComments(this ICommentReader commentReader, MemberInfo memberInfo, ReportWarning reportWarning)
+        private static XElement GetComments(this ICommentReader commentReader, MemberInfo memberInfo)
         {
-            XElement element;
             switch (memberInfo.MemberType)
             {
                 case MemberTypes.Field:
-                    element = commentReader.GetComments((FieldInfo) memberInfo);
-                    break;
+                    return commentReader.GetComments((FieldInfo) memberInfo);
+
                 case MemberTypes.Property:
-                    element = commentReader.GetComments((PropertyInfo) memberInfo);
-                    break;
+                    return commentReader.GetComments((PropertyInfo) memberInfo);
+
                 default:
                     throw new NotSupportedException("Member type not supported: " + memberInfo.MemberType);
-
             }
-            if (element == null)
-            {
-                reportWarning(memberInfo, "No XML doc comment found.");
-            }
-            return element;
         }
 
         /// <summary>
