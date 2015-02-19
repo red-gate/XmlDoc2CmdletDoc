@@ -80,7 +80,7 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         }
 
         /// <summary>
-        /// Returns a text representation of a reflection item referenced in a &lt;see cref=&quot;xxx&quot;&gt; element.
+        /// Returns a text representation of a reflection item referenced in a &lt;see cref=&quot;xxx&quot;/&gt; element.
         /// </summary>
         /// <param name="cref">The cref attribute value.</param>
         /// <returns>A text representation of the referenced item.</returns>

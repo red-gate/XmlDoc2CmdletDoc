@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("Red Gate")]
 [assembly: AssemblyProduct("XmlDoc2CmdletDoc")]
-[assembly: AssemblyCopyright("Copyright © 2014, Red Gate Software Limited")]
+[assembly: AssemblyCopyright("Copyright © 2015, Red Gate Software Limited")]
 
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.8")]
-[assembly: AssemblyFileVersion("0.1.0.8")]
+[assembly: AssemblyVersion("0.1.0.9")]
+[assembly: AssemblyFileVersion("0.1.0.9")]
