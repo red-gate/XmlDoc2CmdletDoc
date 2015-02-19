@@ -158,7 +158,7 @@ namespace XmlDoc2CmdletDoc.Tests
 
             var expectedXml =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
-  <maml:para>This description for TestReferencesCommand references ParameterOne and the second parameter.</maml:para>
+  <maml:para>This description for Test-References references ParameterOne and the second parameter.</maml:para>
 </maml:description>";
             Assert.That(description.ToSimpleString(), Is.EqualTo(expectedXml));
         }
