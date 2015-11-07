@@ -46,7 +46,9 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                 switch (MemberInfo.MemberType)
                 {
                     case MemberTypes.Property:
-                        return ((PropertyInfo) MemberInfo).PropertyType;
+                        var type = ((PropertyInfo) MemberInfo).PropertyType;
+                        var innerType = Nullable.GetUnderlyingType(type);
+                        return innerType ?? type;
                     case MemberTypes.Field:
                         return ((FieldInfo) MemberInfo).FieldType;
                     default:

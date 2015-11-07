@@ -74,5 +74,8 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public ManualClass ValueFromPipelineByPropertyNameParameter { get; set; }
+
+        [Parameter]
+        public int? NullableParameter { get; set; }
     }
 }
