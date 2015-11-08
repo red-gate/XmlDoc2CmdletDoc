@@ -345,11 +345,29 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Parameters_Parameter_NullableType_ForTestManualElements()
+        public void Command_Parameters_Parameter_Type_ReportsUnderlyingTypeForNullableType()
         {
 	        var expectedFullTypeName = typeof(int).FullName;
 	        var expectedTypeName = "int"; // returns the terse type name for this one
 	        var targetName = "NullableParameter";
+
+            Assert.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+	        var fullName = parameter.XPathSelectElement("command:parameterValue", resolver);
+	        Assert.That(fullName.Value, Is.EqualTo(expectedTypeName));
+            var shortName = parameter.XPathSelectElement("dev:type/maml:name", resolver);
+	        Assert.That(shortName.Value, Is.EqualTo(expectedFullTypeName));
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_Type_ReportsActualTypeForNonNullableType()
+        {
+	        var expectedFullTypeName = typeof(ManualClass).FullName;
+	        var expectedTypeName = typeof(ManualClass).Name;
+	        var targetName = "MandatoryParameter";
 
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
