@@ -330,7 +330,13 @@ namespace XmlDoc2CmdletDoc.Core
             foreach (var parameter in command.GetParameters(parameterSetName))
             {
                 syntaxItemElement.Add(GenerateComment("Parameter: " + parameter.Name));
-                syntaxItemElement.Add(GenerateParameterElement(commentReader, parameter, parameterSetName, reportWarning));
+                var parameterElement = GenerateParameterElement(commentReader, parameter, parameterSetName, reportWarning);
+                var enumeratedValuesElement = GetParameterEnumeratedValuesElement(parameter);
+                if (enumeratedValuesElement.HasElements)
+                {
+                    parameterElement.Add(enumeratedValuesElement);
+            }
+                syntaxItemElement.Add(parameterElement);
             }
             return syntaxItemElement;
         }
@@ -369,10 +375,56 @@ namespace XmlDoc2CmdletDoc.Core
                                 new XAttribute("pipelineInput", parameter.GetIsPipelineAttribute(parameterSetName)),
                                 new XAttribute("position", parameter.GetPosition(parameterSetName)),
                                 new XElement(mamlNs + "name", parameter.Name),
-                                commentReader.GetParameterDescriptionElement(parameter, reportWarning),
+                                GenerateDescriptionElement(commentReader, parameter, reportWarning),
                                 commentReader.GetParameterValueElement(parameter, reportWarning),
                                 GenerateTypeElement(commentReader, parameter.ParameterType, true, reportWarning),
                                 commentReader.GetParameterDefaultValueElement(parameter));
+        }
+
+        /// <summary>
+        /// Fetch the description from the ICommentReader.
+        /// If the parameter is an Enum, add to the description a list of its legal values.
+        /// </summary>
+        private static XElement GenerateDescriptionElement(ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
+        {
+            var descriptionElement = commentReader.GetParameterDescriptionElement(parameter, reportWarning);
+            if (parameter.EnumValues.Any())
+            {
+                if (descriptionElement == null)
+                {
+                    descriptionElement = new XElement(mamlNs + "description");
+                }
+                descriptionElement.Add(
+                    new XElement(mamlNs + "para",
+                                 "Possible values: " + string.Join(", ", parameter.EnumValues)));
+            }
+            return descriptionElement;
+        }
+
+        /// <summary>
+        /// Generates a <em>&lt;command:parameterValueGroup&gt;</em> element for a parameter
+        /// in order to display enum choices in the cmdlet's syntax section.
+        /// </summary>
+        private XElement GetParameterEnumeratedValuesElement(Parameter parameter)
+        {
+            var parameterValueGroupElement = new XElement(commandNs + "parameterValueGroup");
+            foreach (var enumValue in parameter.EnumValues)
+            {
+                parameterValueGroupElement.Add(GenerateParameterEnumeratedValueElement(enumValue));
+            }
+            return parameterValueGroupElement;
+        }
+
+        /// <summary>
+        /// Generates a <em>&lt;command:parameterValue&gt;</em> element for a single enum value.
+        /// </summary>
+        private XElement GenerateParameterEnumeratedValueElement(string enumValue)
+        {
+            // These hard-coded attributes were copied from what PowerShell's own core cmdlets use
+            return new XElement(commandNs + "parameterValue", 
+                                new XAttribute("required", false),
+                                new XAttribute("variableLength", false),
+                                enumValue);
         }
 
         /// <summary>
