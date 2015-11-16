@@ -146,24 +146,24 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         }
 
         /// <summary>
-        /// The list of enumerated value names.
+        /// The list of enumerated value names. Returns an empty sequence if there are no enumerated values
+        /// (normally because the parameter type is not an Enum type).
         /// </summary>
         public IEnumerable<string> EnumValues
         {
             get
             {
-                var items = new List<string>();
                 if (MemberInfo.MemberType == MemberTypes.Property)
                 {
                     var type = ParameterType;
                     if (type.IsEnum)
                     {
-                        items.AddRange(type
+                        return type
                             .GetFields(BindingFlags.Public | BindingFlags.Static)
-                            .Select(field => field.Name));
+                            .Select(field => field.Name);
                     }
                 }
-                return items;
+                return Enumerable.Empty<string>();
             }
         }
     }
