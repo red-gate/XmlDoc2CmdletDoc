@@ -12,6 +12,7 @@ XmlDoc2CmdletDoc.exe C:\Full\Path\To\MyPowerShellModule.dll
 
 Here are some examples of how to document your cmdlets:
 
+
 ## Cmdlet synopsis and description
 
 The cmdlet's synopsis and description are defined using `<para>` elements in the cmdlet class's XML doc comment. Tag the `<para>` elements with a `type="synopsis"` or `type="description"` attribute, showing whether `<para>` is part of the synopsis or description. 
@@ -34,6 +35,7 @@ public class TestMyExampleCommand : Cmdlet
 For guidance on writing the cmdlet synopsis, see http://msdn.microsoft.com/en-us/library/bb525429.aspx.
 For guidance on writing the cmdlet description, see http://msdn.microsoft.com/en-us/library/bb736332.aspx.
 
+
 ## Parameter description
 
 The description for a cmdlet parameter is defined using `<para>` elements in the XML doc comment for the parameter's field or property. Tag the `<para>` elements with a `type="description"` attribute.
@@ -55,6 +57,7 @@ public class TestMyExampleCommand : Cmdlet
 ```
 
 For guidance on writing the parameter description, see http://msdn.microsoft.com/en-us/library/bb736339.aspx.
+
 
 ## Type description
 
@@ -81,6 +84,7 @@ public class MyType
     ...
 }
 ```
+
 
 ## Notes
 
@@ -113,6 +117,7 @@ public class TestMyExampleCommand : Cmdlet
 
 For guidance on writing cmdlet notes, see http://msdn.microsoft.com/en-us/library/bb736330.aspx.
 
+
 ## Examples
 
 Cmdlet examples are defined using `<example>` elements in the XML doc comment for the cmdlet class. 
@@ -138,6 +143,7 @@ public class TestMyExampleCommand : Cmdlet
 
 For guidance on writing cmdlet examples, see http://msdn.microsoft.com/en-us/library/bb736335.aspx.
 
+
 ## Related links
 
 Related links are defined using `<para>` elements in the XML doc comment for the cmdlet class. Tag the relevant `<para>` elements with a `type="link"` attribute. The link text for each navigation link is taken from the body of the `<para>` element. If you want to include a uri, specify a uri attribute in the `<para>` element.
@@ -156,3 +162,9 @@ public class TestMyExampleCommand : Cmdlet
 ```
 
 For guidance on writing related links, see http://msdn.microsoft.com/en-us/library/bb736334.aspx.
+
+
+# Contributors
+
+- [Chris Lambrou](https://github.com/chrislambrou) (Redgate)
+- [Michael Sorens](https://github.com/msorens)
