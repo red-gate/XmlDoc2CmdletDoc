@@ -330,13 +330,7 @@ namespace XmlDoc2CmdletDoc.Core
             foreach (var parameter in command.GetParameters(parameterSetName))
             {
                 syntaxItemElement.Add(GenerateComment("Parameter: " + parameter.Name));
-                var parameterElement = GenerateParameterElement(commentReader, parameter, parameterSetName, reportWarning);
-                var enumeratedValuesElement = GetParameterEnumeratedValuesElement(parameter);
-                if (enumeratedValuesElement.HasElements)
-                {
-                    parameterElement.Add(enumeratedValuesElement);
-            }
-                syntaxItemElement.Add(parameterElement);
+                syntaxItemElement.Add(GenerateParameterElement(commentReader, parameter, parameterSetName, reportWarning));
             }
             return syntaxItemElement;
         }
@@ -378,7 +372,8 @@ namespace XmlDoc2CmdletDoc.Core
                                 GenerateDescriptionElement(commentReader, parameter, reportWarning),
                                 commentReader.GetParameterValueElement(parameter, reportWarning),
                                 GenerateTypeElement(commentReader, parameter.ParameterType, true, reportWarning),
-                                commentReader.GetParameterDefaultValueElement(parameter));
+                                commentReader.GetParameterDefaultValueElement(parameter),
+                                GetParameterEnumeratedValuesElement(parameter));
         }
 
         /// <summary>
@@ -407,12 +402,17 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         private XElement GetParameterEnumeratedValuesElement(Parameter parameter)
         {
-            var parameterValueGroupElement = new XElement(commandNs + "parameterValueGroup");
-            foreach (var enumValue in parameter.EnumValues)
+            var enumValues = parameter.EnumValues.ToList();
+            if (enumValues.Any())
             {
-                parameterValueGroupElement.Add(GenerateParameterEnumeratedValueElement(enumValue));
+                var parameterValueGroupElement = new XElement(commandNs + "parameterValueGroup");
+                foreach (var enumValue in enumValues)
+                {
+                    parameterValueGroupElement.Add(GenerateParameterEnumeratedValueElement(enumValue));
+                }
+                return parameterValueGroupElement;
             }
-            return parameterValueGroupElement;
+            return null;
         }
 
         /// <summary>
