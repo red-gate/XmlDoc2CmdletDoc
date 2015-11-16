@@ -56,6 +56,13 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
     [OutputType(typeof(string))]
     public class TestManualElementsCommand : Cmdlet
     {
+        public enum Importance
+        {
+            Regular,
+            Important,
+            Critical
+        };
+
         /// <summary>
         /// <para type="description">This is part of the MandatoryParameter description.</para>
         /// </summary>
@@ -74,6 +81,9 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public ManualClass ValueFromPipelineByPropertyNameParameter { get; set; }
+
+        [Parameter(Mandatory = false)]
+        public Importance EnumParameter { get; set; }
 
         [Parameter]
         public int? NullableParameter { get; set; }

@@ -144,5 +144,27 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                 }
             }
         }
+
+        /// <summary>
+        /// The list of enumerated value names.
+        /// </summary>
+        public IEnumerable<string> EnumValues
+        {
+            get
+            {
+                var items = new List<string>();
+                if (MemberInfo.MemberType == MemberTypes.Property)
+                {
+                    var type = ParameterType;
+                    if (type.IsEnum)
+                    {
+                        items.AddRange(type
+                            .GetFields(BindingFlags.Public | BindingFlags.Static)
+                            .Select(field => field.Name));
+                    }
+                }
+                return items;
+            }
+        }
     }
 }
