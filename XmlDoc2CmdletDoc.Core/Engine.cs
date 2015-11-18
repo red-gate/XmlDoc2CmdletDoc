@@ -387,7 +387,7 @@ namespace XmlDoc2CmdletDoc.Core
             var inputTypesElement = new XElement(commandNs + "inputTypes");
             var pipelineParameters = command.GetParameters(ParameterAttribute.AllParameterSets)
                                             .Where(p => p.IsPipeline(ParameterAttribute.AllParameterSets));
-            foreach (var parameter in pipelineParameters.Distinct(p => p.ParameterType))
+            foreach (var parameter in pipelineParameters)
             {
                 inputTypesElement.Add(GenerateInputTypeElement(commentReader, parameter, reportWarning));
             }

@@ -69,8 +69,17 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         [Parameter(Position = 1)]
         public string PositionedParameter { get; set; }
 
+        /// <summary>
+        /// <para type="description">ValueFromPipeline string parameter is...</para>
+        /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public string ValueFromPipelineParameter { get; set; }
+
+        /// <summary>
+        /// <para type="description">OtherValueFromPipeline string parameter is...</para>
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public string OtherValueFromPipelineParameter { get; set; }
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public ManualClass ValueFromPipelineByPropertyNameParameter { get; set; }

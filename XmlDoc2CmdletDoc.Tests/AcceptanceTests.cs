@@ -389,16 +389,27 @@ namespace XmlDoc2CmdletDoc.Tests
                 .XPathSelectElements("command:inputTypes/command:inputType", resolver)
                 .ToList();
             Assert.That(inputTypes, Is.Not.Empty);
-            Assert.That(inputTypes.Count, Is.EqualTo(2));
+            Assert.That(inputTypes.Count, Is.EqualTo(3));
+	        var enumerator = inputTypes.GetEnumerator();
 
             {
-                var inputType = inputTypes.First();
+				enumerator.MoveNext();
+		        var inputType = enumerator.Current;
+                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+                Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
+            }
+
+			// allow multiple inputs of the same type
+            {
+				enumerator.MoveNext();
+		        var inputType = enumerator.Current;
                 var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
-                var returnValue = inputTypes.Last();
+				enumerator.MoveNext();
+		        var returnValue = enumerator.Current;
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
                 CheckManualClassType(type, true);
 
