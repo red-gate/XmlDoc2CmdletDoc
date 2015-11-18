@@ -78,7 +78,7 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         /// <summary>
         /// <para type="description">OtherValueFromPipeline string parameter is...</para>
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         public string OtherValueFromPipelineParameter { get; set; }
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
