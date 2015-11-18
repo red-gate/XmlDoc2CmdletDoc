@@ -83,6 +83,21 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         public ManualClass ValueFromPipelineByPropertyNameParameter { get; set; }
 
         [Parameter(Mandatory = false)]
+        [Alias("Name1A")]
+        public string SingleAliasParameter { get; set; }
+
+        /// <summary>
+        /// <para type="description">Description here.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        [Alias("Name1B")]
+        public string WithDescriptionAliasParameter { get; set; }
+
+        [Parameter(Mandatory = false)]
+        [Alias("Name1C","Name2C","Name3C")]
+        public string MultipleAliasParameter { get; set; }
+
+        [Parameter(Mandatory = false)]
         public Importance EnumParameter { get; set; }
 
         [Parameter]

@@ -349,8 +349,30 @@ namespace XmlDoc2CmdletDoc.Core
             {
                 parametersElement.Add(GenerateComment("Parameter: " + parameter.Name));
                 parametersElement.Add(GenerateParameterElement(commentReader, parameter, ParameterAttribute.AllParameterSets, reportWarning));
+                GenerateAliasElements(commentReader, reportWarning, parameter, parametersElement);
             }
             return parametersElement;
+        }
+
+        // Because the proper aliases generated in GenerateParameterElement are not manifested by Get-Help,
+        // this simply duplicates parameters that have aliases, substituting in the alias name.
+        // Thus, one could do Get-Help xyz -param actualName or Get-Help xyz -param aliasName
+        private void GenerateAliasElements(ICommentReader commentReader, ReportWarning reportWarning, Parameter parameter, XElement parametersElement)
+        {
+            foreach (var alias in parameter.Aliases)
+            {
+                var parameterElement = GenerateParameterElement(commentReader, parameter, ParameterAttribute.AllParameterSets, reportWarning);
+                parametersElement.Add(parameterElement);
+                var nameElement = (XElement) (parameterElement.Nodes().First(n => ((XElement) n).Name == mamlNs + "name"));
+                nameElement.Value = alias;
+                var descriptionElement = (XElement) (parameterElement.Nodes().FirstOrDefault(n => ((XElement) n).Name == mamlNs + "description"));
+                if (descriptionElement == null)
+                {
+                    descriptionElement = new XElement(mamlNs + "description");
+                    parameterElement.Add(descriptionElement);
+                }
+                descriptionElement.Add(new XElement(mamlNs + "para", string.Format("This is an alias of the {0} parameter.", parameter.Name)));
+            }
         }
 
         /// <summary>
@@ -363,7 +385,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;command:parameter&gt;</em> element for the <paramref name="parameter"/>.</returns>
         private XElement GenerateParameterElement(ICommentReader commentReader, Parameter parameter, string parameterSetName, ReportWarning reportWarning)
         {
-            return new XElement(commandNs + "parameter",
+            var element = new XElement(commandNs + "parameter",
                                 new XAttribute("required", parameter.IsRequired(parameterSetName)),
                                 new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
                                 new XAttribute("pipelineInput", parameter.GetIsPipelineAttribute(parameterSetName)),
@@ -374,6 +396,12 @@ namespace XmlDoc2CmdletDoc.Core
                                 GenerateTypeElement(commentReader, parameter.ParameterType, true, reportWarning),
                                 commentReader.GetParameterDefaultValueElement(parameter),
                                 GetParameterEnumeratedValuesElement(parameter));
+            var aliasNames = parameter.Aliases.ToList();
+            if (aliasNames.Count > 0)
+            {
+                element.Add(new XAttribute("aliases", string.Join(",", aliasNames)));
+            }
+            return element;
         }
 
         /// <summary>
