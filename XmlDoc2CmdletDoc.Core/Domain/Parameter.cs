@@ -166,5 +166,19 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                 return Enumerable.Empty<string>();
             }
         }
+
+        /// <summary>
+        /// The list of parameter aliases.
+        /// </summary>
+        public IEnumerable<string> Aliases
+        {
+            get
+            {
+                var aliasAttribute = (AliasAttribute)MemberInfo
+                    .GetCustomAttributes(typeof(AliasAttribute), true)
+                    .FirstOrDefault();
+                return aliasAttribute == null ? new List<string>() : aliasAttribute.AliasNames;
+            }
+        }
     }
 }

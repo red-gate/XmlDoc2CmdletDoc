@@ -283,6 +283,43 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(attribute.Value, Is.EqualTo(expectedValue));
         }
 
+        [TestCase("SingleAliasParameter", "Name1A")]
+        [TestCase("WithDescriptionAliasParameter", "Name1B")]
+        [TestCase("MultipleAliasParameter", "Name1C,Name2C,Name3C")]
+        [TestCase("MandatoryParameter", null)]
+        public void Command_Parameters_Parameter_AliasesAttribute(string parameterName, string expectedValue)
+        {
+            Assert.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement(
+                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+            var attribute = parameter.Attribute("aliases");
+            if (expectedValue == null) { Assert.That(attribute == null); }
+            else { Assert.That(attribute.Value, Is.EqualTo(expectedValue)); }
+        }
+
+        [TestCase("SingleAliasParameter", "Name1A")]
+        [TestCase("WithDescriptionAliasParameter", "Name1B")]
+        [TestCase("MultipleAliasParameter", "Name1C,Name2C,Name3C")]
+        public void Command_Parameters_Parameter_AliasesExistAsParametersWithNote(string parameterName, string aliases)
+        {
+            Assert.That(testManualElementsCommandElement, Is.Not.Null);
+
+            foreach (var alias in aliases.Split(','))
+            {
+                var parameter = testManualElementsCommandElement.XPathSelectElement(
+                    string.Format(
+                        "command:parameters/command:parameter[maml:name/text() = '{0}']", alias), resolver);
+                Assert.That(parameter, Is.Not.Null);
+
+                var description = parameter.XPathSelectElement("maml:description", resolver);
+                Assert.That(description, Is.Not.Null);
+                Assert.That(description.ToSimpleString(), Is.StringMatching("is an alias of.*" + parameterName));
+            }
+        }
+
         [Test]
         public void Command_Parameters_Parameter_EnumValues_AddedToParameterValueGroup()
         {
