@@ -1,8 +1,8 @@
 # XmlDoc2CmdletDoc
 
-XmlDoc2CmdletDoc is a tool that creates a .dll-Help.xml help file for a binary PowerShell module, given the binary module and its corresponding XML doc comments file. This lets you keep the cmdlet documentation close to the cmdlet source code, and so minimizes the risk of the documentation getting out of sync with the code.
+It's easy to write good help documentation for PowerShell *script* modules (those written in the PowerShell script language). You just write specially formatted comments alongside the source code for your cmdlets, and the PowerShell host automatically uses those comments to provide good inline help for your cmdlets' users. **XmlDoc2CmdletDoc** brings this same functionality to PowerShell *binary* modules (those written in C# or VB.NET). You no longer need to use *CmdletHelpEditor* or *PowerShell Cmdlet Help Editor* to manually edit a separate help file. This tool will automatically generate your PowerShell module's help file from XML Doc comments in your source code.
 
-XmlDoc2CmdletDoc has a handful of NuGet package dependencies. One of them, RedGate.ThirdParty.JoltCore, isn't available via the official public NuGet repository. Nonetheless, the NuGet packages are included in this repository, and the source for RedGate.ThirdParty.JoltCore is [publicly available](https://github.com/red-gate/JoltNet-core). Jolt.NET and XmlDoc2CmdletDoc are released under the same [BSD licence](LICENSE).
+For more details, [Michael Sorens](https://www.simple-talk.com/author/michael-sorens/) has written a [comprehensive guide to documenting your PowerShell binary cmdlets](https://www.simple-talk.com/dotnet/software-tools/documenting-your-powershell-binary-cmdlets/) using XmlDoc2CmdletDoc.
 
 To create a .dll-Help.xml file for your binary PowerShell module, simply call:
 
@@ -163,6 +163,9 @@ public class TestMyExampleCommand : Cmdlet
 
 For guidance on writing related links, see http://msdn.microsoft.com/en-us/library/bb736334.aspx.
 
+# Developer notes 
+
+XmlDoc2CmdletDoc has a handful of NuGet package dependencies. One of them, **RedGate.ThirdParty.JoltCore**, isn't yet available via the official public NuGet repository. Nonetheless, the NuGet packages are included in this repository, and the source for RedGate.ThirdParty.JoltCore is [publicly available](https://github.com/red-gate/JoltNet-core). Jolt.NET and XmlDoc2CmdletDoc are released under the same [BSD licence](LICENSE).
 
 # Contributors
 
