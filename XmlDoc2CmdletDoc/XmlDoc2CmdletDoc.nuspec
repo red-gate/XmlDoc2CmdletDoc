@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>XmlDoc2CmdletDoc</id>
+    <version>$version$</version>
+    <title>Redgate XmlDoc2CmdletDoc tool</title>
+    <authors>Red Gate Software Limited</authors>
+    <owners>Red Gate Software Limited</owners>
+    <projectUrl>https://github.com/red-gate/XmlDoc2CmdletDoc</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments.</description>
+    <copyright>Copyright 2015 Red Gate Software Limited</copyright>
+  </metadata>
+</package>
