@@ -4,8 +4,8 @@ param([string]$Configuration = 'Release')
 use 14.0 MSBuild
 
 # Useful paths used by multiple tasks.
-$VersionFilePath = "$PsScriptRoot\version.txt" | Resolve-Path
 $RepositoryRoot = "$PsScriptRoot\.." | Resolve-Path
+$VersionFilePath = "$RepositoryRoot\version-number.txt" | Resolve-Path
 $SolutionPath = "$RepositoryRoot\XmlDoc2CmdletDoc.sln" | Resolve-Path
 $NuGetPath = "$PsScriptRoot\nuget.exe" | Resolve-Path
 $DistPath = "$RepositoryRoot\dist"
