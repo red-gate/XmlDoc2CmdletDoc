@@ -105,7 +105,7 @@ task Package  Test, {
 
     # Make sure the output folder exists.
     if (-not (Test-Path $DistPath)) {
-        mkdir $DistPath
+        $Null = mkdir $DistPath
     }
 
     # Run NuGet pack.
