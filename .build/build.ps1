@@ -86,15 +86,15 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
 task Package  Compile, {
     Write-Info 'Generating NuGet package'
 
-    $BasePath = "$RepositoryRoot\RedGate.PowerShell" | Resolve-Path
-    $CSProjPath = "$BasePath\RedGate.PowerShell.csproj" | Resolve-Path
+    $BasePath = "$RepositoryRoot\XmlDoc2CmdletDoc" | Resolve-Path
+    $CSProjPath = "$BasePath\XmlDoc2CmdletDoc.csproj" | Resolve-Path
 
     # Run NuGet pack.
     $Parameters = @(
         'pack',
         "$CSProjPath",
         '-Version', $NuGetPackageVersion,
-        '-OutputDirectory', $BuildDir,
+        '-OutputDirectory', $RepositoryRoot,
         '-BasePath', $BasePath
         '-Properties', "configuration=$Configuration"
     )
@@ -102,6 +102,6 @@ task Package  Compile, {
 }
 
 
-task Build  Compile
+task Build  Package
 task Rebuild  Clean, Build
 task Default  Build

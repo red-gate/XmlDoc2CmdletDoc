@@ -53,3 +53,4 @@ _[Nn][Cc]runch*/
 /packages
 /.build/packages
 /.build/nuget.exe
+/*.nupkg
