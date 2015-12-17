@@ -4,9 +4,11 @@ param([string]$Configuration = 'Release')
 use 14.0 MSBuild
 
 # Useful paths used by multiple tasks.
+$VersionFilePath = "$PsScriptRoot\version.txt" | Resolve-Path
 $RepositoryRoot = "$PsScriptRoot\.." | Resolve-Path
 $SolutionPath = "$RepositoryRoot\XmlDoc2CmdletDoc.sln" | Resolve-Path
 $NuGetPath = "$PsScriptRoot\nuget.exe" | Resolve-Path
+$DistPath = "$RepositoryRoot\dist"
 
 # Helper function for clearer logging of each task.
 function Write-Info {
@@ -24,27 +26,33 @@ task Init {
     Write-Host "Is automated build = $IsAutomatedBuild"
     
     # Establish assembly version number
-    $script:Version = [version]'99.99.99.99' # Default for dev builds.
-    if ($env:BUILD_NUMBER) {
-        $Version = [version]$env:BUILD_NUMBER # Build server override.
-    }
+    $script:Version = [version] (Get-Content $VersionFilePath).Trim()
     Write-Host "Version = '$Version'"
     
     # Establish NuGet package version.
-    $BranchName = 'dev' # Default for dev builds.
-    if ($IsAutomatedBuild) {
-        $BranchName = $env:BRANCH_NAME # Build server override.
-    }
+    $BranchName = Get-BranchName
     $IsDefaultBranch = $BranchName -eq 'master'
     $script:NuGetPackageVersion = New-NuGetPackageVersion -Version $Version -BranchName $BranchName -IsDefaultBranch $IsDefaultBranch
     Write-Host "NuGet package version = $NuGetPackageVersion"
+}
+
+function Get-BranchName {
+    # If the branch name is specified via an environment variable (i.e. on TeamCity), use it.
+    if ($env:BRANCH_NAME) {
+        return $env:BRANCH_NAME
+    }
+
+    # Otherwise invoke 'git branch' to determine the name of the current branch
+    $Branches = & git branch --no-color
+    $CurrentBranch = $Branches | where { $_.StartsWith('* ') } | foreach { $_.Substring(2) }
+    return $CurrentBranch
 }
 
 # Clean task, deletes all build output folders.
 task Clean {
     Write-Info 'Cleaning build output'
 
-    Get-ChildItem $RepositoryRoot -Exclude @('packages') -Include @('bin', 'obj') -Directory -Recurse | ForEach-Object {
+    Get-ChildItem $RepositoryRoot -Exclude @('packages') -Include @('dist', 'bin', 'obj') -Directory -Recurse | ForEach-Object {
         Write-Host "Deleting $_"
         Remove-Item $_ -Force -Recurse
     }
@@ -86,15 +94,19 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
 task Package  Compile, {
     Write-Info 'Generating NuGet package'
 
+    if (-not (Test-Path $DistPath)) {
+        mkdir $DistPath
+    }
+
     $BasePath = "$RepositoryRoot\XmlDoc2CmdletDoc" | Resolve-Path
-    $CSProjPath = "$BasePath\XmlDoc2CmdletDoc.csproj" | Resolve-Path
+    $NuSpecPath = "$BasePath\XmlDoc2CmdletDoc.nuspec" | Resolve-Path
 
     # Run NuGet pack.
     $Parameters = @(
         'pack',
-        "$CSProjPath",
+        "$NuSpecPath",
         '-Version', $NuGetPackageVersion,
-        '-OutputDirectory', $RepositoryRoot,
+        '-OutputDirectory', $DistPath,
         '-BasePath', $BasePath
         '-Properties', "configuration=$Configuration"
     )

@@ -17,6 +17,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following attributes are automatically set by the build scripts. Please do not modify them manually.
-[assembly: AssemblyVersion("99.99.99.99")]
-[assembly: AssemblyFileVersion("99.99.99.99")]
-[assembly: AssemblyInformationalVersion("99.99.99-dev99")]
+[assembly: AssemblyVersion("0.1.1.0")]
+[assembly: AssemblyFileVersion("0.1.1.0")]
+[assembly: AssemblyInformationalVersion("0.1.1-build-scripts0")]
