@@ -90,8 +90,17 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
     }
 }
 
+# Test task, runs the NUnit tests.
+task Test  Compile, {
+    Write-Info 'Running tests'
+
+    $AssemblyPath = "$RepositoryRoot\XmlDoc2CmdletDoc.Tests\bin\$Configuration\XmlDoc2CmdletDoc.Tests.dll" | Resolve-Path
+    Invoke-NUnitForAssembly -AssemblyPath $AssemblyPath `
+                            -NUnitVersion '2.6.3'
+}
+
 # Package task, create the NuGet package.
-task Package  Compile, {
+task Package  Test, {
     Write-Info 'Generating NuGet package'
 
     # Make sure the output folder exists.
