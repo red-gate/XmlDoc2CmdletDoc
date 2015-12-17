@@ -94,20 +94,18 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
 task Package  Compile, {
     Write-Info 'Generating NuGet package'
 
+    # Make sure the output folder exists.
     if (-not (Test-Path $DistPath)) {
         mkdir $DistPath
     }
 
-    $BasePath = "$RepositoryRoot\XmlDoc2CmdletDoc" | Resolve-Path
-    $NuSpecPath = "$BasePath\XmlDoc2CmdletDoc.nuspec" | Resolve-Path
-
     # Run NuGet pack.
+    $NuSpecPath = "$RepositoryRoot\XmlDoc2CmdletDoc\XmlDoc2CmdletDoc.nuspec" | Resolve-Path
     $Parameters = @(
         'pack',
         "$NuSpecPath",
         '-Version', $NuGetPackageVersion,
         '-OutputDirectory', $DistPath,
-        '-BasePath', $BasePath
         '-Properties', "configuration=$Configuration"
     )
     & $NuGetPath $Parameters

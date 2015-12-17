@@ -11,4 +11,8 @@
     <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments.</description>
     <copyright>Copyright 2015 Red Gate Software Limited</copyright>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\*.dll" target="tools" />
+    <file src="bin\$configuration$\*.exe" target="tools" />
+  </files>
 </package>
