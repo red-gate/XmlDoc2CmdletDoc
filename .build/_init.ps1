@@ -1,3 +1,9 @@
+# This file is a bootstrapper for the real build file. It's purpose is as follows:
+#
+# 1. Define some top-level fubctions (build, clean, rebuild) that can be used to kick off the build from the command-line.
+# 2. Download nuget.exe and then obtain some NuGet packages that the real build script relies on.
+# 3. Import the RedGate.Build module to make available some convenient build cmdlets.
+
 $VerbosePreference = 'Continue'          # Want useful output in our build log files.
 $ProgressPreference = 'SilentlyContinue' # Progress logging slows down TeamCity when downloading files with Invoke-WebRequest.
 $ErrorActionPreference = 'Stop'          # Abort quickly on error.
