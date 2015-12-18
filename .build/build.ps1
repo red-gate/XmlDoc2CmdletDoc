@@ -43,9 +43,17 @@ function Get-BranchName {
     }
 
     # Otherwise invoke 'git branch' to determine the name of the current branch
-    $Branches = & git branch --no-color
-    $CurrentBranch = $Branches | where { $_.StartsWith('* ') } | foreach { $_.Substring(2) }
-    return $CurrentBranch
+    try {
+        $Branches = & git branch --no-color
+    } catch {
+        throw 'Failed to invoke git: Either git must be available on the path or you must specify the current branch name using the BRANCH_NAME environment variable.'
+    }
+    try {
+        $CurrentBranch = $Branches | where { $_.StartsWith('* ') } | foreach { $_.Substring(2) }
+        return $CurrentBranch
+    } catch {
+        throw "Failed to parse the results of running 'git branch', which were as follows:`r`n$($Branches -join ""`r`n"")`r`nAs an alternative, you can specify the current branch name using the BRANCH_NAME environment variable."
+    }
 }
 
 # Clean task, deletes all build output folders.
