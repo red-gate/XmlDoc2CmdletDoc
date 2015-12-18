@@ -42,18 +42,21 @@ function Get-BranchName {
         return $env:BRANCH_NAME
     }
 
-    # Otherwise invoke 'git branch' to determine the name of the current branch
-    try {
-        $Branches = & git branch --no-color
-    } catch {
-        throw 'Failed to invoke git: Either git must be available on the path or you must specify the current branch name using the BRANCH_NAME environment variable.'
+    # If the .git folder is present, try to get the current branch using Git.
+    $DotGitDirPath = "$RepositoryRoot\.git"
+    if (Test-Path $DotGitDirPath) {
+        Add-Type -Path ("$PsScriptRoot\packages\GitSharp\lib\GitSharp.dll" | Resolve-Path)
+        Add-Type -Path ("$PsScriptRoot\packages\SharpZipLib\lib\20\ICSharpCode.SharpZipLib.dll" | Resolve-Path)
+        Add-Type -Path ("$PsScriptRoot\packages\Tamir.SharpSSH\lib\Tamir.SharpSSH.dll" | Resolve-Path)
+        Add-Type -Path ("$PsScriptRoot\packages\Winterdom.IO.FileMap\lib\Winterdom.IO.FileMap.dll" | Resolve-Path)
+    
+        $Repository = New-Object 'GitSharp.Repository' $DotGitDirPath
+        return $Repository.CurrentBranch.Name
     }
-    try {
-        $CurrentBranch = $Branches | where { $_.StartsWith('* ') } | foreach { $_.Substring(2) }
-        return $CurrentBranch
-    } catch {
-        throw "Failed to parse the results of running 'git branch', which were as follows:`r`n$($Branches -join ""`r`n"")`r`nAs an alternative, you can specify the current branch name using the BRANCH_NAME environment variable."
-    }
+
+    # Otherwise, assume 'master'
+    Write-Warning "Unable to determine the current branch name using either git or the BRANCH_NAME environment variable. Defaulting to 'master'."
+    return 'master'
 }
 
 # Clean task, deletes all build output folders.

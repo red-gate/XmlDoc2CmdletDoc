@@ -25,14 +25,7 @@ function global:Build
             Invoke-WebRequest $NuGetUrl -OutFile $NuGetPath
         }
         
-        # Clean out any existing 'build-level' packages from the .build/packages folder.
-        # Restoring them will be quick thanks to the nuget local cache.
-        if (Test-Path 'packages')
-        {
-            Remove-Item 'packages' -Force -Recurse
-        }
-
-        # Restore the 'build-level' nuget packages into .build/packages
+        # Restore the 'build-level' nuget packages into .build/packages if necessary.
         $NuGetConfigXml = [xml](Get-Content 'packages.config')
         $NuGetConfigXml.packages.package | ForEach-Object {
             & $NuGetPath install $_.id `
