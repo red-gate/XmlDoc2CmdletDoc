@@ -110,7 +110,8 @@ task Test  Compile, {
 
     $AssemblyPath = "$RepositoryRoot\XmlDoc2CmdletDoc.Tests\bin\$Configuration\XmlDoc2CmdletDoc.Tests.dll" | Resolve-Path
     Invoke-NUnitForAssembly -AssemblyPath $AssemblyPath `
-                            -NUnitVersion '2.6.3'
+                            -NUnitVersion '2.6.3' `
+							-FrameworkVersion 'net-4.5'
 }
 
 # Package task, create the NuGet package.
