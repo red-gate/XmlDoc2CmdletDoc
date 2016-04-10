@@ -1,5 +1,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="XmlDoc2CmdletDoc" BeforeTargets="AfterBuild">
+    <Target Name="XmlDoc2CmdletDoc"
+            BeforeTargets="AfterBuild"
+            Inputs="$(TargetPath)"
+            Outputs="$(TargetPath)-Help.xml">
         <Exec Condition="'$(XmlDoc2CmdletDocStrict)' == 'false'"
               Command='"$(MSBuildThisFileDirectory)..\tools\XmlDoc2CmdletDoc.exe" "$(TargetPath)"' />
         <Exec Condition="'$(XmlDoc2CmdletDocStrict)' != 'false'"
