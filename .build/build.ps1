@@ -83,12 +83,7 @@ task RestorePackages {
 task UpdateAssemblyInfo  Init, {
     Write-Info 'Updating assembly information'
 
-    $SolutionInfoPath = [string] ("$RepositoryRoot\SolutionInfo.cs" | Resolve-Path)
-    $CurrentContent = Get-Content $SolutionInfoPath -Encoding UTF8
-    $NewContent = $CurrentContent `
-        -replace '(?<=Assembly(File)?Version\(")[0-9\.\*]*(?="\))', $Version.ToString() `
-        -replace '(?<=AssemblyInformationalVersion\(")[a-zA-Z0-9\.\-]*(?="\))', $NuGetPackageVersion
-    $NewContent | Out-File $SolutionInfoPath -Encoding utf8
+    "$RepositoryRoot\SolutionInfo.cs" | Resolve-Path | Update-AssemblyVersion -Version $Version -InformationalVersion $NuGetPackageVersion
 }
 
 # Compile task, runs MSBuild to build the solution.
