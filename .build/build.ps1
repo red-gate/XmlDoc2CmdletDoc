@@ -99,8 +99,21 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
     }
 }
 
+task Sign  Compile, {
+    if (-not $env:SigningServiceUrl) {
+        Write-Info "Skipping assembly signing - 'SigningServiceUrl' is not defined"
+    } else {
+        Write-Info 'Signing Redgate assemblies'
+        
+        ('Jolt.dll', 'XmlDoc2CmdletDoc.Core.dll', 'XmlDoc2CmdletDoc.exe') | ForEach-Object {
+            "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\$_" | Resolve-Path | Invoke-SigningService
+        }
+    }
+}
+
+
 # Test task, runs the NUnit tests.
-task Test  Compile, {
+task Test  Sign, {
     Write-Info 'Running tests'
 
     $AssemblyPath = "$RepositoryRoot\XmlDoc2CmdletDoc.Tests\bin\$Configuration\XmlDoc2CmdletDoc.Tests.dll" | Resolve-Path
