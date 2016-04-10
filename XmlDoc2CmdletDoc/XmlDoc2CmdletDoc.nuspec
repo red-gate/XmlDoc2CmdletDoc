@@ -14,5 +14,7 @@
   <files>
     <file src="bin\$configuration$\*.dll" target="tools" />
     <file src="bin\$configuration$\*.exe" target="tools" />
+    <file src="XmlDoc2CmdletDoc.props" target="build" />
+    <file src="XmlDoc2CmdletDoc.targets" target="build" />
   </files>
 </package>
