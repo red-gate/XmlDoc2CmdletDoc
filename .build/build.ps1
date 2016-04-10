@@ -37,6 +37,15 @@ task Init {
     $IsDefaultBranch = $BranchName -eq 'master'
     $script:NuGetPackageVersion = New-NuGetPackageVersion -Version $Version -BranchName $BranchName -IsDefaultBranch $IsDefaultBranch
     Write-Host "NuGet package version = $NuGetPackageVersion"
+    
+    # Establish whether or not to sign the asseblies.
+    if ($env:SigningServiceUrl) { # We sign if and only if the SigningServiceUrl environment variable is set.
+        $scriptAssemblySigningEnabled = $True
+        Write-Host 'Assembly signing enabled'
+    } else {
+        $scriptAssemblySigningEnabled = $False
+        Write-Host 'Assembly signing disabled (SigningServiceUrl environment variable is not set)'
+    }
 }
 
 function Get-BranchName {
@@ -100,8 +109,8 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
 }
 
 task Sign  Compile, {
-    if (-not $env:SigningServiceUrl) {
-        Write-Info "Skipping assembly signing - 'SigningServiceUrl' is not defined"
+    if (-not $AssemblySigningEnabled) {
+        Write-Info 'Skipping assembly signing'
     } else {
         Write-Info 'Signing Redgate assemblies'
         
