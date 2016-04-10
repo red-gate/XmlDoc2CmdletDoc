@@ -35,7 +35,7 @@ function global:Build
         $NuGetConfigXml = [xml](Get-Content 'packages.config')
         $NuGetConfigXml.packages.package | ForEach-Object {
             & $NuGetPath install $_.id `
-                -Version $_.Version `
+                -Version $_.version `
                 -OutputDirectory 'packages' `
                 -ExcludeVersion `
                 -PackageSaveMode nuspec
