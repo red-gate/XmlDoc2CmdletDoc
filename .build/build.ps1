@@ -114,9 +114,12 @@ task Sign  Compile, {
     } else {
         Write-Info 'Signing Redgate assemblies'
         
-        ('Jolt.dll', 'XmlDoc2CmdletDoc.Core.dll', 'XmlDoc2CmdletDoc.exe') | ForEach-Object {
-            "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\$_" | Resolve-Path | Invoke-SigningService
-        }
+        "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration" |
+            Get-ChildItem -File |
+            Where-Object { $_.Extension -eq '.dll' -or $_.Extension -eq '.exe'} |
+            ForEach-Object {
+                $_.FullName | Invoke-SigningService
+            }
     }
 }
 
