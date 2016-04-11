@@ -40,10 +40,10 @@ task Init {
     
     # Establish whether or not to sign the asseblies.
     if ($env:SigningServiceUrl) { # We sign if and only if the SigningServiceUrl environment variable is set.
-        $scriptAssemblySigningEnabled = $True
+        $script:AssemblySigningEnabled = $True
         Write-Host 'Assembly signing enabled'
     } else {
-        $scriptAssemblySigningEnabled = $False
+        $script:AssemblySigningEnabled = $False
         Write-Host 'Assembly signing disabled (SigningServiceUrl environment variable is not set)'
     }
 }
