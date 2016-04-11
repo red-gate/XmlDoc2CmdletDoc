@@ -10,7 +10,7 @@
 	<licenseUrl>https://github.com/red-gate/XmlDoc2CmdletDoc/blob/master/LICENSE.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments. Licensed under the terms of the new 3-clause BSD license.</description>
-    <copyright>Copyright 2014-2016 Red Gate Software Limited</copyright>
+    <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
   </metadata>
   <files>
     <file src="bin\$configuration$\*.dll" target="tools" />

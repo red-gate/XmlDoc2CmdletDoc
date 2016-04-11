@@ -1,5 +1,5 @@
 License:  New BSD License
-Copyright (c) 2014-2016, Red Gate Software Limited
+Copyright (c) 2014-2016, Red Gate Software Ltd.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
