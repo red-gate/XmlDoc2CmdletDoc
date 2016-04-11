@@ -165,7 +165,21 @@ For guidance on writing related links, see http://msdn.microsoft.com/en-us/libra
 
 # Developer notes 
 
-XmlDoc2CmdletDoc has a handful of NuGet package dependencies. One of them, **RedGate.ThirdParty.JoltCore**, isn't yet available via the official public NuGet repository. Nonetheless, the NuGet packages are included in this repository, and the source for RedGate.ThirdParty.JoltCore is [publicly available](https://github.com/red-gate/JoltNet-core). Jolt.NET and XmlDoc2CmdletDoc are released under the same [BSD licence](LICENSE).
+XmlDoc2CmdletDoc has a handful of NuGet package dependencies that aren't yet available from the official public NuGet repository. Instead, they are included in a local file-based package source in the `LocalNuGetPackageSource` folder.
+
+1. **RedGate.ThirdParty.JoltCore** - A fork of the [Jolt.NET productivity libraries](http://jolt.codeplex.com/), with some modifications. The [source is publicly available](https://github.com/red-gate/JoltNet-core) under the same [BSD licence](https://github.com/red-gate/JoltNet-core/blob/master/LICENSE) as the original library.
+
+2. **RedGate.Build** - A PowerShell module that contains cmdlets used by this project's build scripts. The [source is publicly available](https://github.com/red-gate/RedGate.Build) under [version 2.0 of the Apache license](https://github.com/red-gate/RedGate.Build/blob/master/LICENSE.md).
+
+XmlDoc2CmdletDoc itself is available under the [3-clause BSD license](https://github.com/red-gate/XmlDoc2CmdletDoc/blob/master/LICENSE.md).
+
+## Building XmlDoc2CmdletDoc
+
+Prerequisites:
+- Microsoft Visual Studio 2015 or Microsoft Build Tools 2015
+- PowerShell 4.0 or later.
+
+To build XmlDoc2CmdletDoc, simply invoke `.\build.ps1` from a PowerShell prompt. This will generate a NuGet package in the `dist` folder. If you'd like direct access to the `XmlDoc2CmdletDoc.exe`, it can be found in `XmlDoc2CmdletDoc\bin\Debug` or `XmlDoc2CmdletDoc\bin\Release`, depending on the configuration you build.
 
 # Contributors
 
