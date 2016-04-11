@@ -48,6 +48,11 @@
       <Name>XmlDoc2CmdletDoc.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="XmlDoc2CmdletDoc.nuspec" />
+    <None Include="XmlDoc2CmdletDoc.props" />
+    <None Include="XmlDoc2CmdletDoc.targets" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

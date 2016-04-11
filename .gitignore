@@ -49,3 +49,8 @@ _[Nn][Cc]runch*/
 *.Tmp
 
 # Project-specific excluded content
+/.vs
+/packages
+/.build/packages
+/.build/nuget.exe
+/dist
