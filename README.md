@@ -4,11 +4,19 @@ It's easy to write good help documentation for PowerShell *script* modules (thos
 
 For more details, [Michael Sorens](https://www.simple-talk.com/author/michael-sorens/) has written a [comprehensive guide to documenting your PowerShell binary cmdlets](https://www.simple-talk.com/dotnet/software-tools/documenting-your-powershell-binary-cmdlets/) using XmlDoc2CmdletDoc.
 
-To create a .dll-Help.xml file for your binary PowerShell module, simply call:
+To create a .dll-Help.xml file for your binary PowerShell module:
 
-```batchfile
-XmlDoc2CmdletDoc.exe C:\Full\Path\To\MyPowerShellModule.dll
+1. Ensure that your project is configured to generate an XML Documentation file alongside its output assembly.
+2. Install the XmlDoc2CmdletDoc NuGet package into your project.
+
+Optionally, you can enable strict mode to cause a build error if any of your cmdlets are missing required documentation elements. To do so, add the following property to an appropriate `PropertyGroup` element in your project file:
+
+```xml
+<XmlDoc2CmdletDocStrict>true</XmlDoc2CmdletDocStrict>
 ```
+
+
+# Examples
 
 Here are some examples of how to document your cmdlets:
 
