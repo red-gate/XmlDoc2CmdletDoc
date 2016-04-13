@@ -20,18 +20,18 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         /// <param name="reportWarning">Used to report failed comment lookups.</param>
         public LoggingCommentReader(ICommentReader proxy, ReportWarning reportWarning)
         {
-            if (proxy == null) throw new ArgumentNullException("proxy");
-            if (reportWarning == null) throw new ArgumentNullException("reportWarning");
+            if (proxy == null) throw new ArgumentNullException(nameof(proxy));
+            if (reportWarning == null) throw new ArgumentNullException(nameof(reportWarning));
 
             _proxy = proxy;
             _reportWarning = reportWarning;
         }
 
-        public XElement GetComments(Type type) { return CheckComment(_proxy.GetComments(type), type); }
-
-        public XElement GetComments(FieldInfo fieldInfo) { return CheckComment(_proxy.GetComments(fieldInfo), fieldInfo); }
-
-        public XElement GetComments(PropertyInfo propertyInfo) { return CheckComment(_proxy.GetComments(propertyInfo), propertyInfo); }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        public XElement GetComments(Type type) => CheckComment(_proxy.GetComments(type), type);
+        public XElement GetComments(FieldInfo fieldInfo) => CheckComment(_proxy.GetComments(fieldInfo), fieldInfo);
+        public XElement GetComments(PropertyInfo propertyInfo) => CheckComment(_proxy.GetComments(propertyInfo), propertyInfo);
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         private XElement CheckComment(XElement commentElement, MemberInfo memberInfo)
         {

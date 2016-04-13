@@ -41,10 +41,9 @@ namespace XmlDoc2CmdletDoc.Core
         public Options(bool treatWarningsAsErrors,
                        string assemblyPath,
                        string outputHelpFilePath = null,
-                       string docCommentsPath = null,
-            string xsltPath = null)
+                       string docCommentsPath = null)
         {
-            if (assemblyPath == null) throw new ArgumentNullException("assemblyPath");
+            if (assemblyPath == null) throw new ArgumentNullException(nameof(assemblyPath));
 
             TreatWarningsAsErrors = treatWarningsAsErrors;
 
@@ -59,10 +58,15 @@ namespace XmlDoc2CmdletDoc.Core
                                   : Path.GetFullPath(docCommentsPath);
         }
 
+        /// <summary>
+        /// Provides a string representation of the options, for logging and debug purposes.
+        /// </summary>
         public override string ToString()
         {
-            return string.Format("AssemblyPath: {0}, OutputHelpFilePath: {1}, DocCommentsPath: {2}, TreatWarningsAsErrors {3}",
-                                 AssemblyPath, OutputHelpFilePath, DocCommentsPath, TreatWarningsAsErrors);
+            return $"AssemblyPath: {AssemblyPath}, " +
+                   $"OutputHelpFilePath: {OutputHelpFilePath}, " +
+                   $"DocCommentsPath: {DocCommentsPath}, " +
+                   $"TreatWarningsAsErrors {TreatWarningsAsErrors}";
         }
     }
 }

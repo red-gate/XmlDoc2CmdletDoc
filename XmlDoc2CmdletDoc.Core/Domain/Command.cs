@@ -20,10 +20,10 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// and have a <see cref="CmdletAttribute"/>.</param>
         public Command(Type cmdletType)
         {
-            if (cmdletType == null) throw new ArgumentNullException("cmdletType");
+            if (cmdletType == null) throw new ArgumentNullException(nameof(cmdletType));
             CmdletType = cmdletType;
             _attribute = CmdletType.GetCustomAttribute<CmdletAttribute>();
-            if (_attribute == null) throw new ArgumentException("Missing CmdletAttribute", "cmdletType");
+            if (_attribute == null) throw new ArgumentException("Missing CmdletAttribute", nameof(cmdletType));
         }
 
         /// <summary>
@@ -74,6 +74,13 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             }
         }
 
+        /// <summary>
+        /// The command's parameters that belong to the specified parameter set.
+        /// </summary>
+        /// <param name="parameterSetName">The name of the parameter set.</param>
+        /// <returns>
+        /// The command's parameters that belong to the specified parameter set.
+        /// </returns>
         public IEnumerable<Parameter> GetParameters(string parameterSetName)
         {
             return parameterSetName == ParameterAttribute.AllParameterSets

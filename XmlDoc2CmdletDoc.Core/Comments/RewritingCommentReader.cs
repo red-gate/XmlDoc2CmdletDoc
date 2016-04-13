@@ -20,13 +20,15 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         /// </summary>
         /// <param name="proxy">The proxy source of comments.</param>
         public RewritingCommentReader(ICommentReader proxy) {
-            if (proxy == null) throw new ArgumentNullException("proxy");
+            if (proxy == null) throw new ArgumentNullException(nameof(proxy));
             _proxy = proxy;
         }
 
-        public XElement GetComments(Type type) { return RewriteComment(_proxy.GetComments(type)); }
-        public XElement GetComments(FieldInfo fieldInfo) { return RewriteComment(_proxy.GetComments(fieldInfo)); }
-        public XElement GetComments(PropertyInfo propertyInfo) { return RewriteComment(_proxy.GetComments(propertyInfo)); }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        public XElement GetComments(Type type) => RewriteComment(_proxy.GetComments(type));
+        public XElement GetComments(FieldInfo fieldInfo) => RewriteComment(_proxy.GetComments(fieldInfo));
+        public XElement GetComments(PropertyInfo propertyInfo) => RewriteComment(_proxy.GetComments(propertyInfo));
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         private static XElement RewriteComment(XElement element)
         {

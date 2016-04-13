@@ -6,7 +6,6 @@ using System.Management.Automation;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
-using Jolt;
 using XmlDoc2CmdletDoc.Core.Comments;
 using XmlDoc2CmdletDoc.Core.Domain;
 using XmlDoc2CmdletDoc.Core.Extensions;
@@ -25,9 +24,9 @@ namespace XmlDoc2CmdletDoc.Core
     /// <para>This class is stateless, so you can call <see cref="GenerateHelp"/> multitple times on multiple threads.</para>
     /// </summary>
     /// <remarks>
-    /// A lot of the detailed help generation is also delegated to <see cref="XmlDocCommentReaderExtensions"/>.
+    /// A lot of the detailed help generation is also delegated to <see cref="CommentReaderExtensions"/>.
     /// This class is generally responsible for generating the overall structure of the XML help file, whilst
-    /// <see cref="XmlDocCommentReaderExtensions"/> is resonsible for generating specific items of documentation,
+    /// <see cref="CommentReaderExtensions"/> is resonsible for generating specific items of documentation,
     /// such as command synopses, and command and parameter descriptions.
     /// </remarks>
     public class Engine
