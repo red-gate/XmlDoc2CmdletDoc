@@ -22,7 +22,7 @@ function global:Build
     try
     {
         # Obtain nuget.exe
-        $NuGetVersion = [version] '3.2.0'
+        $NuGetVersion = [version] '3.3.0'
         $NuGetPath = '.\nuget.exe'
         if (-not (Test-Path $NuGetPath) -or (Get-Item $NuGetPath).VersionInfo.ProductVersion -ne $NuGetVersion)
         {
