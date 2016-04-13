@@ -19,11 +19,12 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         /// <param name="proxy">The decorated comment reader.</param>
         public CachingCommentReader(ICommentReader proxy)
         {
-            if (proxy == null) throw new ArgumentNullException("proxy");
+            if (proxy == null) throw new ArgumentNullException(nameof(proxy));
             _proxy = proxy;
             _cache = new Dictionary<MemberInfo, XElement>();
         }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public XElement GetComments(Type type)
         {
             XElement element;
@@ -41,5 +42,6 @@ namespace XmlDoc2CmdletDoc.Core.Comments
             XElement element;
             return _cache.TryGetValue(propertyInfo, out element) ? element : _cache[propertyInfo] = _proxy.GetComments(propertyInfo);
         }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

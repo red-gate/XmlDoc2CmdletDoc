@@ -307,6 +307,15 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             return parameterDescription;
         }
 
+        /// <summary>
+        /// Obtains a <em>&lt;maml:description&gt;</em> for a command's output type.
+        /// </summary>
+        /// <param name="commentReader">The comment reader.</param>
+        /// <param name="command">The command.</param>
+        /// <param name="outputType">The output type of the command.</param>
+        /// <param name="reportWarning">Used to log any warnings.</param>
+        /// <returns>A <em>&lt;maml:description&gt;</em> for the command's output type,
+        /// or null if no explicit description is available for the output type.</returns>
         public static XElement GetOutputTypeDescriptionElement(this ICommentReader commentReader,
                                                                Command command,
                                                                Type outputType,
@@ -334,7 +343,6 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// </summary>
         /// <param name="commentReader">The comment reader.</param>
         /// <param name="memberInfo">The member whose comments are to be retrieved.</param>
-        /// <param name="reportWarning">Used to log any warnings.</param>
         /// <returns>The XML doc commments for the <paramref name="memberInfo"/>, or<em>null</em> if they are not available.</returns>
         private static XElement GetComments(this ICommentReader commentReader, MemberInfo memberInfo)
         {

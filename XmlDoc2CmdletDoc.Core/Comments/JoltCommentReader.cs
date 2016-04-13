@@ -18,12 +18,14 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         /// <param name="docCommentsFullPath">The full path of the XML Doc comments file.</param>
         public JoltCommentReader(string docCommentsFullPath)
         {
-            if (docCommentsFullPath == null) throw new ArgumentNullException("docCommentsFullPath");
+            if (docCommentsFullPath == null) throw new ArgumentNullException(nameof(docCommentsFullPath));
             _proxy = new XmlDocCommentReader(docCommentsFullPath);
         }
 
-        public XElement GetComments(Type type) { return _proxy.GetComments(type); }
-        public XElement GetComments(FieldInfo fieldInfo) { return _proxy.GetComments(fieldInfo); }
-        public XElement GetComments(PropertyInfo propertyInfo) { return _proxy.GetComments(propertyInfo); }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        public XElement GetComments(Type type) => _proxy.GetComments(type);
+        public XElement GetComments(FieldInfo fieldInfo) => _proxy.GetComments(fieldInfo);
+        public XElement GetComments(PropertyInfo propertyInfo) => _proxy.GetComments(propertyInfo);
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }
