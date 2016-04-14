@@ -114,7 +114,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var paras = items.SkipWhile(x => x.Name == "para").SkipWhile(x => x.Name == "code").ToList();
 
             var example = new XElement(commandNs + "example",
-                           new XElement(mamlNs + "title", string.Format("----------  EXAMPLE {0}  ----------", exampleNumber)));
+                           new XElement(mamlNs + "title", $"----------  EXAMPLE {exampleNumber}  ----------"));
 
             bool isEmpty = true;
             if (intros.Any())
@@ -139,7 +139,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
 
             if (isEmpty)
             {
-                reportWarning(string.Format("No para or code elements found for example {0}.", exampleNumber));
+                reportWarning($"No para or code elements found for example {exampleNumber}.");
             }
 
             return example;
@@ -378,7 +378,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             if (commentsElement != null)
             {
                 // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement(string.Format(".//maml:description[@type='{0}']", typeAttribute), resolver);
+                var mamlDescriptionElement = commentsElement.XPathSelectElement($".//maml:description[@type='{typeAttribute}']", resolver);
                 if (mamlDescriptionElement != null)
                 {
                     mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
@@ -387,7 +387,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
                 }
 
                 // Next try <para type="typeAttribute"> elements.
-                var paraElements = commentsElement.XPathSelectElements(string.Format(".//para[@type='{0}']", typeAttribute)).ToList();
+                var paraElements = commentsElement.XPathSelectElements($".//para[@type='{typeAttribute}']").ToList();
                 if (paraElements.Any())
                 {
                     var descriptionElement = new XElement(mamlNs + "description");
@@ -397,7 +397,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             }
 
             // We've failed to provide a description from the XML doc commment.
-            reportWarning(string.Format("No {0} comment found.", typeAttribute));
+            reportWarning($"No {typeAttribute} comment found.");
             return null;
         }
 

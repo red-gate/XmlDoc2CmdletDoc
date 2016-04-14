@@ -98,7 +98,7 @@ namespace XmlDoc2CmdletDoc.Core.Comments
                     var cmdletAttribute = GetCustomAttribute<CmdletAttribute>(type);
                     if (cmdletAttribute != null)
                     {
-                        return string.Format("{0}-{1}", cmdletAttribute.VerbName, cmdletAttribute.NounName);
+                        return $"{cmdletAttribute.VerbName}-{cmdletAttribute.NounName}";
                     }
 
                     // Otherwise, return the short name.

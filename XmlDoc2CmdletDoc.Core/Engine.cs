@@ -133,7 +133,7 @@ namespace XmlDoc2CmdletDoc.Core
             var type = memberInfo as Type;
             return type != null
                 ? type.FullName
-                : string.Format("{0}.{1}", GetFullyQualifiedName(memberInfo.DeclaringType), memberInfo.Name);
+                : $"{GetFullyQualifiedName(memberInfo.DeclaringType)}.{memberInfo.Name}";
         }
 
         /// <summary>
@@ -370,7 +370,7 @@ namespace XmlDoc2CmdletDoc.Core
                     descriptionElement = new XElement(mamlNs + "description");
                     parameterElement.Add(descriptionElement);
                 }
-                descriptionElement.Add(new XElement(mamlNs + "para", string.Format("This is an alias of the {0} parameter.", parameter.Name)));
+                descriptionElement.Add(new XElement(mamlNs + "para", $"This is an alias of the {parameter.Name} parameter."));
             }
         }
 
@@ -568,6 +568,6 @@ namespace XmlDoc2CmdletDoc.Core
         /// </summary>
         /// <param name="text">The text of the comment.</param>
         /// <returns>An <see cref="XComment"/> instance based on the specified <paramref name="text"/>.</returns>
-        private XComment GenerateComment(string text) { return new XComment(string.Format(" {0} ", text)); }
+        private XComment GenerateComment(string text) { return new XComment($" {text} "); }
     }
 }

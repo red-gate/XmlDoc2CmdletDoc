@@ -219,7 +219,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
         }
 
@@ -231,7 +231,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("required");
@@ -246,7 +246,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("position");
@@ -262,7 +262,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("pipelineInput");
@@ -276,7 +276,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("globbing");
@@ -292,7 +292,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                string.Format("command:parameters/command:parameter[maml:name/text() = '{0}']", parameterName), resolver);
+                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("aliases");
@@ -310,8 +310,7 @@ namespace XmlDoc2CmdletDoc.Tests
             foreach (var alias in aliases.Split(','))
             {
                 var parameter = testManualElementsCommandElement.XPathSelectElement(
-                    string.Format(
-                        "command:parameters/command:parameter[maml:name/text() = '{0}']", alias), resolver);
+                    $"command:parameters/command:parameter[maml:name/text() = '{alias}']", resolver);
                 Assert.That(parameter, Is.Not.Null);
 
                 var description = parameter.XPathSelectElement("maml:description", resolver);
