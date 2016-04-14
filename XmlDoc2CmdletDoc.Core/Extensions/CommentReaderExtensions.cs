@@ -16,21 +16,21 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
     /// </summary>
     public static class CommentReaderExtensions
     {
-        private static readonly XNamespace mshNs = XNamespace.Get("http://msh");
-        private static readonly XNamespace mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
-        private static readonly XNamespace commandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
-        private static readonly XNamespace devNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
+        private static readonly XNamespace MshNs = XNamespace.Get("http://msh");
+        private static readonly XNamespace MamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
+        private static readonly XNamespace CommandNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/command/2004/10");
+        private static readonly XNamespace DevNs = XNamespace.Get("http://schemas.microsoft.com/maml/dev/2004/10");
 
-        private static readonly IXmlNamespaceResolver resolver;
+        private static readonly IXmlNamespaceResolver Resolver;
 
         static CommentReaderExtensions()
         {
             var manager = new XmlNamespaceManager(new NameTable());
-            manager.AddNamespace("", mshNs.NamespaceName);
-            manager.AddNamespace("maml", mamlNs.NamespaceName);
-            manager.AddNamespace("command", commandNs.NamespaceName);
-            manager.AddNamespace("dev", devNs.NamespaceName);
-            resolver = manager;
+            manager.AddNamespace("", MshNs.NamespaceName);
+            manager.AddNamespace("maml", MamlNs.NamespaceName);
+            manager.AddNamespace("command", CommandNs.NamespaceName);
+            manager.AddNamespace("dev", DevNs.NamespaceName);
+            Resolver = manager;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
                 return null;
             }
 
-            var examples = new XElement(commandNs + "examples");
+            var examples = new XElement(CommandNs + "examples");
             int exampleNumber = 1;
             foreach (var xmlDocExample in xmlDocExamples)
             {
@@ -113,26 +113,26 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var code = items.SkipWhile(x => x.Name == "para").TakeWhile(x => x.Name == "code").FirstOrDefault();
             var paras = items.SkipWhile(x => x.Name == "para").SkipWhile(x => x.Name == "code").ToList();
 
-            var example = new XElement(commandNs + "example",
-                           new XElement(mamlNs + "title", $"----------  EXAMPLE {exampleNumber}  ----------"));
+            var example = new XElement(CommandNs + "example",
+                           new XElement(MamlNs + "title", $"----------  EXAMPLE {exampleNumber}  ----------"));
 
             bool isEmpty = true;
             if (intros.Any())
             {
-                var introduction = new XElement(mamlNs + "introduction");
-                intros.ForEach(intro => introduction.Add(new XElement(mamlNs + "para", Tidy(intro.Value))));
+                var introduction = new XElement(MamlNs + "introduction");
+                intros.ForEach(intro => introduction.Add(new XElement(MamlNs + "para", Tidy(intro.Value))));
                 example.Add(introduction);
                 isEmpty = false;
             }
             if (code != null)
             {
-                example.Add(new XElement(devNs + "code", TidyCode(code.Value)));
+                example.Add(new XElement(DevNs + "code", TidyCode(code.Value)));
                 isEmpty = false;
             }
             if (paras.Any())
             {
-                var remarks = new XElement(devNs + "remarks");
-                paras.ForEach(para => remarks.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
+                var remarks = new XElement(DevNs + "remarks");
+                paras.ForEach(para => remarks.Add(new XElement(MamlNs + "para", Tidy(para.Value))));
                 example.Add(remarks);
                 isEmpty = false;
             }
@@ -164,15 +164,15 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var paras = comments.XPathSelectElements("//para[@type='link']").ToList();
             if (!paras.Any()) return null;
 
-            var relatedLinks = new XElement(mamlNs + "relatedLinks");
+            var relatedLinks = new XElement(MamlNs + "relatedLinks");
             foreach (var para in paras)
             {
-                var navigationLink = new XElement(mamlNs + "navigationLink",
-                                                  new XElement(mamlNs + "linkText", para.Value));
+                var navigationLink = new XElement(MamlNs + "navigationLink",
+                                                  new XElement(MamlNs + "linkText", para.Value));
                 var uri = para.Attribute("uri");
                 if (uri != null)
                 {
-                    navigationLink.Add(new XElement(mamlNs + "uri", uri.Value));
+                    navigationLink.Add(new XElement(MamlNs + "uri", uri.Value));
                 }
                 relatedLinks.Add(navigationLink);
             }
@@ -196,7 +196,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             }
 
             // First see if there's an alertSet element in the comments
-            var alertSet = comments.XPathSelectElement("//maml:alertSet", resolver);
+            var alertSet = comments.XPathSelectElement("//maml:alertSet", Resolver);
             if (alertSet != null)
             {
                 return alertSet;
@@ -208,24 +208,24 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             {
                 return null;
             }
-            alertSet = new XElement(mamlNs + "alertSet");
+            alertSet = new XElement(MamlNs + "alertSet");
             foreach (var item in list.XPathSelectElements("item"))
             {
                 var term = item.XPathSelectElement("term");
                 var description = item.XPathSelectElement("description");
                 if (term != null && description != null)
                 {
-                    var alertTitle = new XElement(mamlNs + "title", Tidy(term.Value));
+                    var alertTitle = new XElement(MamlNs + "title", Tidy(term.Value));
 
-                    var alert = new XElement(mamlNs + "alert");
+                    var alert = new XElement(MamlNs + "alert");
                     var paras = description.XPathSelectElements("para").ToList();
                     if (paras.Any())
                     {
-                        paras.ForEach(para => alert.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
+                        paras.ForEach(para => alert.Add(new XElement(MamlNs + "para", Tidy(para.Value))));
                     }
                     else
                     {
-                        alert.Add(new XElement(mamlNs + "para", Tidy(description.Value)));
+                        alert.Add(new XElement(MamlNs + "para", Tidy(description.Value)));
                     }
 
                     alertSet.Add(alertTitle, alert);
@@ -257,7 +257,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// <returns>A description element for the parameter.</returns>
         public static XElement GetParameterValueElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
-            return new XElement(commandNs + "parameterValue",
+            return new XElement(CommandNs + "parameterValue",
                                 new XAttribute("required", true),
                                 GetSimpleTypeName(parameter.ParameterType));
         }
@@ -273,7 +273,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var defaultValue = parameter.DefaultValue; // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
             {
-                return new XElement(devNs + "defaultValue", defaultValue.ToString());
+                return new XElement(DevNs + "defaultValue", defaultValue.ToString());
             }
             return null;
         }
@@ -378,7 +378,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             if (commentsElement != null)
             {
                 // Examine the XML doc comment first for an embedded <maml:description> element.
-                var mamlDescriptionElement = commentsElement.XPathSelectElement($".//maml:description[@type='{typeAttribute}']", resolver);
+                var mamlDescriptionElement = commentsElement.XPathSelectElement($".//maml:description[@type='{typeAttribute}']", Resolver);
                 if (mamlDescriptionElement != null)
                 {
                     mamlDescriptionElement = new XElement(mamlDescriptionElement); // Deep clone the element, as we're about to modify it.
@@ -390,8 +390,8 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
                 var paraElements = commentsElement.XPathSelectElements($".//para[@type='{typeAttribute}']").ToList();
                 if (paraElements.Any())
                 {
-                    var descriptionElement = new XElement(mamlNs + "description");
-                    paraElements.ForEach(para => descriptionElement.Add(new XElement(mamlNs + "para", Tidy(para.Value))));
+                    var descriptionElement = new XElement(MamlNs + "description");
+                    paraElements.ForEach(para => descriptionElement.Add(new XElement(MamlNs + "para", Tidy(para.Value))));
                     return descriptionElement;
                 }
             }
