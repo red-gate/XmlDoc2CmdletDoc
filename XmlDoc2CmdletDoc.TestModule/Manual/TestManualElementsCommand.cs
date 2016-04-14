@@ -54,6 +54,7 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
     [Cmdlet(VerbsDiagnostic.Test, "ManualElements")]
     [OutputType(typeof(ManualClass))]
     [OutputType(typeof(string))]
+    [OutputType(typeof(void))]
     public class TestManualElementsCommand : Cmdlet
     {
         public enum Importance

@@ -606,16 +606,22 @@ namespace XmlDoc2CmdletDoc.Tests
                 .XPathSelectElements("command:returnValues/command:returnValue", resolver)
                 .ToList();
             Assert.That(returnValues, Is.Not.Empty);
-            Assert.That(returnValues.Count, Is.EqualTo(2));
+            Assert.That(returnValues.Count, Is.EqualTo(3));
 
             {
-                var returnValue = returnValues.First();
+                var returnValue = returnValues[0];
                 var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
-                var returnValue = returnValues.Last();
+                var returnValue = returnValues[1];
+                var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
+                Assert.That(name.Value, Is.EqualTo("None"));
+            }
+
+            {
+                var returnValue = returnValues[2];
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
                 CheckManualClassType(type, false);
 
