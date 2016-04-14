@@ -500,7 +500,7 @@ namespace XmlDoc2CmdletDoc.Core
             var returnValueElement = new XElement(commandNs + "returnValues");
             foreach (var type in command.OutputTypes)
             {
-                returnValueElement.Add(GenerateComment("OutputType: " + type.Name));
+                returnValueElement.Add(GenerateComment("OutputType: " + (type == typeof(void) ? "None" : type.Name)));
                 var returnValueDescription = commentReader.GetOutputTypeDescriptionElement(command, type, reportWarning);
                 returnValueElement.Add(new XElement(commandNs + "returnValue",
                                                     GenerateTypeElement(commentReader, type, returnValueDescription == null, reportWarning),
@@ -558,7 +558,7 @@ namespace XmlDoc2CmdletDoc.Core
         private XElement GenerateTypeElement(ICommentReader commentReader, Type type, bool includeMamlDescription, ReportWarning reportWarning)
         {
             return new XElement(devNs + "type",
-                                new XElement(mamlNs + "name", type.FullName),
+                                new XElement(mamlNs + "name", type == typeof(void) ? "None" : type.FullName),
                                 new XElement(mamlNs + "uri"),
                                 includeMamlDescription ? commentReader.GetTypeDescriptionElement(type, reportWarning) : null);
         }
