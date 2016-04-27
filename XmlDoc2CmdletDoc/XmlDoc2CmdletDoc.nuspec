@@ -15,6 +15,9 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
 	<tags>PowerShell help xmldoc</tags>
 	<developmentDependency>true</developmentDependency>
+    <releaseNotes>Version 0.2.2 - GitHub issue 19: Help for cmdlet parameters is now explicitly ordered by Position, then Required, then Name, rather than relying on the arbitrary order of Type.GetMembers.
+	
+Version 0.2.1 - First public release.</releaseNotes>
   </metadata>
   <files>
     <file src="bin\$configuration$\*.dll" target="tools" />
