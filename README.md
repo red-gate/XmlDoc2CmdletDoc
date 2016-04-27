@@ -193,3 +193,4 @@ To build XmlDoc2CmdletDoc, simply invoke `.\build.ps1` from a PowerShell prompt.
 
 - [Chris Lambrou](https://github.com/chrislambrou) (Redgate)
 - [Michael Sorens](https://github.com/msorens)
+- [Mirosław Rypuła](https://github.com/rymir75)
