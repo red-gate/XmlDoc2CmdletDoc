@@ -324,7 +324,9 @@ namespace XmlDoc2CmdletDoc.Core
         {
             var syntaxItemElement = new XElement(CommandNs + "syntaxItem",
                                                  new XElement(MamlNs + "name", command.Name));
-            foreach (var parameter in command.GetParameters(parameterSetName))
+            foreach (var parameter in command.GetParameters(parameterSetName).OrderBy(p => p.GetPosition(parameterSetName)).
+                                                                              ThenBy(p => p.IsRequired(parameterSetName) ? "0" : "1").
+                                                                              ThenBy(p => p.Name))
             {
                 syntaxItemElement.Add(GenerateComment("Parameter: " + parameter.Name));
                 syntaxItemElement.Add(GenerateParameterElement(commentReader, parameter, parameterSetName, reportWarning));

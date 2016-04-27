@@ -38,6 +38,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testMamlElementsCommandElement;
         private XElement testReferencesCommandElement;
         private XElement testInputTypesCommandElement;
+        private XElement testPositionedParametersCommandElement;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -67,6 +68,7 @@ namespace XmlDoc2CmdletDoc.Tests
             testMamlElementsCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-MamlElements']", resolver);
             testReferencesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-References']", resolver);
             testInputTypesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-InputTypes']", resolver);
+            testPositionedParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-PositionedParameters']", resolver);
         }
 
         [Test]
@@ -798,5 +800,38 @@ If ($thingy -eq $that) {
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
   <maml:para>This is the MamlClass description.</maml:para>
 </maml:description>";
+
+        [Test]
+        public void Command_Syntax_Parameters_Ordered_By_Position()
+        {
+            Assert.That(testPositionedParametersCommandElement, Is.Not.Null);
+
+            var syntaxItemParameters = testPositionedParametersCommandElement.XPathSelectElements("command:syntax/command:syntaxItem/command:parameter", resolver).ToList();
+
+            Assert.That(syntaxItemParameters, Is.Not.Empty);
+            Assert.That(syntaxItemParameters.Count, Is.EqualTo(6));
+
+            var position = syntaxItemParameters[0].Attribute("position").Value;
+            Assert.That(position, Is.EqualTo("0"));
+
+            position = syntaxItemParameters[1].Attribute("position").Value;
+            Assert.That(position, Is.EqualTo("1"));
+
+            position = syntaxItemParameters[2].Attribute("position").Value;
+            Assert.That(position, Is.EqualTo("2"));
+
+            position = syntaxItemParameters[3].Attribute("position").Value;
+            Assert.That(position, Is.EqualTo("3"));
+
+            var require = syntaxItemParameters[4].Attribute("required").Value;
+            position = syntaxItemParameters[4].Attribute("position").Value;
+            Assert.That(position, Is.EqualTo("named"));
+            Assert.That(require, Is.EqualTo("true"));
+
+            require = syntaxItemParameters[5].Attribute("required").Value;
+            position = syntaxItemParameters[5].Attribute("position").Value;
+            Assert.That(position, Is.EqualTo("named"));
+            Assert.That(require, Is.EqualTo("false"));
+        }
     }
 }
