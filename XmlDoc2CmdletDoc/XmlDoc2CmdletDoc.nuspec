@@ -15,7 +15,9 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.3 - XmlDoc2CmdletDoc now executes prior to the AfterBuild target, rather than prior to the PostBuildEvent target, to give developers the option to copy files around in either target, rather than only in the latter.
+    <releaseNotes>Version 0.2.4 - Fixed issue #22. When encountering a Parameter with no getter, XmlDoc2CmdletDoc now records a warning that the default value for the Parameter cannot be obtained. Previously this raised a fatal exception.
+    
+Version 0.2.3 - XmlDoc2CmdletDoc now executes prior to the AfterBuild target, rather than prior to the PostBuildEvent target, to give developers the option to copy files around in either target, rather than only in the latter.
 
 Version 0.2.2 - GitHub issue 19: Help for cmdlet parameters is now explicitly ordered by Position, then Required, then Name, rather than relying on the arbitrary order of Type.GetMembers.
 
