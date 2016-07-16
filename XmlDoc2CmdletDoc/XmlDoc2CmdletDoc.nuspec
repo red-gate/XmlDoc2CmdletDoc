@@ -7,16 +7,18 @@
     <authors>Redgate</authors>
     <owners>Redgate</owners>
     <projectUrl>https://github.com/red-gate/XmlDoc2CmdletDoc</projectUrl>
-	<licenseUrl>https://github.com/red-gate/XmlDoc2CmdletDoc/blob/master/LICENSE.md</licenseUrl>
+    <licenseUrl>https://github.com/red-gate/XmlDoc2CmdletDoc/blob/master/LICENSE.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<summary>Generates help documentation for binary PowerShell modules from XML Doc comments.</summary>
+    <summary>Generates help documentation for binary PowerShell modules from XML Doc comments.</summary>
     <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments. Licensed under the terms of the new 3-clause BSD license.</description>
-	<language>en-us</language>
+    <language>en-us</language>
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
-	<tags>PowerShell help xmldoc</tags>
-	<developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.2 - GitHub issue 19: Help for cmdlet parameters is now explicitly ordered by Position, then Required, then Name, rather than relying on the arbitrary order of Type.GetMembers.
-	
+    <tags>PowerShell help xmldoc</tags>
+    <developmentDependency>true</developmentDependency>
+    <releaseNotes>Version 0.2.3 - XmlDoc2CmdletDoc now executes prior to the AfterBuild target, rather than prior to the PostBuildEvent target, to give developers the option to copy files around in either target, rather than only in the latter.
+
+Version 0.2.2 - GitHub issue 19: Help for cmdlet parameters is now explicitly ordered by Position, then Required, then Name, rather than relying on the arbitrary order of Type.GetMembers.
+
 Version 0.2.1 - First public release.</releaseNotes>
   </metadata>
   <files>
