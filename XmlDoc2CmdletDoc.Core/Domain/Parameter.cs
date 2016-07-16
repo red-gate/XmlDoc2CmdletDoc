@@ -128,20 +128,23 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// The default value of the parameter. This is obtained by instantiating the cmdlet and accessing the parameter
         /// property or field to determine its initial value.
         /// </summary>
-        public object DefaultValue
+        public object GetDefaultValue(ReportWarning reportWarning)
         {
-            get
+            var cmdlet = Activator.CreateInstance(_cmdletType);
+            switch (MemberInfo.MemberType)
             {
-                var cmdlet = Activator.CreateInstance(_cmdletType);
-                switch (MemberInfo.MemberType)
-                {
-                    case MemberTypes.Property:
-                        return ((PropertyInfo) MemberInfo).GetValue(cmdlet);
-                    case MemberTypes.Field:
-                        return ((FieldInfo) MemberInfo).GetValue(cmdlet);
-                    default:
-                        throw new NotSupportedException("Unsupported type: " + MemberInfo);
-                }
+                case MemberTypes.Property:
+                    var propertyInfo = ((PropertyInfo) MemberInfo);
+                    if (!propertyInfo.CanRead)
+                    {
+                        reportWarning(MemberInfo, "Parameter does not have a getter. Unable to determine its default value");
+                        return null;
+                    }
+                    return propertyInfo.GetValue(cmdlet);
+                case MemberTypes.Field:
+                    return ((FieldInfo) MemberInfo).GetValue(cmdlet);
+                default:
+                    throw new NotSupportedException("Unsupported type: " + MemberInfo);
             }
         }
 

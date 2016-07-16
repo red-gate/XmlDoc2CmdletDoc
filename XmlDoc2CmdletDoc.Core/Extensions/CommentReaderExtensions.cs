@@ -261,16 +261,17 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
                                 new XAttribute("required", true),
                                 GetSimpleTypeName(parameter.ParameterType));
         }
-        
+
         /// <summary>
         /// Obtains a <em>&lt;dev:defaultValue&gt;</em> element for a parameter.
         /// </summary>
         /// <param name="commentReader">The comment reader.</param>
         /// <param name="parameter">The parameter.</param>
+        /// <param name="reportWarning">Used to record warnings.</param>
         /// <returns>A default value element for the parameter's default value, or <em>null</em> if a default value could not be obtained.</returns>
-        public static XElement GetParameterDefaultValueElement(this ICommentReader commentReader, Parameter parameter)
+        public static XElement GetParameterDefaultValueElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
-            var defaultValue = parameter.DefaultValue; // TODO: Get the default value from the doc comments?
+            var defaultValue = parameter.GetDefaultValue(reportWarning); // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
             {
                 return new XElement(DevNs + "defaultValue", defaultValue.ToString());

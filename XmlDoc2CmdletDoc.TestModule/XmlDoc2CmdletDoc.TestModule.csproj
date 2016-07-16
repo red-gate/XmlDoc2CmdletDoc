@@ -53,6 +53,7 @@
     <Compile Include="References\TestReferencesCommand.cs" />
     <Compile Include="Undocumented\TestUndocumentedCommand.cs" />
     <Compile Include="Undocumented\UndocumentedClass.cs" />
+    <Compile Include="WriteOnly\TestWriteOnlyParameterCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

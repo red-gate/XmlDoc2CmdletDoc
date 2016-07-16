@@ -393,7 +393,7 @@ namespace XmlDoc2CmdletDoc.Core
                                 GenerateDescriptionElement(commentReader, parameter, reportWarning),
                                 commentReader.GetParameterValueElement(parameter, reportWarning),
                                 GenerateTypeElement(commentReader, parameter.ParameterType, true, reportWarning),
-                                commentReader.GetParameterDefaultValueElement(parameter),
+                                commentReader.GetParameterDefaultValueElement(parameter, reportWarning),
                                 GetParameterEnumeratedValuesElement(parameter));
             var aliasNames = parameter.Aliases.ToList();
             if (aliasNames.Count > 0)
