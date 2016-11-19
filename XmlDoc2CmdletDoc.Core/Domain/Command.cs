@@ -68,9 +68,19 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
-                return CmdletType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
-                    .Select(member => new Parameter(CmdletType, member));
+                var parameters = CmdletType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
+                                           .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
+                                           .Select(member => new Parameter(CmdletType, member));
+                if (typeof(IDynamicParameters).IsAssignableFrom(CmdletType))
+                {
+                    foreach (var nestedType in CmdletType.GetNestedTypes(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+                    {
+                        parameters = parameters.Concat(nestedType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
+                                                                 .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
+                                                                 .Select(member => new Parameter(nestedType, member)));
+                    }
+                }
+                return parameters.ToList();
             }
         }
 
