@@ -39,6 +39,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testReferencesCommandElement;
         private XElement testInputTypesCommandElement;
         private XElement testPositionedParametersCommandElement;
+        private XElement testDynamicParametersCommandElement;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -69,6 +70,7 @@ namespace XmlDoc2CmdletDoc.Tests
             testReferencesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-References']", resolver);
             testInputTypesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-InputTypes']", resolver);
             testPositionedParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-PositionedParameters']", resolver);
+            testDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DynamicParameters']", resolver);
         }
 
         [Test]
@@ -442,6 +444,24 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
+        public void Command_Parameters_DynamicParameter()
+        {
+            Assert.That(testDynamicParametersCommandElement, Is.Not.Null);
+
+            // We expect the static parameter to be documented.
+            var staticParameter = testDynamicParametersCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'StaticParam']", resolver);
+            Assert.That(staticParameter, Is.Not.Null);
+
+            // We also expect the dynamic parameter to be documented.
+            var dynamicParameter = testDynamicParametersCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'DynamicParam']", resolver);
+            Assert.That(dynamicParameter, Is.Not.Null);
+
+            // We don't expect non-parameters on the inner classes to be documented.
+            var irrelevantProperty = testDynamicParametersCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'IrrelevantProperty']", resolver);
+            Assert.That(irrelevantProperty, Is.Null);
+        }
+
+        [Test]
         public void Command_InputTypes_ForTestManualElements()
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
@@ -451,26 +471,26 @@ namespace XmlDoc2CmdletDoc.Tests
                 .ToList();
             Assert.That(inputTypes, Is.Not.Empty);
             Assert.That(inputTypes.Count, Is.EqualTo(3));
-	        var enumerator = inputTypes.GetEnumerator();
+            var enumerator = inputTypes.GetEnumerator();
 
             {
-				enumerator.MoveNext();
-		        var inputType = enumerator.Current;
+                enumerator.MoveNext();
+                var inputType = enumerator.Current;
                 var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
-			// allow multiple inputs of the same type
+            // allow multiple inputs of the same type
             {
-				enumerator.MoveNext();
-		        var inputType = enumerator.Current;
+                enumerator.MoveNext();
+                var inputType = enumerator.Current;
                 var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
-				enumerator.MoveNext();
-		        var returnValue = enumerator.Current;
+                enumerator.MoveNext();
+                var returnValue = enumerator.Current;
                 var type = returnValue.XPathSelectElement("dev:type", resolver);
                 CheckManualClassType(type, true);
 

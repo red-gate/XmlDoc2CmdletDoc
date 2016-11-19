@@ -42,6 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicParameters\TestDynamicParametersCommand.cs" />
     <Compile Include="InputTypes\TestInputTypesCommand.cs" />
     <Compile Include="Maml\MamlClass.cs" />
     <Compile Include="Maml\TestMamlElementsCommand.cs" />
