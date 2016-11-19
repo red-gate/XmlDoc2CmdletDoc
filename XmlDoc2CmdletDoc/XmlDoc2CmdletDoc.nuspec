@@ -15,7 +15,9 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.4 - Fixed issue #22. When encountering a Parameter with no getter, XmlDoc2CmdletDoc now records a warning that the default value for the Parameter cannot be obtained. Previously this raised a fatal exception.
+    <releaseNotes>Version 0.2.5 - Added limited support for documenting dynamic parameters. If a cmdlet implements IDynamicParameters, and its GetDynamicParameters method returns an instance of a nested type within the cmdlet, then help documentation will be extracted from the nested type's XML Doc comments.
+    
+Version 0.2.4 - Fixed issue #22. When encountering a Parameter with no getter, XmlDoc2CmdletDoc now records a warning that the default value for the Parameter cannot be obtained. Previously this raised a fatal exception.
     
 Version 0.2.3 - XmlDoc2CmdletDoc now executes prior to the AfterBuild target, rather than prior to the PostBuildEvent target, to give developers the option to copy files around in either target, rather than only in the latter.
 
