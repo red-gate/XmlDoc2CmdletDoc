@@ -92,7 +92,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var synopsis = testManualElementsCommandElement.XPathSelectElement("command:details/maml:description", resolver);
+            var synopsis = testManualElementsCommandElement.XPathSelectElement("./command:details/maml:description", resolver);
 
             Assert.That(synopsis, Is.Not.Null);
 
@@ -109,7 +109,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var synopsis = testMamlElementsCommandElement.XPathSelectElement("command:details/maml:description", resolver);
+            var synopsis = testMamlElementsCommandElement.XPathSelectElement("./command:details/maml:description", resolver);
 
             Assert.That(synopsis, Is.Not.Null);
 
@@ -125,7 +125,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var description = testManualElementsCommandElement.XPathSelectElement("maml:description", resolver);
+            var description = testManualElementsCommandElement.XPathSelectElement("./maml:description", resolver);
 
             Assert.That(description, Is.Not.Null);
 
@@ -142,7 +142,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var description = testMamlElementsCommandElement.XPathSelectElement("maml:description", resolver);
+            var description = testMamlElementsCommandElement.XPathSelectElement("./maml:description", resolver);
 
             Assert.That(description, Is.Not.Null);
 
@@ -158,7 +158,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testReferencesCommandElement, Is.Not.Null);
 
-            var description = testReferencesCommandElement.XPathSelectElement("maml:description", resolver);
+            var description = testReferencesCommandElement.XPathSelectElement("./maml:description", resolver);
 
             Assert.That(description, Is.Not.Null);
 
@@ -174,7 +174,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var syntaxItems = testManualElementsCommandElement.XPathSelectElements("command:syntax/command:syntaxItem", resolver).ToList();
+            var syntaxItems = testManualElementsCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem", resolver).ToList();
 
             Assert.That(syntaxItems, Is.Not.Empty);
             Assert.That(syntaxItems.Count, Is.EqualTo(1));
@@ -185,7 +185,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var syntaxItems = testMamlElementsCommandElement.XPathSelectElements("command:syntax/command:syntaxItem", resolver).ToList();
+            var syntaxItems = testMamlElementsCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem", resolver).ToList();
 
             Assert.That(syntaxItems, Is.Not.Empty);
             Assert.That(syntaxItems.Count, Is.EqualTo(2));
@@ -196,20 +196,20 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var syntaxItems = testMamlElementsCommandElement.XPathSelectElements("command:syntax/command:syntaxItem", resolver).ToList();
+            var syntaxItems = testMamlElementsCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem", resolver).ToList();
 
             Assert.That(syntaxItems, Is.Not.Empty);
             Assert.That(syntaxItems.Count, Is.EqualTo(2));
 
             {
                 var syntaxItemOne = syntaxItems[0];
-                var names = syntaxItemOne.XPathSelectElements("command:parameter/maml:name", resolver).Select(x => x.Value);
+                var names = syntaxItemOne.XPathSelectElements("./command:parameter/maml:name", resolver).Select(x => x.Value);
                 Assert.That(names, Is.EqualTo(new [] {"CommonParameter", "ParameterOne"}));
             }
 
             {
                 var syntaxItemTwo = syntaxItems[1];
-                var names = syntaxItemTwo.XPathSelectElements("command:parameter/maml:name", resolver).Select(x => x.Value);
+                var names = syntaxItemTwo.XPathSelectElements("./command:parameter/maml:name", resolver).Select(x => x.Value);
                 Assert.That(names, Is.EqualTo(new [] {"CommonParameter", "ParameterTwo"}));
             }
         }
@@ -225,7 +225,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+                $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
         }
 
@@ -237,7 +237,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+                $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("required");
@@ -252,7 +252,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+                $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("position");
@@ -268,7 +268,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+                $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("pipelineInput");
@@ -282,7 +282,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+                $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("globbing");
@@ -298,7 +298,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+                $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var attribute = parameter.Attribute("aliases");
@@ -316,10 +316,10 @@ namespace XmlDoc2CmdletDoc.Tests
             foreach (var alias in aliases.Split(','))
             {
                 var parameter = testManualElementsCommandElement.XPathSelectElement(
-                    $"command:parameters/command:parameter[maml:name/text() = '{alias}']", resolver);
+                    $"./command:parameters/command:parameter[maml:name/text() = '{alias}']", resolver);
                 Assert.That(parameter, Is.Not.Null);
 
-                var description = parameter.XPathSelectElement("maml:description", resolver);
+                var description = parameter.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description, Is.Not.Null);
                 Assert.That(description.ToSimpleString(), Is.StringMatching("is an alias of.*" + parameterName));
             }
@@ -332,10 +332,10 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                "command:syntax/command:syntaxItem/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
+                $"./command:syntax/command:syntaxItem/command:parameter[maml:name/text() = '" +targetName+"']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var valueGroup = parameter.XPathSelectElement("command:parameterValueGroup", resolver);
+            var valueGroup = parameter.XPathSelectElement("./command:parameterValueGroup", resolver);
             Assert.That(valueGroup, Is.Not.Null);
 
             var expectedXml =
@@ -353,10 +353,10 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var description = parameter.XPathSelectElement("maml:description", resolver);
+            var description = parameter.XPathSelectElement("./maml:description", resolver);
             Assert.That(description, Is.Not.Null);
 
             var expectedXml =
@@ -372,10 +372,10 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var parameter = testMamlElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'CommonParameter']", resolver);
+            var parameter = testMamlElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'CommonParameter']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var description = parameter.XPathSelectElement("maml:description", resolver);
+            var description = parameter.XPathSelectElement("./maml:description", resolver);
             Assert.That(description, Is.Not.Null);
 
             var expectedXml =
@@ -390,10 +390,10 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var type = parameter.XPathSelectElement("dev:type", resolver);
+            var type = parameter.XPathSelectElement("./dev:type", resolver);
             CheckManualClassType(type, true);
         }
 
@@ -402,10 +402,10 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var parameter = testMamlElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'CommonParameter']", resolver);
+            var parameter = testMamlElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'CommonParameter']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var type = parameter.XPathSelectElement("dev:type", resolver);
+            var type = parameter.XPathSelectElement("./dev:type", resolver);
             CheckMamlClassType(type, true);
         }
 
@@ -418,12 +418,12 @@ namespace XmlDoc2CmdletDoc.Tests
 
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var fullName = parameter.XPathSelectElement("command:parameterValue", resolver);
+            var fullName = parameter.XPathSelectElement("./command:parameterValue", resolver);
             Assert.That(fullName.Value, Is.EqualTo(expectedTypeName));
-            var shortName = parameter.XPathSelectElement("dev:type/maml:name", resolver);
+            var shortName = parameter.XPathSelectElement("./dev:type/maml:name", resolver);
             Assert.That(shortName.Value, Is.EqualTo(expectedFullTypeName));
         }
 
@@ -436,12 +436,12 @@ namespace XmlDoc2CmdletDoc.Tests
 
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
-            var fullName = parameter.XPathSelectElement("command:parameterValue", resolver);
+            var fullName = parameter.XPathSelectElement("./command:parameterValue", resolver);
             Assert.That(fullName.Value, Is.EqualTo(expectedTypeName));
-            var shortName = parameter.XPathSelectElement("dev:type/maml:name", resolver);
+            var shortName = parameter.XPathSelectElement("./dev:type/maml:name", resolver);
             Assert.That(shortName.Value, Is.EqualTo(expectedFullTypeName));
         }
 
@@ -451,15 +451,15 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testDynamicParametersCommandElement, Is.Not.Null);
 
             // We expect the static parameter to be documented.
-            var staticParameter = testDynamicParametersCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'StaticParam']", resolver);
+            var staticParameter = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'StaticParam']", resolver);
             Assert.That(staticParameter, Is.Not.Null);
 
             // We also expect the dynamic parameter to be documented.
-            var dynamicParameter = testDynamicParametersCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'DynamicParam']", resolver);
+            var dynamicParameter = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParam']", resolver);
             Assert.That(dynamicParameter, Is.Not.Null);
 
             // We don't expect non-parameters on the inner classes to be documented.
-            var irrelevantProperty = testDynamicParametersCommandElement.XPathSelectElement("command:parameters/command:parameter[maml:name/text() = 'IrrelevantProperty']", resolver);
+            var irrelevantProperty = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'IrrelevantProperty']", resolver);
             Assert.That(irrelevantProperty, Is.Null);
         }
 
@@ -469,7 +469,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var inputTypes = testManualElementsCommandElement
-                .XPathSelectElements("command:inputTypes/command:inputType", resolver)
+                .XPathSelectElements("./command:inputTypes/command:inputType", resolver)
                 .ToList();
             Assert.That(inputTypes, Is.Not.Empty);
             Assert.That(inputTypes.Count, Is.EqualTo(3));
@@ -478,7 +478,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 enumerator.MoveNext();
                 var inputType = enumerator.Current;
-                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+                var name = inputType.XPathSelectElement("./dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
@@ -486,17 +486,17 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 enumerator.MoveNext();
                 var inputType = enumerator.Current;
-                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+                var name = inputType.XPathSelectElement("./dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
                 enumerator.MoveNext();
                 var returnValue = enumerator.Current;
-                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                var type = returnValue.XPathSelectElement("./dev:type", resolver);
                 CheckManualClassType(type, true);
 
-                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                var description = returnValue.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description, Is.Null);
             }
         }
@@ -507,23 +507,23 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
             var inputTypes = testMamlElementsCommandElement
-                .XPathSelectElements("command:inputTypes/command:inputType", resolver)
+                .XPathSelectElements("./command:inputTypes/command:inputType", resolver)
                 .ToList();
             Assert.That(inputTypes, Is.Not.Empty);
             Assert.That(inputTypes.Count, Is.EqualTo(2));
 
             {
                 var inputType = inputTypes.First();
-                var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+                var name = inputType.XPathSelectElement("./dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
                 var returnValue = inputTypes.Last();
-                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                var type = returnValue.XPathSelectElement("./dev:type", resolver);
                 CheckMamlClassType(type, true);
 
-                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                var description = returnValue.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description, Is.Null);
             }
         }
@@ -533,7 +533,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testInputTypesCommandElement, Is.Not.Null);
 
             var inputTypes = testInputTypesCommandElement
-                .XPathSelectElements("command:inputTypes/command:inputType", resolver)
+                .XPathSelectElements("./command:inputTypes/command:inputType", resolver)
                 .ToList();
             Assert.That(inputTypes, Is.Not.Empty);
             Assert.That(inputTypes.Count, Is.EqualTo(3));
@@ -549,11 +549,11 @@ namespace XmlDoc2CmdletDoc.Tests
             var inputType = inputTypes[0];
 
             // Check we've got the right one.
-            var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+            var name = inputType.XPathSelectElement("./dev:type/maml:name", resolver);
             Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass1).FullName));
 
             // Check that there's an explicit description.
-            var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
+            var explicitDescription = inputType.XPathSelectElement("./maml:description", resolver);
             Assert.That(explicitDescription, Is.Not.Null);
             var expectedDescription =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
@@ -562,7 +562,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(explicitDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
 
             // Check that there's no generic type descrition taken from the InputTypeClass1 comment.
-            var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
+            var genericDescription = inputType.XPathSelectElement("./dev:type/maml:description", resolver);
             Assert.That(genericDescription, Is.Null);
         }
 
@@ -576,15 +576,15 @@ namespace XmlDoc2CmdletDoc.Tests
             var inputType = inputTypes[1];
 
             // Check we've got the right one.
-            var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+            var name = inputType.XPathSelectElement("./dev:type/maml:name", resolver);
             Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass2).FullName));
 
             // Check that there's no explicit description.
-            var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
+            var explicitDescription = inputType.XPathSelectElement("./maml:description", resolver);
             Assert.That(explicitDescription, Is.Null);
 
             // Check that there's a generic type descrition taken from the InputTypeClass2 comment.
-            var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
+            var genericDescription = inputType.XPathSelectElement("./dev:type/maml:description", resolver);
             Assert.That(genericDescription, Is.Not.Null);
             var expectedDescription =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
@@ -603,11 +603,11 @@ namespace XmlDoc2CmdletDoc.Tests
             var inputType = inputTypes[2];
 
             // Check we've got the right one.
-            var name = inputType.XPathSelectElement("dev:type/maml:name", resolver);
+            var name = inputType.XPathSelectElement("./dev:type/maml:name", resolver);
             Assert.That(name.Value, Is.EqualTo(typeof(InputTypeClass3).FullName));
 
             // Check that there's an explicit description inherited from the parameter description.
-            var explicitDescription = inputType.XPathSelectElement("maml:description", resolver);
+            var explicitDescription = inputType.XPathSelectElement("./maml:description", resolver);
             Assert.That(explicitDescription, Is.Not.Null);
             var expectedDescription =
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
@@ -616,7 +616,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(explicitDescription.ToSimpleString(), Is.EqualTo(expectedDescription));
 
             // Check that there's no generic type descrition taken from the InputTypeClass3 comment.
-            var genericDescription = inputType.XPathSelectElement("dev:type/maml:description", resolver);
+            var genericDescription = inputType.XPathSelectElement("./dev:type/maml:description", resolver);
             Assert.That(genericDescription, Is.Null);
         }
 
@@ -626,31 +626,31 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var returnValues = testManualElementsCommandElement
-                .XPathSelectElements("command:returnValues/command:returnValue", resolver)
+                .XPathSelectElements("./command:returnValues/command:returnValue", resolver)
                 .ToList();
             Assert.That(returnValues, Is.Not.Empty);
             Assert.That(returnValues.Count, Is.EqualTo(3));
 
             {
                 var returnValue = returnValues[0];
-                var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
+                var name = returnValue.XPathSelectElement("./dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
                 var returnValue = returnValues[1];
-                var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
+                var name = returnValue.XPathSelectElement("./dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo("None"));
             }
 
             {
                 var returnValue = returnValues[2];
-                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                var type = returnValue.XPathSelectElement("./dev:type", resolver);
                 CheckManualClassType(type, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
-                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                var description = returnValue.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description.ToSimpleString(), Is.EqualTo(ManualClassDescription));
             }
         }
@@ -661,25 +661,25 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
             var returnValues = testMamlElementsCommandElement
-                .XPathSelectElements("command:returnValues/command:returnValue", resolver)
+                .XPathSelectElements("./command:returnValues/command:returnValue", resolver)
                 .ToList();
             Assert.That(returnValues, Is.Not.Empty);
             Assert.That(returnValues.Count, Is.EqualTo(2));
 
             {
                 var returnValue = returnValues.First();
-                var name = returnValue.XPathSelectElement("dev:type/maml:name", resolver);
+                var name = returnValue.XPathSelectElement("./dev:type/maml:name", resolver);
                 Assert.That(name.Value, Is.EqualTo(typeof(string).FullName));
             }
 
             {
                 var returnValue = returnValues.Last();
-                var type = returnValue.XPathSelectElement("dev:type", resolver);
+                var type = returnValue.XPathSelectElement("./dev:type", resolver);
                 CheckMamlClassType(type, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
-                var description = returnValue.XPathSelectElement("maml:description", resolver);
+                var description = returnValue.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description.ToSimpleString(), Is.EqualTo(MamlClassDescription));
             }
         }
@@ -689,7 +689,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var alertSet = testManualElementsCommandElement.XPathSelectElement("maml:alertSet", resolver);
+            var alertSet = testManualElementsCommandElement.XPathSelectElement("./maml:alertSet", resolver);
             Assert.That(alertSet, Is.Not.Null);
             Assert.That(alertSet.ToSimpleString(), Is.EqualTo(AlertSet));
         }
@@ -699,7 +699,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testMamlElementsCommandElement, Is.Not.Null);
 
-            var alertSet = testMamlElementsCommandElement.XPathSelectElement("maml:alertSet", resolver);
+            var alertSet = testMamlElementsCommandElement.XPathSelectElement("./maml:alertSet", resolver);
             Assert.That(alertSet, Is.Not.Null);
             Assert.That(alertSet.ToSimpleString(), Is.EqualTo(AlertSet));
         }
@@ -722,7 +722,7 @@ namespace XmlDoc2CmdletDoc.Tests
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var examples = testManualElementsCommandElement.XPathSelectElement("command:examples", resolver);
+            var examples = testManualElementsCommandElement.XPathSelectElement("./command:examples", resolver);
             Assert.That(examples, Is.Not.Null);
             Assert.That(examples.ToSimpleString(), Is.EqualTo(Examples));
         }
@@ -776,11 +776,11 @@ If ($thingy -eq $that) {
         {
             Assert.That(type, Is.Not.Null);
 
-            var name = type.XPathSelectElement("maml:name", resolver);
+            var name = type.XPathSelectElement("./maml:name", resolver);
             Assert.That(name, Is.Not.Null);
             Assert.That(name.Value, Is.EqualTo(typeof(ManualClass).FullName));
 
-            var description = type.XPathSelectElement("maml:description", resolver);
+            var description = type.XPathSelectElement("./maml:description", resolver);
             if (expectADescription)
             {
                 Assert.That(description, Is.Not.Null);
@@ -802,11 +802,11 @@ If ($thingy -eq $that) {
         {
             Assert.That(type, Is.Not.Null);
 
-            var name = type.XPathSelectElement("maml:name", resolver);
+            var name = type.XPathSelectElement("./maml:name", resolver);
             Assert.That(name, Is.Not.Null);
             Assert.That(name.Value, Is.EqualTo(typeof(MamlClass).FullName));
 
-            var description = type.XPathSelectElement("maml:description", resolver);
+            var description = type.XPathSelectElement("./maml:description", resolver);
             if (expectADescription)
             {
                 Assert.That(description, Is.Not.Null);
@@ -828,7 +828,7 @@ If ($thingy -eq $that) {
         {
             Assert.That(testPositionedParametersCommandElement, Is.Not.Null);
 
-            var syntaxItemParameters = testPositionedParametersCommandElement.XPathSelectElements("command:syntax/command:syntaxItem/command:parameter", resolver).ToList();
+            var syntaxItemParameters = testPositionedParametersCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem/command:parameter", resolver).ToList();
 
             Assert.That(syntaxItemParameters, Is.Not.Empty);
             Assert.That(syntaxItemParameters.Count, Is.EqualTo(6));
