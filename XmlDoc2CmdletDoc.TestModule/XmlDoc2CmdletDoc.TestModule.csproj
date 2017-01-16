@@ -48,6 +48,7 @@
     <Compile Include="Maml\TestMamlElementsCommand.cs" />
     <Compile Include="Manual\ManualClass.cs" />
     <Compile Include="Manual\TestManualElementsCommand.cs" />
+    <Compile Include="Parameterless\TestParameterlessCommand.cs" />
     <Compile Include="PositionedParameters\TestPositionedParametersCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InputTypes\InputTypeClass.cs" />

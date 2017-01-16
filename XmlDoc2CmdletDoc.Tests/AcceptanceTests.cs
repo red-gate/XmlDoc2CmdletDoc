@@ -39,6 +39,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testReferencesCommandElement;
         private XElement testInputTypesCommandElement;
         private XElement testPositionedParametersCommandElement;
+        private XElement testParameterlessCommandElement;
         private XElement testDynamicParametersCommandElement;
 
         [TestFixtureSetUp]
@@ -70,6 +71,7 @@ namespace XmlDoc2CmdletDoc.Tests
             testReferencesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-References']", resolver);
             testInputTypesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-InputTypes']", resolver);
             testPositionedParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-PositionedParameters']", resolver);
+            testParameterlessCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-Parameterless']", resolver);
             testDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DynamicParameters']", resolver);
         }
 
@@ -852,6 +854,21 @@ If ($thingy -eq $that) {
             position = syntaxItemParameters[5].Attribute("position").Value;
             Assert.That(position, Is.EqualTo("named"));
             Assert.That(require, Is.EqualTo("false"));
+        }
+
+        [Test]
+        public void Command_Syntax_Parameterless()
+        {
+            Assert.That(testParameterlessCommandElement, Is.Not.Null);
+
+            // There shpuld be a single syntaxItem element.
+            var syntaxItems = testParameterlessCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem", resolver).ToList();
+            Assert.That(syntaxItems, Is.Not.Empty);
+            Assert.That(syntaxItems.Count, Is.EqualTo(1));
+
+            // And it should not contain any parameters.
+            var syntaxItemParameters = syntaxItems[0].XPathSelectElements("./command:parameter", resolver).ToList();
+            Assert.That(syntaxItemParameters, Is.Empty);
         }
     }
 }

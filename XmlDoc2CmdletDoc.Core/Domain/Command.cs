@@ -99,17 +99,17 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                                                p.ParameterSetNames.Contains(ParameterAttribute.AllParameterSets));
         }
 
-	    /// <summary>
-	    /// The names of the parameter sets that the parameters belongs to.
-	    /// </summary>
-	    public IEnumerable<string> ParameterSetNames
-	    {
-		    get
-		    {
-			    return Parameters.SelectMany(p => p.ParameterSetNames)
-			                     .Union(new[] {ParameterAttribute.AllParameterSets}) //Parameterless cmdlets need this seeded
-			                     .Distinct();
-		    }
-	    }
+        /// <summary>
+        /// The names of the parameter sets that the parameters belongs to.
+        /// </summary>
+        public IEnumerable<string> ParameterSetNames
+        {
+            get
+            {
+                return Parameters.SelectMany(p => p.ParameterSetNames)
+                                 .Union(new[] {ParameterAttribute.AllParameterSets}) // Parameterless cmdlets need this seeded
+                                 .Distinct();
+            }
+        }
     }
 }
