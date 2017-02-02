@@ -15,7 +15,7 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.7 - Fixed issue #31. Removed affinity for running as a 32-bit process, thus ensuring 64-bit target modules can be loaded.
+    <releaseNotes>Version 0.2.7 - Fixed issue #31. Use platform-specific versions of XmlDoc2CmdletDoc.exe
 
 Version 0.2.6 - Fixed issue #28. Ensure that help syntax is correctly displayed for parameterless cmdlets.
 

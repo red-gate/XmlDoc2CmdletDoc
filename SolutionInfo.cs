@@ -20,4 +20,4 @@ using System.Runtime.InteropServices;
 // Instead, change the value defined in version-number.txt.
 [assembly: AssemblyVersion("0.2.7")]
 [assembly: AssemblyFileVersion("0.2.7")]
-[assembly: AssemblyInformationalVersion("0.2.7-Fix64BitAssemblyLoad")]
+[assembly: AssemblyInformationalVersion("0.2.7-Fix64Bit001")]

@@ -13,12 +13,14 @@ $SolutionPath = "$RepositoryRoot\XmlDoc2CmdletDoc.sln" | Resolve-Path
 $NuGetPath = "$PsScriptRoot\nuget.exe" | Resolve-Path
 $DistPath = "$RepositoryRoot\dist"
 
+
 # Helper function for clearer logging of each task.
 function Write-Info {
     param ([string] $Message)
 
     Write-Host "## $Message ##" -ForegroundColor Magenta
 }
+
 
 # Environment-specific configuration should happen here (and only here!)
 task Init {
@@ -71,6 +73,7 @@ function Get-BranchName {
     return 'master'
 }
 
+
 # Clean task, deletes all build output folders.
 task Clean {
     Write-Info 'Cleaning build output'
@@ -81,6 +84,7 @@ task Clean {
     }
 }
 
+
 # RestorePackages task, restores all the NuGet packages.
 task RestorePackages {
     Write-Info "Restoring NuGet packages for solution $SolutionPath"
@@ -88,12 +92,14 @@ task RestorePackages {
     & $NuGetPath @('restore', $SolutionPath)
 }
 
+
 # UpdateAssemblyInfo task, updates the AssemblyVersion, AssemblyFileVersion and AssemblyInformationlVersion attributes in the source code.
 task UpdateAssemblyInfo  Init, {
     Write-Info 'Updating assembly information'
 
     "$RepositoryRoot\SolutionInfo.cs" | Resolve-Path | Update-AssemblyVersion -Version $Version -InformationalVersion $NuGetPackageVersion
 }
+
 
 # Compile task, runs MSBuild to build the solution.
 task Compile  UpdateAssemblyInfo, RestorePackages, {
@@ -108,7 +114,38 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
     }
 }
 
-task Sign  Compile, {
+
+# Create a forced 32-bit version of the tool.
+task CorFlags  Compile, {
+    Write-Info "Using CorFlags.exe to create a 32-bit forced version of XmlDoc2CmdletDoc.exe"
+
+    copy -Force "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc.exe" "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc32.exe"
+
+    $CorFlagsPath = Get-CorFlagsPath
+    Write-Host "CorFlagsPath = $CorFlagsPath"
+    $Parameters = @(
+        "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc32.exe"
+        '/32BITREQ+'
+    )
+
+    exec {
+        & $CorFlagsPath $Parameters
+    }
+}
+
+function Get-CorFlagsPath {
+    $Files = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows" `
+        | Get-ChildItem -File -Recurse -Filter CorFlags.exe `
+        | Sort-Object -Descending { $_.VersionInfo.ProductVersion }
+    if ($Files.Count -eq 0) {
+        throw 'Failed to locate CorFlags.exe'
+    }
+    return $Files[0].FullName
+}
+
+
+# Sign the files (note that this is signing, not strong-naming)
+task Sign  CorFlags, {
     if (-not $AssemblySigningEnabled) {
         Write-Info 'Skipping assembly signing'
     } else {
