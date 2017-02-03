@@ -38,7 +38,7 @@ task Init {
     # Establish NuGet package version.
     $BranchName = Get-BranchName
     $IsDefaultBranch = $BranchName -eq 'master'
-    $script:NuGetPackageVersion = New-NuGetPackageVersion -Version $Version -BranchName $BranchName -IsDefaultBranch $IsDefaultBranch
+    $script:NuGetPackageVersion = New-SemanticNuGetPackageVersion -Version $Version -BranchName $BranchName -IsDefaultBranch $IsDefaultBranch
     Write-Host "NuGet package version = $NuGetPackageVersion"
     
     # Establish whether or not to sign the asseblies.
