@@ -16,6 +16,7 @@ $DistPath = "$RepositoryRoot\dist"
 
 # Helper function for clearer logging of each task.
 function Write-Info {
+    [CmdletBinding()]
     param ([string] $Message)
 
     Write-Host "## $Message ##" -ForegroundColor Magenta
@@ -117,7 +118,7 @@ task Compile  UpdateAssemblyInfo, RestorePackages, {
 
 # Create a forced 32-bit version of the tool.
 task CorFlags  Compile, {
-    Write-Info "Using CorFlags.exe to create a 32-bit forced version of XmlDoc2CmdletDoc.exe"
+    Write-Info 'Using CorFlags.exe to create a 32-bit forced version of XmlDoc2CmdletDoc.exe'
 
     copy -Force "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc.exe" "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc32.exe"
 
@@ -134,12 +135,16 @@ task CorFlags  Compile, {
 }
 
 function Get-CorFlagsPath {
-    $Files = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows" `
-        | Get-ChildItem -File -Recurse -Filter CorFlags.exe `
-        | Sort-Object -Descending { $_.VersionInfo.ProductVersion }
-    if ($Files.Count -eq 0) {
-        throw 'Failed to locate CorFlags.exe'
-    }
+    $ProgramFiles = ${env:ProgramFiles(x86)}
+    $ProgramFiles = if ($ProgramFiles) { $ProgramFiles } else { $env:ProgramFiles }
+    $Root = "$ProgramFiles\Microsoft SDKs\Windows"
+    if (-not (Test-Path $Root)) { throw "Path not found: $Root" }
+
+    $Files =  $Root |
+        Get-ChildItem -File -Recurse -Filter CorFlags.exe |
+        Sort-Object -Descending { $_.VersionInfo.ProductVersion }
+    if ($Files.Count -eq 0) { throw 'Failed to locate CorFlags.exe' }
+
     return $Files[0].FullName
 }
 
