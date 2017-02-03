@@ -15,7 +15,7 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.7 - Fixed issue #31. Use platform-specific versions of XmlDoc2CmdletDoc.exe
+    <releaseNotes>Version 0.2.7 - Fixed issue #31. MSBuild task now accommodates binary modules that are specifically targeted at only x86 or x64 architectures.
 
 Version 0.2.6 - Fixed issue #28. Ensure that help syntax is correctly displayed for parameterless cmdlets.
 
