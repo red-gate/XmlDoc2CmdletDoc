@@ -15,12 +15,14 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.6 - Fixed issue #28. Ensure that help syntax is correctly displayed for parameterless cmdlets.
-    
+    <releaseNotes>Version 0.2.7 - Fixed issue #31. MSBuild task now accommodates binary modules that are specifically targeted at only x86 or x64 architectures.
+
+Version 0.2.6 - Fixed issue #28. Ensure that help syntax is correctly displayed for parameterless cmdlets.
+
 Version 0.2.5 - Added limited support for documenting dynamic parameters. If a cmdlet implements IDynamicParameters, and its GetDynamicParameters method returns an instance of a nested type within the cmdlet, then help documentation will be extracted from the nested type's XML Doc comments.
-    
+
 Version 0.2.4 - Fixed issue #22. When encountering a Parameter with no getter, XmlDoc2CmdletDoc now records a warning that the default value for the Parameter cannot be obtained. Previously this raised a fatal exception.
-    
+
 Version 0.2.3 - XmlDoc2CmdletDoc now executes prior to the AfterBuild target, rather than prior to the PostBuildEvent target, to give developers the option to copy files around in either target, rather than only in the latter.
 
 Version 0.2.2 - Fixed issue #19: Help for cmdlet parameters is now explicitly ordered by Position, then Required, then Name, rather than relying on the arbitrary order of Type.GetMembers.
@@ -30,7 +32,6 @@ Version 0.2.1 - First public release.</releaseNotes>
   <files>
     <file src="bin\$configuration$\*.dll" target="tools" />
     <file src="bin\$configuration$\*.exe" target="tools" />
-    <file src="XmlDoc2CmdletDoc.props" target="build" />
     <file src="XmlDoc2CmdletDoc.targets" target="build" />
   </files>
 </package>
