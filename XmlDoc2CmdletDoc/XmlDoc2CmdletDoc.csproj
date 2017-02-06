@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="XmlDoc2CmdletDoc.nuspec" />
-    <None Include="XmlDoc2CmdletDoc.props" />
     <None Include="XmlDoc2CmdletDoc.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
