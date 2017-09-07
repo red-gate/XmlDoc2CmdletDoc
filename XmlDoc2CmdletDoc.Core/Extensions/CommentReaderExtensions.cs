@@ -276,7 +276,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             {
                 if (defaultValue.GetType().IsArray)
                 {
-                    return new XElement(DevNs + "defaultValue", string.Join(", ", ((object[])defaultValue).Select(element => element.ToString())));
+                    return new XElement(DevNs + "defaultValue", string.Join(", ", ((Array)defaultValue).OfType<object>().Select(element => element.ToString())));
                 }
                 return new XElement(DevNs + "defaultValue", defaultValue.ToString());
             }
