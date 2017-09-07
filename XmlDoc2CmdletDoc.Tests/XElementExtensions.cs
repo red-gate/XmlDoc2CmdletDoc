@@ -39,11 +39,11 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 if (node is XElement)
                 {
-                    newElement.Add(((XElement) node).Simplify());
+                    newElement.Add(((XElement)node).Simplify());
                 }
                 else if (node is XText)
                 {
-                    newElement.Add(((XText) node).Value.Trim());
+                    newElement.Add(((XText)node).Value.Trim());
                 }
             }
             return newElement;

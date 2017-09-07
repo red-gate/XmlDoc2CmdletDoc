@@ -8,6 +8,6 @@
     /// </summary>
     public class MamlClass
     {
-         
+
     }
 }

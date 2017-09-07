@@ -19,9 +19,9 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         /// Creates a new instance that decorates the specified <paramref name="proxy"/>.
         /// </summary>
         /// <param name="proxy">The proxy source of comments.</param>
-        public RewritingCommentReader(ICommentReader proxy) {
-            if (proxy == null) throw new ArgumentNullException(nameof(proxy));
-            _proxy = proxy;
+        public RewritingCommentReader(ICommentReader proxy)
+        {
+            _proxy = proxy ?? throw new ArgumentNullException(nameof(proxy));
         }
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

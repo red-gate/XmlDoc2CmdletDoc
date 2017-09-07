@@ -70,8 +70,7 @@ namespace XmlDoc2CmdletDoc.Core
             catch (Exception exception)
             {
                 Console.Error.WriteLine(exception);
-                var typeLoadException = exception as ReflectionTypeLoadException;
-                if (typeLoadException != null)
+                if (exception is ReflectionTypeLoadException typeLoadException)
                 {
                     foreach (var loaderException in typeLoadException.LoaderExceptions)
                     {
@@ -362,9 +361,9 @@ namespace XmlDoc2CmdletDoc.Core
             {
                 var parameterElement = GenerateParameterElement(commentReader, parameter, ParameterAttribute.AllParameterSets, reportWarning);
                 parametersElement.Add(parameterElement);
-                var nameElement = (XElement) (parameterElement.Nodes().First(n => ((XElement) n).Name == MamlNs + "name"));
+                var nameElement = (XElement)(parameterElement.Nodes().First(n => ((XElement)n).Name == MamlNs + "name"));
                 nameElement.Value = alias;
-                var descriptionElement = (XElement) (parameterElement.Nodes().FirstOrDefault(n => ((XElement) n).Name == MamlNs + "description"));
+                var descriptionElement = (XElement)(parameterElement.Nodes().FirstOrDefault(n => ((XElement)n).Name == MamlNs + "description"));
                 if (descriptionElement == null)
                 {
                     descriptionElement = new XElement(MamlNs + "description");
@@ -448,7 +447,7 @@ namespace XmlDoc2CmdletDoc.Core
         private XElement GenerateParameterEnumeratedValueElement(string enumValue)
         {
             // These hard-coded attributes were copied from what PowerShell's own core cmdlets use
-            return new XElement(CommandNs + "parameterValue", 
+            return new XElement(CommandNs + "parameterValue",
                                 new XAttribute("required", false),
                                 new XAttribute("variableLength", false),
                                 enumValue);

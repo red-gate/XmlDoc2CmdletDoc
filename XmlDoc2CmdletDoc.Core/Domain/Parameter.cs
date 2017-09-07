@@ -46,15 +46,12 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                 switch (MemberInfo.MemberType)
                 {
                     case MemberTypes.Property:
-                        var type = ((PropertyInfo) MemberInfo).PropertyType;
-                        var innerType = Nullable.GetUnderlyingType(type);
-                        return innerType ?? type;
                         var type = ((PropertyInfo)MemberInfo).PropertyType;
                         var elementType = type.IsArray ? type.GetElementType() : null;
                         var innerType = Nullable.GetUnderlyingType(elementType ?? type);
                         return innerType ?? elementType ?? type;
                     case MemberTypes.Field:
-                        return ((FieldInfo) MemberInfo).FieldType;
+                        return ((FieldInfo)MemberInfo).FieldType;
                     default:
                         throw new NotSupportedException("Unsupported type: " + MemberInfo);
                 }
@@ -138,7 +135,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             switch (MemberInfo.MemberType)
             {
                 case MemberTypes.Property:
-                    var propertyInfo = ((PropertyInfo) MemberInfo);
+                    var propertyInfo = ((PropertyInfo)MemberInfo);
                     if (!propertyInfo.CanRead)
                     {
                         reportWarning(MemberInfo, "Parameter does not have a getter. Unable to determine its default value");
@@ -146,7 +143,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                     }
                     return propertyInfo.GetValue(cmdlet);
                 case MemberTypes.Field:
-                    return ((FieldInfo) MemberInfo).GetValue(cmdlet);
+                    return ((FieldInfo)MemberInfo).GetValue(cmdlet);
                 default:
                     throw new NotSupportedException("Unsupported type: " + MemberInfo);
             }

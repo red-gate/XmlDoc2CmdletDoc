@@ -20,11 +20,8 @@ namespace XmlDoc2CmdletDoc.Core.Comments
         /// <param name="reportWarning">Used to report failed comment lookups.</param>
         public LoggingCommentReader(ICommentReader proxy, ReportWarning reportWarning)
         {
-            if (proxy == null) throw new ArgumentNullException(nameof(proxy));
-            if (reportWarning == null) throw new ArgumentNullException(nameof(reportWarning));
-
-            _proxy = proxy;
-            _reportWarning = reportWarning;
+            _proxy = proxy ?? throw new ArgumentNullException(nameof(proxy));
+            _reportWarning = reportWarning ?? throw new ArgumentNullException(nameof(reportWarning));
         }
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
