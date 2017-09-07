@@ -49,6 +49,10 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                         var type = ((PropertyInfo) MemberInfo).PropertyType;
                         var innerType = Nullable.GetUnderlyingType(type);
                         return innerType ?? type;
+                        var type = ((PropertyInfo)MemberInfo).PropertyType;
+                        var elementType = type.IsArray ? type.GetElementType() : null;
+                        var innerType = Nullable.GetUnderlyingType(elementType ?? type);
+                        return innerType ?? elementType ?? type;
                     case MemberTypes.Field:
                         return ((FieldInfo) MemberInfo).FieldType;
                     default:

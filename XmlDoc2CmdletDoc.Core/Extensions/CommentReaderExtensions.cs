@@ -274,6 +274,10 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var defaultValue = parameter.GetDefaultValue(reportWarning); // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
             {
+                if (defaultValue.GetType().IsArray)
+                {
+                    return new XElement(DevNs + "defaultValue", string.Join(", ", ((object[])defaultValue).Select(element => element.ToString())));
+                }
                 return new XElement(DevNs + "defaultValue", defaultValue.ToString());
             }
             return null;
