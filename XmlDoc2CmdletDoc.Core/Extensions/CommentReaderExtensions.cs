@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -274,11 +275,18 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var defaultValue = parameter.GetDefaultValue(reportWarning); // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
             {
-                if (defaultValue.GetType().IsArray)
+                if (defaultValue is IEnumerable enumerable)
                 {
-                    return new XElement(DevNs + "defaultValue", string.Join(", ", ((Array)defaultValue).OfType<object>().Select(element => element.ToString())));
+                    var content = string.Join(", ", enumerable.Cast<object>().Select(element => element.ToString()));
+                    if (content != "")
+                    {
+                        return new XElement(DevNs + "defaultValue", content);
+                    }
                 }
-                return new XElement(DevNs + "defaultValue", defaultValue.ToString());
+                else
+                {
+                    return new XElement(DevNs + "defaultValue", defaultValue.ToString());
+                }
             }
             return null;
         }

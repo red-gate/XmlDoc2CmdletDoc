@@ -41,6 +41,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testPositionedParametersCommandElement;
         private XElement testParameterlessCommandElement;
         private XElement testDynamicParametersCommandElement;
+        private XElement testDefaultValueCommandElement;
 
         [SetUp]
         public void SetUp()
@@ -73,6 +74,7 @@ namespace XmlDoc2CmdletDoc.Tests
             testPositionedParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-PositionedParameters']", resolver);
             testParameterlessCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-Parameterless']", resolver);
             testDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DynamicParameters']", resolver);
+            testDefaultValueCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DefaultValue']", resolver);
         }
 
         [Test]
@@ -461,6 +463,60 @@ namespace XmlDoc2CmdletDoc.Tests
             // We don't expect non-parameters on the inner classes to be documented.
             var irrelevantProperty = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'IrrelevantProperty']", resolver);
             Assert.That(irrelevantProperty, Is.Null);
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_DefaultValue_ForArray()
+        {
+            Assert.That(testDefaultValueCommandElement, Is.Not.Null);
+
+            var parameter = testDefaultValueCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'ArrayParameter']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+            var defaultValue = parameter.XPathSelectElement("./dev:defaultValue", resolver);
+            Assert.That(defaultValue, Is.Not.Null);
+
+            Assert.That(defaultValue.Value, Is.EqualTo("1, 2, 3"));
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_DefaultValue_ForList()
+        {
+            Assert.That(testDefaultValueCommandElement, Is.Not.Null);
+
+            var parameter = testDefaultValueCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'ListParameter']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+            var defaultValue = parameter.XPathSelectElement("./dev:defaultValue", resolver);
+            Assert.That(defaultValue, Is.Not.Null);
+
+            Assert.That(defaultValue.Value, Is.EqualTo("1, 2, 3"));
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_DefaultValue_ForEnumerable()
+        {
+            Assert.That(testDefaultValueCommandElement, Is.Not.Null);
+
+            var parameter = testDefaultValueCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'EnumerableParameter']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+            var defaultValue = parameter.XPathSelectElement("./dev:defaultValue", resolver);
+            Assert.That(defaultValue, Is.Not.Null);
+
+            Assert.That(defaultValue.Value, Is.EqualTo("1, 2, 3"));
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_DefaultValue_ForEmptyEnumerable()
+        {
+            Assert.That(testDefaultValueCommandElement, Is.Not.Null);
+
+            var parameter = testDefaultValueCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'EmptyEnumerableParameter']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+            var defaultValue = parameter.XPathSelectElement("./dev:defaultValue", resolver);
+            Assert.That(defaultValue, Is.Null);
         }
 
         [Test]
