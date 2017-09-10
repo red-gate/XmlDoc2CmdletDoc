@@ -20,8 +20,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// and have a <see cref="CmdletAttribute"/>.</param>
         public Command(Type cmdletType)
         {
-            if (cmdletType == null) throw new ArgumentNullException(nameof(cmdletType));
-            CmdletType = cmdletType;
+            CmdletType = cmdletType ?? throw new ArgumentNullException(nameof(cmdletType));
             _attribute = CmdletType.GetCustomAttribute<CmdletAttribute>();
             if (_attribute == null) throw new ArgumentException("Missing CmdletAttribute", nameof(cmdletType));
         }
@@ -107,7 +106,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             get
             {
                 return Parameters.SelectMany(p => p.ParameterSetNames)
-                                 .Union(new[] {ParameterAttribute.AllParameterSets}) // Parameterless cmdlets need this seeded
+                                 .Union(new[] { ParameterAttribute.AllParameterSets }) // Parameterless cmdlets need this seeded
                                  .Distinct();
             }
         }

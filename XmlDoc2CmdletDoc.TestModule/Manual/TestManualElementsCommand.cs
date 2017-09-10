@@ -104,7 +104,7 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         public string WithDescriptionAliasParameter { get; set; }
 
         [Parameter(Mandatory = false)]
-        [Alias("Name1C","Name2C","Name3C")]
+        [Alias("Name1C", "Name2C", "Name3C")]
         public string MultipleAliasParameter { get; set; }
 
         [Parameter(Mandatory = false)]

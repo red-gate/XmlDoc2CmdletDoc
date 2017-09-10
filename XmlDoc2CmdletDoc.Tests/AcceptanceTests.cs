@@ -42,7 +42,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testParameterlessCommandElement;
         private XElement testDynamicParametersCommandElement;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void SetUp()
         {
             // ARRANGE
@@ -204,13 +204,13 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var syntaxItemOne = syntaxItems[0];
                 var names = syntaxItemOne.XPathSelectElements("./command:parameter/maml:name", resolver).Select(x => x.Value);
-                Assert.That(names, Is.EqualTo(new [] {"CommonParameter", "ParameterOne"}));
+                Assert.That(names, Is.EqualTo(new[] { "CommonParameter", "ParameterOne" }));
             }
 
             {
                 var syntaxItemTwo = syntaxItems[1];
                 var names = syntaxItemTwo.XPathSelectElements("./command:parameter/maml:name", resolver).Select(x => x.Value);
-                Assert.That(names, Is.EqualTo(new [] {"CommonParameter", "ParameterTwo"}));
+                Assert.That(names, Is.EqualTo(new[] { "CommonParameter", "ParameterTwo" }));
             }
         }
 
@@ -321,7 +321,7 @@ namespace XmlDoc2CmdletDoc.Tests
 
                 var description = parameter.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description, Is.Not.Null);
-                Assert.That(description.ToSimpleString(), Is.StringMatching("is an alias of.*" + parameterName));
+                Assert.That(description.ToSimpleString(), Does.Match("is an alias of.*" + parameterName));
             }
         }
 
@@ -332,7 +332,7 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
-                $"./command:syntax/command:syntaxItem/command:parameter[maml:name/text() = '" +targetName+"']", resolver);
+                $"./command:syntax/command:syntaxItem/command:parameter[maml:name/text() = '" + targetName + "']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var valueGroup = parameter.XPathSelectElement("./command:parameterValueGroup", resolver);
@@ -418,7 +418,7 @@ namespace XmlDoc2CmdletDoc.Tests
 
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = '" + targetName + "']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var fullName = parameter.XPathSelectElement("./command:parameterValue", resolver);
@@ -436,7 +436,7 @@ namespace XmlDoc2CmdletDoc.Tests
 
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = '"+targetName+"']", resolver);
+            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = '" + targetName + "']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var fullName = parameter.XPathSelectElement("./command:parameterValue", resolver);

@@ -6,6 +6,6 @@
     /// <para type="description">This is also part of the ManualClass description.</para>
     public class ManualClass
     {
-         
+
     }
 }

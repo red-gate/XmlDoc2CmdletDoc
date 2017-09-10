@@ -274,6 +274,10 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var defaultValue = parameter.GetDefaultValue(reportWarning); // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
             {
+                if (defaultValue.GetType().IsArray)
+                {
+                    return new XElement(DevNs + "defaultValue", string.Join(", ", ((Array)defaultValue).OfType<object>().Select(element => element.ToString())));
+                }
                 return new XElement(DevNs + "defaultValue", defaultValue.ToString());
             }
             return null;
@@ -350,10 +354,10 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             switch (memberInfo.MemberType)
             {
                 case MemberTypes.Field:
-                    return commentReader.GetComments((FieldInfo) memberInfo);
+                    return commentReader.GetComments((FieldInfo)memberInfo);
 
                 case MemberTypes.Property:
-                    return commentReader.GetComments((PropertyInfo) memberInfo);
+                    return commentReader.GetComments((PropertyInfo)memberInfo);
 
                 default:
                     throw new NotSupportedException("Member type not supported: " + memberInfo.MemberType);
@@ -416,7 +420,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         private static string TidyCode(string value)
         {
             // Split the value into separate lines, and eliminate leading and trailing empty lines.
-            IEnumerable<string> lines = value.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None)
+            IEnumerable<string> lines = value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
                              .SkipWhile(string.IsNullOrWhiteSpace)
                              .Reverse()
                              .SkipWhile(string.IsNullOrWhiteSpace)
@@ -445,8 +449,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
                 return GetSimpleTypeName(type.GetElementType()) + "[]";
             }
 
-            string result;
-            if (PredefinedSimpleTypeNames.TryGetValue(type, out result))
+            if (PredefinedSimpleTypeNames.TryGetValue(type, out string result))
             {
                 return result;
             }
