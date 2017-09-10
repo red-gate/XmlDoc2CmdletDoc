@@ -43,15 +43,14 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
+                Type GetType(Type type) => Nullable.GetUnderlyingType(type) ?? type;
+
                 switch (MemberInfo.MemberType)
                 {
                     case MemberTypes.Property:
-                        var type = ((PropertyInfo)MemberInfo).PropertyType;
-                        var elementType = type.IsArray ? type.GetElementType() : null;
-                        var innerType = Nullable.GetUnderlyingType(elementType ?? type);
-                        return innerType ?? elementType ?? type;
+                        return GetType(((PropertyInfo) MemberInfo).PropertyType);
                     case MemberTypes.Field:
-                        return ((FieldInfo)MemberInfo).FieldType;
+                        return GetType(((FieldInfo) MemberInfo).FieldType);
                     default:
                         throw new NotSupportedException("Unsupported type: " + MemberInfo);
                 }
