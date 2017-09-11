@@ -4,7 +4,6 @@
 [CmdletBinding()]
 param([string]$Configuration = 'Release')
 
-use 14.0 MSBuild
 
 # Useful paths used by multiple tasks.
 $RepositoryRoot = "$PsScriptRoot\.." | Resolve-Path
@@ -106,12 +105,33 @@ task UpdateAssemblyInfo  Init, {
 task Compile  UpdateAssemblyInfo, RestorePackages, {
     Write-Info "Compiling solution $SolutionPath"
 
+    $MSBuildPath = Get-MSBuildPath
+    $Parameters = @(
+        $SolutionPath,
+        '/nodeReuse:False',
+        '/target:Build',
+        "/property:Configuration=$Configuration"
+    )
     exec {
-        msbuild "$SolutionPath" `
-        /nodeReuse:False `
-        /target:Build `
-        /property:Configuration=$Configuration `
-        $AdditionalMSBuildParameters
+        & $MSBuildPath $Parameters
+    }
+}
+
+function Get-MSBuildPath {
+    $MSBuildPath = @(
+        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe",
+        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\MSBuild.exe",
+        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
+    ) |
+        Where-Object {
+            Write-Host "Checking $_"
+            return Test-Path $_
+        } |
+    Select-Object -First 1
+    if ($MSBuildPath) {
+        return $MSBuildPath
+    } else {
+        throw 'Failed to locate MSBuild.exe'
     }
 }
 
