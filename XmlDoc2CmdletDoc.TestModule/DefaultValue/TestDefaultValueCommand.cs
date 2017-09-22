@@ -12,6 +12,12 @@ namespace XmlDoc2CmdletDoc.TestModule.DefaultValue
     public class TestDefaultValueCommand : Cmdlet
     {
         /// <summary>
+        /// <para type="description">This has the default value: &quot;default-string-value&quot;.</para>
+        /// </summary>
+        [Parameter]
+        public string StringParameter = "default-string-value";
+
+        /// <summary>
         /// <para type="description">This has the default values: 1, 2, 3.</para>
         /// </summary>
         [Parameter]

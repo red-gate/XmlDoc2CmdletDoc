@@ -15,7 +15,9 @@
     <copyright>Copyright 2014-2016 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.8 - Partially addressed issues #33 and #37. Slightly improved handling of default values and array parameters. More work is required in this area, though.
+    <releaseNotes>Version 0.2.9 - Fixed issue #39. Corrected a regression for the default value of string parameters.
+    
+Version 0.2.8 - Partially addressed issues #33 and #37. Slightly improved handling of default values and array parameters. More work is required in this area, though.
     
 Version 0.2.7 - Fixed issue #31. MSBuild task now accommodates binary modules that are specifically targeted at only x86 or x64 architectures.
 

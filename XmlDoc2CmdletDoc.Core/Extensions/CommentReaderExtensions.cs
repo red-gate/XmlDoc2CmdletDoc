@@ -275,7 +275,7 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
             var defaultValue = parameter.GetDefaultValue(reportWarning); // TODO: Get the default value from the doc comments?
             if (defaultValue != null)
             {
-                if (defaultValue is IEnumerable enumerable)
+                if (defaultValue is IEnumerable enumerable && !(defaultValue is string))
                 {
                     var content = string.Join(", ", enumerable.Cast<object>().Select(element => element.ToString()));
                     if (content != "")
