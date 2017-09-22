@@ -466,6 +466,20 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
+        public void Command_Parameters_Parameter_DefaultValue_ForString()
+        {
+            Assert.That(testDefaultValueCommandElement, Is.Not.Null);
+
+            var parameter = testDefaultValueCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'StringParameter']", resolver);
+            Assert.That(parameter, Is.Not.Null);
+
+            var defaultValue = parameter.XPathSelectElement("./dev:defaultValue", resolver);
+            Assert.That(defaultValue, Is.Not.Null);
+
+            Assert.That(defaultValue.Value, Is.EqualTo("default-string-value"));
+        }
+
+        [Test]
         public void Command_Parameters_Parameter_DefaultValue_ForArray()
         {
             Assert.That(testDefaultValueCommandElement, Is.Not.Null);
