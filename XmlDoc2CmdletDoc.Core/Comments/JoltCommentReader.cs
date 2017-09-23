@@ -6,7 +6,8 @@ using Jolt;
 namespace XmlDoc2CmdletDoc.Core.Comments
 {
     /// <summary>
-    /// Implementation of <see cref="ICommentReader"/> that's based on an instance of <see cref="XmlDocCommentReader"/> from the Jolt.Net library.
+    /// Implementation of <see cref="T:XmlDoc2CmdletDoc.Core.Comments.ICommentReader" /> that's based on an instance
+    /// of <see cref="T:Jolt.XmlDocCommentReader" /> from the Jolt.Net library.
     /// </summary>
     public class JoltCommentReader : ICommentReader
     {
@@ -22,10 +23,13 @@ namespace XmlDoc2CmdletDoc.Core.Comments
             _proxy = new XmlDocCommentReader(docCommentsFullPath);
         }
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        /// <inheritdoc />
         public XElement GetComments(Type type) => _proxy.GetComments(type);
+
+        /// <inheritdoc />
         public XElement GetComments(FieldInfo fieldInfo) => _proxy.GetComments(fieldInfo);
+
+        /// <inheritdoc />
         public XElement GetComments(PropertyInfo propertyInfo) => _proxy.GetComments(propertyInfo);
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

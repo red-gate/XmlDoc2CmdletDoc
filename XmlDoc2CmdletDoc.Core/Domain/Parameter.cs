@@ -26,15 +26,15 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// <param name="memberInfo">The parameter member of the cmdlet. May represent either a field or property.</param>
         public Parameter(Type cmdletType, MemberInfo memberInfo)
         {
-            _cmdletType = cmdletType;
-            MemberInfo = memberInfo;
+            _cmdletType = cmdletType ?? throw new ArgumentNullException(nameof(cmdletType));
+            MemberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
             _attributes = memberInfo.GetCustomAttributes<ParameterAttribute>();
         }
 
         /// <summary>
         /// The name of the parameter.
         /// </summary>
-        public string Name { get { return MemberInfo.Name; } }
+        public string Name => MemberInfo.Name;
 
         /// <summary>
         /// The type of the parameter.
@@ -60,42 +60,29 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// <summary>
         /// The names of the parameter sets that the parameter belongs to.
         /// </summary>
-        public IEnumerable<string> ParameterSetNames
-        {
-            get { return _attributes.Select(attr => attr.ParameterSetName); }
-        }
+        public IEnumerable<string> ParameterSetNames => _attributes.Select(attr => attr.ParameterSetName);
 
-        private IEnumerable<ParameterAttribute> GetAttributes(string parameterSetName)
-        {
-            return parameterSetName == ParameterAttribute.AllParameterSets
-                       ? _attributes
-                       : _attributes.Where(attr => attr.ParameterSetName == parameterSetName ||
-                                                   attr.ParameterSetName == ParameterAttribute.AllParameterSets);
-        }
+        private IEnumerable<ParameterAttribute> GetAttributes(string parameterSetName) =>
+            parameterSetName == ParameterAttribute.AllParameterSets
+                ? _attributes
+                : _attributes.Where(attr => attr.ParameterSetName == parameterSetName ||
+                                            attr.ParameterSetName == ParameterAttribute.AllParameterSets);
 
         /// <summary>
         /// Indicates whether or not the parameter is mandatory.
         /// </summary>
-        public bool IsRequired(string parameterSetName)
-        {
-            return GetAttributes(parameterSetName).Any(attr => attr.Mandatory);
-        }
+        public bool IsRequired(string parameterSetName) => GetAttributes(parameterSetName).Any(attr => attr.Mandatory);
 
         /// <summary>
         /// Indicates whether or not the parameter supports globbing. Currently always returns false.
         /// </summary>
-        public bool SupportsGlobbing(string parameterSetName)
-        {
-            return false; // TODO: How do we determine this correctly?
-        }
+        public bool SupportsGlobbing(string parameterSetName) => false; // TODO: How do we determine this correctly?
 
         /// <summary>
         /// Indicates whether or not the parameter takes its value from the pipeline input.
         /// </summary>
-        public bool IsPipeline(string parameterSetName)
-        {
-            return GetAttributes(parameterSetName).Any(attr => attr.ValueFromPipeline || attr.ValueFromPipelineByPropertyName);
-        }
+        public bool IsPipeline(string parameterSetName) =>
+            GetAttributes(parameterSetName).Any(attr => attr.ValueFromPipeline || attr.ValueFromPipelineByPropertyName);
 
         /// <summary>
         /// Indicates whether or not the parameter takes its value from the pipeline input.
@@ -177,10 +164,10 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
-                var aliasAttribute = (AliasAttribute)MemberInfo
+                var aliasAttribute = (AliasAttribute) MemberInfo
                     .GetCustomAttributes(typeof(AliasAttribute), true)
                     .FirstOrDefault();
-                return aliasAttribute == null ? new List<string>() : aliasAttribute.AliasNames;
+                return aliasAttribute?.AliasNames ?? new List<string>();
             }
         }
     }

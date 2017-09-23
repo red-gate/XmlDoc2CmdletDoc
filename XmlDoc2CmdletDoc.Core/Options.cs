@@ -61,12 +61,8 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// Provides a string representation of the options, for logging and debug purposes.
         /// </summary>
-        public override string ToString()
-        {
-            return $"AssemblyPath: {AssemblyPath}, " +
-                   $"OutputHelpFilePath: {OutputHelpFilePath}, " +
-                   $"DocCommentsPath: {DocCommentsPath}, " +
-                   $"TreatWarningsAsErrors {TreatWarningsAsErrors}";
-        }
+        public override string ToString() => $"AssemblyPath: {AssemblyPath}, " +
+                                             $"OutputHelpFilePath: {OutputHelpFilePath}, " +
+                                             $"TreatWarningsAsErrors {TreatWarningsAsErrors}";
     }
 }

@@ -21,8 +21,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         public Command(Type cmdletType)
         {
             CmdletType = cmdletType ?? throw new ArgumentNullException(nameof(cmdletType));
-            _attribute = CmdletType.GetCustomAttribute<CmdletAttribute>();
-            if (_attribute == null) throw new ArgumentException("Missing CmdletAttribute", nameof(cmdletType));
+            _attribute = CmdletType.GetCustomAttribute<CmdletAttribute>() ?? throw new ArgumentException("Missing CmdletAttribute", nameof(cmdletType));
         }
 
         /// <summary>
@@ -33,32 +32,26 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// <summary>
         /// The cmdlet verb.
         /// </summary>
-        public string Verb { get { return _attribute.VerbName; } }
+        public string Verb => _attribute.VerbName;
 
         /// <summary>
         /// The cmdlet noun.
         /// </summary>
-        public string Noun { get { return _attribute.NounName; } }
+        public string Noun => _attribute.NounName;
 
         /// <summary>
         /// The cmdlet name, of the form verb-noun.
         /// </summary>
-        public string Name { get { return Verb + "-" + Noun; } }
+        public string Name => Verb + "-" + Noun;
 
         /// <summary>
         /// The output types declared by the command.
         /// </summary>
-        public IEnumerable<Type> OutputTypes
-        {
-            get
-            {
-                return CmdletType.GetCustomAttributes<OutputTypeAttribute>()
-                                 .SelectMany(attr => attr.Type)
-                                 .Select(pstype => pstype.Type)
-                                 .Distinct()
-                                 .OrderBy(type => type.FullName);
-            }
-        }
+        public IEnumerable<Type> OutputTypes => CmdletType.GetCustomAttributes<OutputTypeAttribute>()
+                                                          .SelectMany(attr => attr.Type)
+                                                          .Select(pstype => pstype.Type)
+                                                          .Distinct()
+                                                          .OrderBy(type => type.FullName);
 
         /// <summary>
         /// The parameters belonging to the command.
@@ -90,25 +83,18 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// <returns>
         /// The command's parameters that belong to the specified parameter set.
         /// </returns>
-        public IEnumerable<Parameter> GetParameters(string parameterSetName)
-        {
-            return parameterSetName == ParameterAttribute.AllParameterSets
-                       ? Parameters
-                       : Parameters.Where(p => p.ParameterSetNames.Contains(parameterSetName) ||
-                                               p.ParameterSetNames.Contains(ParameterAttribute.AllParameterSets));
-        }
+        public IEnumerable<Parameter> GetParameters(string parameterSetName) =>
+            parameterSetName == ParameterAttribute.AllParameterSets
+                ? Parameters
+                : Parameters.Where(p => p.ParameterSetNames.Contains(parameterSetName) ||
+                                        p.ParameterSetNames.Contains(ParameterAttribute.AllParameterSets));
 
         /// <summary>
         /// The names of the parameter sets that the parameters belongs to.
         /// </summary>
-        public IEnumerable<string> ParameterSetNames
-        {
-            get
-            {
-                return Parameters.SelectMany(p => p.ParameterSetNames)
-                                 .Union(new[] { ParameterAttribute.AllParameterSets }) // Parameterless cmdlets need this seeded
-                                 .Distinct();
-            }
-        }
+        public IEnumerable<string> ParameterSetNames =>
+            Parameters.SelectMany(p => p.ParameterSetNames)
+                      .Union(new[] {ParameterAttribute.AllParameterSets}) // Parameterless cmdlets need this seeded
+                      .Distinct();
     }
 }
