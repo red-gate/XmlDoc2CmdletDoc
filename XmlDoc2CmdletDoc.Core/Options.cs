@@ -32,7 +32,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// <summary>
         /// A list of parameter sets that should be excluded from the cmdlet XML Help file.
         /// </summary>
-        public readonly IReadOnlyCollection<string> ExcludedParameterSets;
+        public readonly ISet<string> ExcludedParameterSets;
 
         /// <summary>
         /// Creates a new instance with the specified settings.
@@ -59,7 +59,7 @@ namespace XmlDoc2CmdletDoc.Core
 
             AssemblyPath = Path.GetFullPath(assemblyPath);
 
-            ExcludedParameterSets = excludedParameterSets;
+            ExcludedParameterSets = new HashSet<string>(excludedParameterSets);
 
             OutputHelpFilePath = outputHelpFilePath == null
                                      ? Path.ChangeExtension(AssemblyPath, "dll-Help.xml")
