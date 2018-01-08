@@ -18,24 +18,42 @@ namespace XmlDoc2CmdletDoc
 
         private static Options ParseArguments(string[] args)
         {
-            const string StrictSwitch = "-strict";
+            const string strictSwitch = "-strict";
 
-            var treatWarningsAsErrors = false;
-            var arguments = args.ToList();
-            if (arguments.Contains(StrictSwitch))
+            try
             {
-                treatWarningsAsErrors = true;
-                arguments.Remove(StrictSwitch);
+                var treatWarningsAsErrors = false;
+                string assemblyPath = null;
+
+                for (var i = 0; i < args.Length; i++)
+                {
+                    if (args[i] == strictSwitch)
+                    {
+                        treatWarningsAsErrors = true;
+                    }
+                    else if (assemblyPath == null)
+                    {
+                        assemblyPath = args[i];
+                    }
+                    else
+                    {
+                        throw new ArgumentException();
+                    }
+                }
+
+                if (assemblyPath == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                return new Options(treatWarningsAsErrors, assemblyPath);
             }
-
-            if (arguments.Count != 1)
+            catch (ArgumentException)
             {
-                Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe [{0}] assemblyPath", StrictSwitch);
+                Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe [{0}] assemblyPath", strictSwitch);
                 Environment.Exit(-1);
+                throw;
             }
-
-            var options = new Options(treatWarningsAsErrors, arguments.First());
-            return options;
         }
     }
 }
