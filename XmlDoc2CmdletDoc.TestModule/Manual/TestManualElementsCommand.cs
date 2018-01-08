@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 
 namespace XmlDoc2CmdletDoc.TestModule.Manual
 {
@@ -112,5 +113,9 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
 
         [Parameter]
         public int? NullableParameter { get; set; }
+
+        [Parameter]
+        [Obsolete]
+        public string ObsoleteParameter { get; set; }
     }
 }

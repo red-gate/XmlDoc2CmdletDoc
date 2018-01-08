@@ -232,6 +232,17 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
+        public void Command_Parameters_Obsolete()
+        {
+            Assert.That(testManualElementsCommandElement, Is.Not.Null);
+
+            const string parameterName = "ObsoleteParameter";
+
+            var parameter = testManualElementsCommandElement.XPathSelectElement($"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
+            Assert.That(parameter, Is.Null);
+        }
+
+        [Test]
         [TestCase("MandatoryParameter", "true")]
         [TestCase("OptionalParameter", "false")]
         public void Command_Parameters_Parameter_RequiredAttribute(string parameterName, string expectedValue)
