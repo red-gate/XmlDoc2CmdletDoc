@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using XmlDoc2CmdletDoc.Core;
 
 namespace XmlDoc2CmdletDoc
@@ -16,20 +16,28 @@ namespace XmlDoc2CmdletDoc
             Environment.Exit((int)exitCode);
         }
 
-        private static Options ParseArguments(string[] args)
+        private static Options ParseArguments(IReadOnlyList<string> args)
         {
             const string strictSwitch = "-strict";
+            const string excludeParameterSetSwitch = "-excludeParameterSet";
 
             try
             {
                 var treatWarningsAsErrors = false;
+                var excludedParameterSets = new List<string>();
                 string assemblyPath = null;
 
-                for (var i = 0; i < args.Length; i++)
+                for (var i = 0; i < args.Count; i++)
                 {
                     if (args[i] == strictSwitch)
                     {
                         treatWarningsAsErrors = true;
+                    }
+                    else if (args[i] == excludeParameterSetSwitch)
+                    {
+                        i++;
+                        if (i >= args.Count) throw new ArgumentException();
+                        excludedParameterSets.Add(args[i]);
                     }
                     else if (assemblyPath == null)
                     {
@@ -46,7 +54,7 @@ namespace XmlDoc2CmdletDoc
                     throw new ArgumentException();
                 }
 
-                return new Options(treatWarningsAsErrors, assemblyPath);
+                return new Options(treatWarningsAsErrors, assemblyPath, excludedParameterSets);
             }
             catch (ArgumentException)
             {
