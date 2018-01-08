@@ -30,6 +30,11 @@ namespace XmlDoc2CmdletDoc.Core
         public readonly bool TreatWarningsAsErrors;
 
         /// <summary>
+        /// A list of parameter sets that should be excluded from the cmdlet XML Help file.
+        /// </summary>
+        public readonly IReadOnlyCollection<string> ExcludedParameterSets;
+
+        /// <summary>
         /// Creates a new instance with the specified settings.
         /// </summary>
         /// <param name="treatWarningsAsErrors">Indicates whether or not the presence of warnings should be treated as a failure condition.</param>
@@ -54,6 +59,8 @@ namespace XmlDoc2CmdletDoc.Core
 
             AssemblyPath = Path.GetFullPath(assemblyPath);
 
+            ExcludedParameterSets = excludedParameterSets;
+
             OutputHelpFilePath = outputHelpFilePath == null
                                      ? Path.ChangeExtension(AssemblyPath, "dll-Help.xml")
                                      : Path.GetFullPath(outputHelpFilePath);
@@ -67,6 +74,7 @@ namespace XmlDoc2CmdletDoc.Core
         /// Provides a string representation of the options, for logging and debug purposes.
         /// </summary>
         public override string ToString() => $"AssemblyPath: {AssemblyPath}, " +
+                                             $"ExcludedParameterSets: {string.Join(", ", ExcludedParameterSets)}" +
                                              $"OutputHelpFilePath: {OutputHelpFilePath}, " +
                                              $"TreatWarningsAsErrors {TreatWarningsAsErrors}";
     }
