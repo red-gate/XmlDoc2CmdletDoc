@@ -4,13 +4,23 @@ using XmlDoc2CmdletDoc.Core;
 
 namespace XmlDoc2CmdletDoc
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
+            var options = ParseArguments(args);
+            Console.WriteLine(options);
+            var engine = new Engine();
+            var exitCode = engine.GenerateHelp(options);
+            Console.WriteLine("GenerateHelp completed with exit code '{0}'", exitCode);
+            Environment.Exit((int)exitCode);
+        }
+
+        private static Options ParseArguments(string[] args)
+        {
             const string StrictSwitch = "-strict";
 
-            bool treatWarningsAsErrors = false;
+            var treatWarningsAsErrors = false;
             var arguments = args.ToList();
             if (arguments.Contains(StrictSwitch))
             {
@@ -23,15 +33,9 @@ namespace XmlDoc2CmdletDoc
                 Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe [{0}] assemblyPath", StrictSwitch);
                 Environment.Exit(-1);
             }
-            else
-            {
-                var options = new Options(treatWarningsAsErrors, arguments.First());
-                Console.WriteLine(options);
-                var engine = new Engine();
-                var exitCode = engine.GenerateHelp(options);
-                Console.WriteLine("GenerateHelp completed with exit code '{0}'", exitCode);
-                Environment.Exit((int)exitCode);
-            }
+
+            var options = new Options(treatWarningsAsErrors, arguments.First());
+            return options;
         }
     }
 }
