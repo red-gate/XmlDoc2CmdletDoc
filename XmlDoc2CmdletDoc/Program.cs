@@ -1,36 +1,67 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using XmlDoc2CmdletDoc.Core;
 
 namespace XmlDoc2CmdletDoc
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            const string StrictSwitch = "-strict";
+            var options = ParseArguments(args);
+            Console.WriteLine(options);
+            var engine = new Engine();
+            var exitCode = engine.GenerateHelp(options);
+            Console.WriteLine("GenerateHelp completed with exit code '{0}'", exitCode);
+            Environment.Exit((int)exitCode);
+        }
 
-            bool treatWarningsAsErrors = false;
-            var arguments = args.ToList();
-            if (arguments.Contains(StrictSwitch))
+        private static Options ParseArguments(IReadOnlyList<string> args)
+        {
+            const string strictSwitch = "-strict";
+            const string excludeParameterSetSwitch = "-excludeParameterSets";
+
+            try
             {
-                treatWarningsAsErrors = true;
-                arguments.Remove(StrictSwitch);
+                var treatWarningsAsErrors = false;
+                var excludedParameterSets = new List<string>();
+                string assemblyPath = null;
+
+                for (var i = 0; i < args.Count; i++)
+                {
+                    if (args[i] == strictSwitch)
+                    {
+                        treatWarningsAsErrors = true;
+                    }
+                    else if (args[i] == excludeParameterSetSwitch)
+                    {
+                        i++;
+                        if (i >= args.Count) throw new ArgumentException();
+                        excludedParameterSets.AddRange(args[i].Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()));
+                    }
+                    else if (assemblyPath == null)
+                    {
+                        assemblyPath = args[i];
+                    }
+                    else
+                    {
+                        throw new ArgumentException();
+                    }
+                }
+
+                if (assemblyPath == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                return new Options(treatWarningsAsErrors, assemblyPath, excludedParameterSets.Contains);
             }
-
-            if (arguments.Count != 1)
+            catch (ArgumentException)
             {
-                Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe [{0}] assemblyPath", StrictSwitch);
+                Console.Error.WriteLine($"Usage: XmlDoc2CmdletDoc.exe [{strictSwitch}] [{excludeParameterSetSwitch} parameterSetToExclude1,parameterSetToExclude2] assemblyPath");
                 Environment.Exit(-1);
-            }
-            else
-            {
-                var options = new Options(treatWarningsAsErrors, arguments.First());
-                Console.WriteLine(options);
-                var engine = new Engine();
-                var exitCode = engine.GenerateHelp(options);
-                Console.WriteLine("GenerateHelp completed with exit code '{0}'", exitCode);
-                Environment.Exit((int)exitCode);
+                throw;
             }
         }
     }
