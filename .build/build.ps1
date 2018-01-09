@@ -7,7 +7,6 @@ param([string]$Configuration = 'Release')
 
 # Useful paths used by multiple tasks.
 $RepositoryRoot = "$PsScriptRoot\.." | Resolve-Path
-$VersionFilePath = "$RepositoryRoot\version-number.txt" | Resolve-Path
 $SolutionPath = "$RepositoryRoot\XmlDoc2CmdletDoc.sln" | Resolve-Path
 $NuGetPath = "$PsScriptRoot\nuget.exe" | Resolve-Path
 $DistPath = "$RepositoryRoot\dist"
@@ -30,23 +29,62 @@ task Init {
     $script:IsAutomatedBuild = $env:BRANCH_NAME -and $env:BUILD_NUMBER
     Write-Host "Is automated build = $IsAutomatedBuild"
     
+    # Load the release notes and parse the version number.
+    $Notes = Get-ReleaseNotes
+    $script:ReleaseNotes = [string] $Notes.Content
+    $script:SemanticVersion = [version] $Notes.Version
+    Write-Host "Semantic version = '$SemanticVersion'"
+    
     # Establish assembly version number
-    $script:Version = [version] (Get-Content $VersionFilePath).Trim()
-    Write-Host "Version = '$Version'"
+    $script:AssemblyVersion = [version] "$($SemanticVersion.Major).0.0.0"
+    $script:AssemblyFileVersion = [version] "$SemanticVersion.0"
+    if ($env:BUILD_NUMBER) {
+        $VersionSuffix = $env:BUILD_NUMBER # Build server override.
+        $script:AssemblyFileVersion = [version] "$SemanticVersion.$VersionSuffix"
+    }
+    Write-Host "Assembly version = '$AssemblyVersion'"
+    Write-Host "Assembly file version = '$AssemblyFileVersion'"
+    TeamCity-SetBuildNumber $AssemblyFileVersion
     
     # Establish NuGet package version.
     $BranchName = Get-BranchName
     $IsDefaultBranch = $BranchName -eq 'master'
-    $script:NuGetPackageVersion = New-SemanticNuGetPackageVersion -Version $Version -BranchName $BranchName -IsDefaultBranch $IsDefaultBranch
+    $script:NuGetPackageVersion = New-SemanticNuGetPackageVersion -Version $AssemblyFileVersion -BranchName $BranchName -IsDefaultBranch $IsDefaultBranch
     Write-Host "NuGet package version = $NuGetPackageVersion"
     
-    # Establish whether or not to sign the asseblies.
+    # Establish whether or not to sign the assemblies.
     if ($env:SigningServiceUrl) { # We sign if and only if the SigningServiceUrl environment variable is set.
         $script:AssemblySigningEnabled = $True
         Write-Host 'Assembly signing enabled'
     } else {
         $script:AssemblySigningEnabled = $False
         Write-Host 'Assembly signing disabled (SigningServiceUrl environment variable is not set)'
+    }
+}
+
+function Get-ReleaseNotes {
+    $ReleaseNotesPath = "$RepositoryRoot\release-notes.md" | Resolve-Path
+    $Lines = [System.IO.File]::ReadAllLines($ReleaseNotesPath, [System.Text.Encoding]::UTF8)
+    $Result = @()
+    $Version = $Null
+    $Lines | ForEach-Object {
+        $Line = $_.Trim()
+        if (-not $Version) {
+            $Match = [regex]::Match($Line, '[0-9]+\.[0-9]+\.[0-9]+')
+            if ($Match.Success) {
+                $Version = $Match.Value
+            }
+        }
+        if ($Version) {
+            $Result += $Line
+        }
+    }
+    if (-not $Version) {
+        throw "Failed to parse release notes: $ReleaseNotesPath"
+    }
+    return @{
+        Content = $Result -join [System.Environment]::NewLine
+        Version = [version] $Version
     }
 }
 
@@ -97,7 +135,7 @@ task RestorePackages {
 task UpdateAssemblyInfo  Init, {
     Write-Info 'Updating assembly information'
 
-    "$RepositoryRoot\SolutionInfo.cs" | Resolve-Path | Update-AssemblyVersion -Version $Version -InformationalVersion $NuGetPackageVersion
+    "$RepositoryRoot\SolutionInfo.cs" | Resolve-Path | Update-AssemblyVersion -Version $SemanticVersion -InformationalVersion $NuGetPackageVersion
 }
 
 
@@ -212,7 +250,7 @@ task Package  Test, {
         "$NuSpecPath",
         '-Version', $NuGetPackageVersion,
         '-OutputDirectory', $DistPath,
-        '-Properties', "configuration=$Configuration"
+        '-Properties', "configuration=$Configuration;releaseNotes=$ReleaseNotes"
     )
     & $NuGetPath $Parameters
 }
