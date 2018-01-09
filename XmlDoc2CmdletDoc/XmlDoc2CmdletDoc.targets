@@ -10,6 +10,7 @@
         <XmlDoc2CmdletDocStrict Condition="'$(XmlDoc2CmdletDocStrict)' == ''">false</XmlDoc2CmdletDocStrict>
 
         <!--
+        Indicates the names of any parameter sets that should be ignored.
         Projects that wish to use exclude any parameter sets should add the
         following to their project file within a <PropertyGroup/> element:
 
