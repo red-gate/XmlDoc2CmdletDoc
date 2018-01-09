@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using XmlDoc2CmdletDoc.Core;
 
 namespace XmlDoc2CmdletDoc
@@ -19,7 +20,7 @@ namespace XmlDoc2CmdletDoc
         private static Options ParseArguments(IReadOnlyList<string> args)
         {
             const string strictSwitch = "-strict";
-            const string excludeParameterSetSwitch = "-excludeParameterSet";
+            const string excludeParameterSetSwitch = "-excludeParameterSets";
 
             try
             {
@@ -37,7 +38,7 @@ namespace XmlDoc2CmdletDoc
                     {
                         i++;
                         if (i >= args.Count) throw new ArgumentException();
-                        excludedParameterSets.Add(args[i]);
+                        excludedParameterSets.AddRange(args[i].Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()));
                     }
                     else if (assemblyPath == null)
                     {
@@ -58,7 +59,7 @@ namespace XmlDoc2CmdletDoc
             }
             catch (ArgumentException)
             {
-                Console.Error.WriteLine("Usage: XmlDoc2CmdletDoc.exe [{0}] assemblyPath", strictSwitch);
+                Console.Error.WriteLine($"Usage: XmlDoc2CmdletDoc.exe [{strictSwitch}] [{excludeParameterSetSwitch} parameterSetToExclude1,parameterSetToExclude2] assemblyPath");
                 Environment.Exit(-1);
                 throw;
             }
