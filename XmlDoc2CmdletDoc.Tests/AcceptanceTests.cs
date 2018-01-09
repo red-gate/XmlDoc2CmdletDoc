@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -222,6 +221,7 @@ namespace XmlDoc2CmdletDoc.Tests
         [TestCase("PositionedParameter")]
         [TestCase("ValueFromPipelineParameter")]
         [TestCase("ValueFromPipelineByPropertyNameParameter")]
+        [TestCase("ObsoleteParameter")] // Obsolete parameters should still have docs, so Get-Help MyCommand -Parameter ObsoleteParameter still works
         public void Command_Parameters_Parameter(string parameterName)
         {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
@@ -230,7 +230,7 @@ namespace XmlDoc2CmdletDoc.Tests
                 $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
         }
-
+        
         [Test]
         [TestCase("MandatoryParameter", "true")]
         [TestCase("OptionalParameter", "false")]
@@ -892,6 +892,17 @@ If ($thingy -eq $that) {
 @"<maml:description xmlns:maml=""http://schemas.microsoft.com/maml/2004/10"">
   <maml:para>This is the MamlClass description.</maml:para>
 </maml:description>";
+
+        [Test]
+        public void Command_Syntax_Obsolete_Parameters_Are_Excluded()
+        {
+            Assert.That(testManualElementsCommandElement, Is.Not.Null);
+
+            var syntaxItemParameters = testManualElementsCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem/command:parameter/maml:name", resolver).ToList();
+                
+            Assert.That(syntaxItemParameters, Is.Not.Empty);
+            Assert.That(syntaxItemParameters.Select(x => x.Value).Contains("ObsoleteParameter"), Is.False);
+        }
 
         [Test]
         public void Command_Syntax_Parameters_Ordered_By_Position()
