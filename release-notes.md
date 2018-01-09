@@ -1,5 +1,11 @@
 *Note: The build version number is derived from the first entry in this file.*
 
+# 0.2.10
+
+- Parameters marked with the [Obsolete] attribute no longer appear in the cmdlet syntax summary, though it's still possible to provide help text for the parameter, which can be viewed using the `-Parameter` switch of the `Get-Help` cmdlet.
+
+- Added support for excluding parameter sets by name, via a new command-line option and corresponding msbuild property.
+
 # 0.2.9
 
 - Fixed issue #39. Corrected a regression for the default value of string parameters.
