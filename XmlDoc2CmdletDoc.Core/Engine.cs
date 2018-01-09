@@ -323,7 +323,8 @@ namespace XmlDoc2CmdletDoc.Core
         {
             var syntaxItemElement = new XElement(CommandNs + "syntaxItem",
                                                  new XElement(MamlNs + "name", command.Name));
-            foreach (var parameter in command.GetParameters(parameterSetName).OrderBy(p => p.GetPosition(parameterSetName))
+            foreach (var parameter in command.GetParameters(parameterSetName).Where(p => !p.MemberInfo.CustomAttributes.Any(x => x.AttributeType == typeof(ObsoleteAttribute)))
+                                                                             .OrderBy(p => p.GetPosition(parameterSetName))
                                                                              .ThenBy(p => p.IsRequired(parameterSetName) ? "0" : "1")
                                                                              .ThenBy(p => p.Name))
             {

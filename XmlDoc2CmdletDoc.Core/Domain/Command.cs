@@ -62,7 +62,6 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             {
                 var parameters = CmdletType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
                                            .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
-                                           .Where(member => !member.GetCustomAttributes<ObsoleteAttribute>().Any())
                                            .Select(member => new Parameter(CmdletType, member));
                 if (typeof(IDynamicParameters).IsAssignableFrom(CmdletType))
                 {
