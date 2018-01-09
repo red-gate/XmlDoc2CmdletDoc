@@ -9,6 +9,13 @@
         -->
         <XmlDoc2CmdletDocStrict Condition="'$(XmlDoc2CmdletDocStrict)' == ''">false</XmlDoc2CmdletDocStrict>
 
+        <!--
+        Projects that wish to use exclude any parameter sets should add the
+        following to their project file within a <PropertyGroup/> element:
+
+        <XmlDoc2CmdletDocExcludeParameterSets>ParameterSetToExclude1,ParameterSetToExclude2</XmlDoc2CmdletDocExcludeParameterSets>
+        -->
+
         <!-- Determine which platform version of XmlDoc2CmdletDoc.exe to use. -->        
         <XmlDocExeName Condition="'$(PlatformTarget)' == 'x86'">XmlDoc2CmdletDoc32.exe</XmlDocExeName>
         <XmlDocExeName Condition="'$(XmlDocExeName)' == ''">XmlDoc2CmdletDoc.exe</XmlDocExeName>
@@ -18,8 +25,8 @@
             Inputs="$(TargetPath)"
             Outputs="$(TargetPath)-Help.xml">
         <Exec Condition="'$(XmlDoc2CmdletDocStrict)' == 'false'"
-              Command='"$(MSBuildThisFileDirectory)..\tools\$(XmlDocExeName)" "$(TargetPath)"' />
+              Command='"$(MSBuildThisFileDirectory)..\tools\$(XmlDocExeName)" -excludeParameterSets "$(XmlDoc2CmdletDocExcludeParameterSets)" "$(TargetPath)"' />
         <Exec Condition="'$(XmlDoc2CmdletDocStrict)' != 'false'"
-              Command='"$(MSBuildThisFileDirectory)..\tools\$(XmlDocExeName)" -strict "$(TargetPath)"' />
+              Command='"$(MSBuildThisFileDirectory)..\tools\$(XmlDocExeName)" -excludeParameterSets "$(XmlDoc2CmdletDocExcludeParameterSets)" -strict "$(TargetPath)"' />
     </Target>
 </Project>
