@@ -12,26 +12,10 @@
     <summary>Generates help documentation for binary PowerShell modules from XML Doc comments.</summary>
     <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments. Licensed under the terms of the new 3-clause BSD license.</description>
     <language>en-us</language>
-    <copyright>Copyright 2014-2017 Red Gate Software Ltd.</copyright>
+    <copyright>Copyright 2014-2018 Red Gate Software Ltd.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
-    <releaseNotes>Version 0.2.9 - Fixed issue #39. Corrected a regression for the default value of string parameters.
-    
-Version 0.2.8 - Partially addressed issues #33 and #37. Slightly improved handling of default values and array parameters. More work is required in this area, though.
-    
-Version 0.2.7 - Fixed issue #31. MSBuild task now accommodates binary modules that are specifically targeted at only x86 or x64 architectures.
-
-Version 0.2.6 - Fixed issue #28. Ensure that help syntax is correctly displayed for parameterless cmdlets.
-
-Version 0.2.5 - Added limited support for documenting dynamic parameters. If a cmdlet implements IDynamicParameters, and its GetDynamicParameters method returns an instance of a nested type within the cmdlet, then help documentation will be extracted from the nested type's XML Doc comments.
-
-Version 0.2.4 - Fixed issue #22. When encountering a Parameter with no getter, XmlDoc2CmdletDoc now records a warning that the default value for the Parameter cannot be obtained. Previously this raised a fatal exception.
-
-Version 0.2.3 - XmlDoc2CmdletDoc now executes prior to the AfterBuild target, rather than prior to the PostBuildEvent target, to give developers the option to copy files around in either target, rather than only in the latter.
-
-Version 0.2.2 - Fixed issue #19: Help for cmdlet parameters is now explicitly ordered by Position, then Required, then Name, rather than relying on the arbitrary order of Type.GetMembers.
-
-Version 0.2.1 - First public release.</releaseNotes>
+    <releaseNotes><![CDATA[$releaseNotes$]]></releaseNotes>
   </metadata>
   <files>
     <file src="bin\$configuration$\*.dll" target="tools" />
