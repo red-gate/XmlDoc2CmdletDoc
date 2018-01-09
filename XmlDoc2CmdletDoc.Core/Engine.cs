@@ -253,7 +253,7 @@ namespace XmlDoc2CmdletDoc.Core
                                 new XAttribute(XNamespace.Xmlns + "dev", DevNs),
                                 GenerateDetailsElement(commentReader, command, reportWarning),
                                 GenerateDescriptionElement(commentReader, command, reportWarning),
-                                GenerateSyntaxElement(commentReader, command, reportWarning, options.ExcludedParameterSets),
+                                GenerateSyntaxElement(commentReader, command, reportWarning, options.IsExcludedParameterSetName),
                                 GenerateParametersElement(commentReader, command, reportWarning),
                                 GenerateInputTypesElement(commentReader, command, reportWarning),
                                 GenerateReturnValuesElement(commentReader, command, reportWarning),
@@ -296,9 +296,9 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="commentReader">Provides access to the XML Doc comments.</param>
         /// <param name="command">The command.</param>
         /// <param name="reportWarning">Function used to log warnings.</param>
-        /// <param name="excludedParameterSets">The parameter sets to exclude from the cmdlet XML Help file.</param>
+        /// <param name="isExcludedParameterSetName">Determines whether or not to exclude a parameter set from the cmdlet XML Help file, based on its name.</param>
         /// <returns>A <em>&lt;command:syntax&gt;</em> element for the <paramref name="command"/>.</returns>
-        private XElement GenerateSyntaxElement(ICommentReader commentReader, Command command, ReportWarning reportWarning, ICollection<string> excludedParameterSets)
+        private XElement GenerateSyntaxElement(ICommentReader commentReader, Command command, ReportWarning reportWarning, Predicate<string> isExcludedParameterSetName)
         {
             var syntaxElement = new XElement(CommandNs + "syntax");
             IEnumerable<string> parameterSetNames = command.ParameterSetNames.ToList();
@@ -306,7 +306,7 @@ namespace XmlDoc2CmdletDoc.Core
             {
                 parameterSetNames = parameterSetNames.Where(name => name != ParameterAttribute.AllParameterSets);
             }
-            foreach (var parameterSetName in parameterSetNames.Where(name => !excludedParameterSets.Contains(name)))
+            foreach (var parameterSetName in parameterSetNames.Where(name => !isExcludedParameterSetName(name)))
             {
                 syntaxElement.Add(GenerateComment("Parameter set: " + parameterSetName));
                 syntaxElement.Add(GenerateSyntaxItemElement(commentReader, command, parameterSetName, reportWarning));

@@ -55,7 +55,7 @@ namespace XmlDoc2CmdletDoc
                     throw new ArgumentException();
                 }
 
-                return new Options(treatWarningsAsErrors, assemblyPath, excludedParameterSets);
+                return new Options(treatWarningsAsErrors, assemblyPath, excludedParameterSets.Contains);
             }
             catch (ArgumentException)
             {

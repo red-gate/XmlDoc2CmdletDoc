@@ -30,9 +30,11 @@ namespace XmlDoc2CmdletDoc.Core
         public readonly bool TreatWarningsAsErrors;
 
         /// <summary>
-        /// A list of parameter sets that should be excluded from the cmdlet XML Help file.
+        /// A predicate that determines whether a parameter set should be excluded from the
+        /// output help file, based on its name. This is intended to be used for deprecated parameter sets,
+        /// to make them less discoverable.
         /// </summary>
-        public readonly ISet<string> ExcludedParameterSets;
+        public readonly Predicate<string> IsExcludedParameterSetName;
 
         /// <summary>
         /// Creates a new instance with the specified settings.
@@ -40,7 +42,8 @@ namespace XmlDoc2CmdletDoc.Core
         /// <param name="treatWarningsAsErrors">Indicates whether or not the presence of warnings should be treated as a failure condition.</param>
         /// <param name="assemblyPath">The path of the taget assembly whose XML Doc comments file is to be converted
         /// into a cmdlet XML Help file.</param>
-        /// <param name="excludedParameterSets">A list of parameter sets that should be excluded from the cmdlet XML Help file.
+        /// <param name="isExcludedParameterSetName">A predicate that determines whether a parameter set should be excluded from the
+        /// output help file, based on its name.
         /// This is intended to be used for deprecated parameter sets, to make them less discoverable.</param>
         /// <param name="outputHelpFilePath">The output path of the cmdlet XML Help file.
         /// If <c>null</c>, an appropriate default is selected based on <paramref name="assemblyPath"/>.</param>
@@ -49,7 +52,7 @@ namespace XmlDoc2CmdletDoc.Core
         public Options(
             bool treatWarningsAsErrors,
             string assemblyPath,
-            IReadOnlyCollection<string> excludedParameterSets,
+            Predicate<string> isExcludedParameterSetName = null,
             string outputHelpFilePath = null,
             string docCommentsPath = null)
         {
@@ -59,7 +62,7 @@ namespace XmlDoc2CmdletDoc.Core
 
             AssemblyPath = Path.GetFullPath(assemblyPath);
 
-            ExcludedParameterSets = new HashSet<string>(excludedParameterSets);
+            IsExcludedParameterSetName = isExcludedParameterSetName ?? (_ => false);
 
             OutputHelpFilePath = outputHelpFilePath == null
                                      ? Path.ChangeExtension(AssemblyPath, "dll-Help.xml")
@@ -74,7 +77,6 @@ namespace XmlDoc2CmdletDoc.Core
         /// Provides a string representation of the options, for logging and debug purposes.
         /// </summary>
         public override string ToString() => $"AssemblyPath: {AssemblyPath}, " +
-                                             $"ExcludedParameterSets: {string.Join(", ", ExcludedParameterSets)}" +
                                              $"OutputHelpFilePath: {OutputHelpFilePath}, " +
                                              $"TreatWarningsAsErrors {TreatWarningsAsErrors}";
     }

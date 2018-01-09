@@ -55,7 +55,7 @@ namespace XmlDoc2CmdletDoc.Tests
             }
 
             // ACT
-            var options = new Options(false, assemblyPath, new string[0]);
+            var options = new Options(false, assemblyPath);
             var engine = new Engine();
             engine.GenerateHelp(options);
 
