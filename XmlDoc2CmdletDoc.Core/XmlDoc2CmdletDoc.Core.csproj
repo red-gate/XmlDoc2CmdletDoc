@@ -55,6 +55,8 @@
     <Compile Include="Comments\JoltCommentReader.cs" />
     <Compile Include="Domain\Command.cs" />
     <Compile Include="Domain\Parameter.cs" />
+    <Compile Include="Domain\ReflectionParameter.cs" />
+    <Compile Include="Domain\RuntimeParameter.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineExitCode.cs" />
     <Compile Include="EngineException.cs" />

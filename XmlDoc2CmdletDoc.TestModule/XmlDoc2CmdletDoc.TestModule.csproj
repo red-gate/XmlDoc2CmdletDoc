@@ -43,7 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultValue\TestDefaultValueCommand.cs" />
-    <Compile Include="DynamicParameters\TestDynamicParametersCommand.cs" />
+    <Compile Include="DynamicParameters\TestNestedTypeDynamicParametersCommand.cs" />
+    <Compile Include="DynamicParameters\TestRuntimeDynamicParametersCommand.cs" />
     <Compile Include="InputTypes\TestInputTypesCommand.cs" />
     <Compile Include="Maml\MamlClass.cs" />
     <Compile Include="Maml\TestMamlElementsCommand.cs" />

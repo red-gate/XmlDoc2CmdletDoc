@@ -39,7 +39,8 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testInputTypesCommandElement;
         private XElement testPositionedParametersCommandElement;
         private XElement testParameterlessCommandElement;
-        private XElement testDynamicParametersCommandElement;
+        private XElement testNestedTypeDynamicParametersCommandElement;
+        private XElement testRuntimeDynamicParametersCommandElement;
         private XElement testDefaultValueCommandElement;
 
         [SetUp]
@@ -72,7 +73,8 @@ namespace XmlDoc2CmdletDoc.Tests
             testInputTypesCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-InputTypes']", resolver);
             testPositionedParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-PositionedParameters']", resolver);
             testParameterlessCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-Parameterless']", resolver);
-            testDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DynamicParameters']", resolver);
+            testNestedTypeDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-NestedTypeDynamicParameters']", resolver);
+            testRuntimeDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-RuntimeDynamicParameters']", resolver);
             testDefaultValueCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DefaultValue']", resolver);
         }
 
@@ -448,21 +450,39 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        public void Command_Parameters_DynamicParameter()
+        public void Command_Parameters_DynamicParameter_Reflection()
         {
-            Assert.That(testDynamicParametersCommandElement, Is.Not.Null);
+            Assert.That(testNestedTypeDynamicParametersCommandElement, Is.Not.Null);
 
             // We expect the static parameter to be documented.
-            var staticParameter = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'StaticParam']", resolver);
+            var staticParameter = testNestedTypeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'StaticParam']", resolver);
             Assert.That(staticParameter, Is.Not.Null);
 
             // We also expect the dynamic parameter to be documented.
-            var dynamicParameter = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParam']", resolver);
+            var dynamicParameter = testNestedTypeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParam']", resolver);
             Assert.That(dynamicParameter, Is.Not.Null);
 
             // We don't expect non-parameters on the inner classes to be documented.
-            var irrelevantProperty = testDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'IrrelevantProperty']", resolver);
+            var irrelevantProperty = testNestedTypeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'IrrelevantProperty']", resolver);
             Assert.That(irrelevantProperty, Is.Null);
+        }
+
+        [Test]
+        public void Command_Parameters_DynamicParameter_Runtime()
+        {
+            Assert.That(testRuntimeDynamicParametersCommandElement, Is.Not.Null);
+
+            // We expect the static parameter to be documented.
+            var staticParameter = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'StaticParam']", resolver);
+            Assert.That(staticParameter, Is.Not.Null);
+
+            // We also expect the dynamic parameter containing a ParameterAttribute to be documented.
+            var dynamicParameterWithAttribute = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParamWithAttribute']", resolver);
+            Assert.That(dynamicParameterWithAttribute, Is.Not.Null);
+
+            // We also expect the dynamic parameter without a ParameterAttribute to be documented.
+            var dynamicParameterWithoutAttribute = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParamWithoutAttribute']", resolver);
+            Assert.That(dynamicParameterWithoutAttribute, Is.Not.Null);
         }
 
         [Test]

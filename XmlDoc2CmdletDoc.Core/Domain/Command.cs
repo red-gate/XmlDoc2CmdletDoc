@@ -60,16 +60,26 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
-                var parameters = CmdletType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
+                IEnumerable<Parameter> parameters = CmdletType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
                                            .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
-                                           .Select(member => new Parameter(CmdletType, member));
+                                           .Select(member => new ReflectionParameter(CmdletType, member));
                 if (typeof(IDynamicParameters).IsAssignableFrom(CmdletType))
                 {
                     foreach (var nestedType in CmdletType.GetNestedTypes(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                     {
                         parameters = parameters.Concat(nestedType.GetMembers(BindingFlags.Instance | BindingFlags.Public)
                                                                  .Where(member => member.GetCustomAttributes<ParameterAttribute>().Any())
-                                                                 .Select(member => new Parameter(nestedType, member)));
+                                                                 .Select(member => new ReflectionParameter(nestedType, member)));
+                    }
+
+                    var cmdlet = Activator.CreateInstance(CmdletType);
+
+                    var runtimeParamDictionary = ((IDynamicParameters) cmdlet).GetDynamicParameters() as RuntimeDefinedParameterDictionary;
+
+                    if (runtimeParamDictionary != null)
+                    {
+                        parameters = parameters.Concat(runtimeParamDictionary
+                                               .Select(member => new RuntimeParameter(CmdletType, member.Value)));
                     }
                 }
                 return parameters.ToList();

@@ -9,53 +9,39 @@ namespace XmlDoc2CmdletDoc.Core.Domain
     /// <summary>
     /// Represents a single parameter of a cmdlet.
     /// </summary>
-    public class Parameter
+    public abstract class Parameter
     {
-        private readonly Type _cmdletType;
-        private readonly IEnumerable<ParameterAttribute> _attributes;
-
         /// <summary>
-        /// The <see cref="PropertyInfo"/> or <see cref="FieldInfo"/> that defines the property.
+        /// The type of the cmdlet this parameter is defined on.
         /// </summary>
-        public readonly MemberInfo MemberInfo;
+        protected readonly Type _cmdletType;
+        private readonly IEnumerable<ParameterAttribute> _attributes;
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="cmdletType">The type of the cmdlet the parameter belongs to.</param>
-        /// <param name="memberInfo">The parameter member of the cmdlet. May represent either a field or property.</param>
-        public Parameter(Type cmdletType, MemberInfo memberInfo)
+        /// <param name="attributes">The parameter attributes of the cmdlet.</param>
+        public Parameter(Type cmdletType, IEnumerable<ParameterAttribute> attributes)
         {
             _cmdletType = cmdletType ?? throw new ArgumentNullException(nameof(cmdletType));
-            MemberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
-            _attributes = memberInfo.GetCustomAttributes<ParameterAttribute>();
+            _attributes = attributes;
         }
 
         /// <summary>
         /// The name of the parameter.
         /// </summary>
-        public string Name => MemberInfo.Name;
+        public abstract string Name { get; }
 
         /// <summary>
         /// The type of the parameter.
         /// </summary>
-        public Type ParameterType
-        {
-            get
-            {
-                Type GetType(Type type) => Nullable.GetUnderlyingType(type) ?? type;
+        public abstract Type ParameterType { get; }
 
-                switch (MemberInfo.MemberType)
-                {
-                    case MemberTypes.Property:
-                        return GetType(((PropertyInfo) MemberInfo).PropertyType);
-                    case MemberTypes.Field:
-                        return GetType(((FieldInfo) MemberInfo).FieldType);
-                    default:
-                        throw new NotSupportedException("Unsupported type: " + MemberInfo);
-                }
-            }
-        }
+        /// <summary>
+        /// The type of this parameter's member - method, constructor, property, and so on.
+        /// </summary>
+        public abstract MemberTypes MemberType { get; }
 
         /// <summary>
         /// The names of the parameter sets that the parameter belongs to.
@@ -97,8 +83,8 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                              ? "true (ByValue, ByPropertyName)"
                              : "true (ByValue)"
                        : byParameterName
-                             ? "true (ByPropertyName)"
-                             : "false";
+                           ? "true (ByPropertyName)"
+                           : "false";
         }
 
         /// <summary>
@@ -112,28 +98,10 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         }
 
         /// <summary>
-        /// The default value of the parameter. This is obtained by instantiating the cmdlet and accessing the parameter
+        /// The default value of the parameter. This may be obtained by instantiating the cmdlet and accessing the parameter
         /// property or field to determine its initial value.
         /// </summary>
-        public object GetDefaultValue(ReportWarning reportWarning)
-        {
-            var cmdlet = Activator.CreateInstance(_cmdletType);
-            switch (MemberInfo.MemberType)
-            {
-                case MemberTypes.Property:
-                    var propertyInfo = ((PropertyInfo)MemberInfo);
-                    if (!propertyInfo.CanRead)
-                    {
-                        reportWarning(MemberInfo, "Parameter does not have a getter. Unable to determine its default value");
-                        return null;
-                    }
-                    return propertyInfo.GetValue(cmdlet);
-                case MemberTypes.Field:
-                    return ((FieldInfo)MemberInfo).GetValue(cmdlet);
-                default:
-                    throw new NotSupportedException("Unsupported type: " + MemberInfo);
-            }
-        }
+        public abstract object GetDefaultValue(ReportWarning reportWarning);
 
         /// <summary>
         /// The list of enumerated value names. Returns an empty sequence if there are no enumerated values
@@ -143,14 +111,14 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
-                if (MemberInfo.MemberType == MemberTypes.Property)
+                if (MemberType == MemberTypes.Property)
                 {
                     var type = ParameterType;
                     if (type.IsEnum)
                     {
                         return type
-                            .GetFields(BindingFlags.Public | BindingFlags.Static)
-                            .Select(field => field.Name);
+                               .GetFields(BindingFlags.Public | BindingFlags.Static)
+                               .Select(field => field.Name);
                     }
                 }
                 return Enumerable.Empty<string>();
@@ -164,11 +132,16 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         {
             get
             {
-                var aliasAttribute = (AliasAttribute) MemberInfo
-                    .GetCustomAttributes(typeof(AliasAttribute), true)
-                    .FirstOrDefault();
+                var aliasAttribute = (AliasAttribute)GetCustomAttributes<AliasAttribute>()
+                                                     .FirstOrDefault();
                 return aliasAttribute?.AliasNames ?? new List<string>();
             }
         }
+
+        /// <summary>
+        /// Retrieves custom attributes defined on the parameter.
+        /// </summary>
+        /// <typeparam name="T">The type of attribute to retrieve.</typeparam>
+        public abstract object[] GetCustomAttributes<T>() where T : Attribute;
     }
 }
