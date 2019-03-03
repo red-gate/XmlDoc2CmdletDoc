@@ -78,8 +78,8 @@ namespace XmlDoc2CmdletDoc.Core.Domain
 
                     if (runtimeParamDictionary != null)
                     {
-                        parameters = parameters.Concat(runtimeParamDictionary
-                                               .Select(member => new RuntimeParameter(CmdletType, member.Value)));
+                        parameters = parameters.Concat(runtimeParamDictionary.Where(member => member.Value.Attributes.OfType<ParameterAttribute>().Any())
+                                                                             .Select(member => new RuntimeParameter(CmdletType, member.Value)));
                     }
                 }
                 return parameters.ToList();

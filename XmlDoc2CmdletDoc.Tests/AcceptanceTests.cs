@@ -477,12 +477,13 @@ namespace XmlDoc2CmdletDoc.Tests
             Assert.That(staticParameter, Is.Not.Null);
 
             // We also expect the dynamic parameter containing a ParameterAttribute to be documented.
-            var dynamicParameterWithAttribute = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParamWithAttribute']", resolver);
-            Assert.That(dynamicParameterWithAttribute, Is.Not.Null);
+            var dynamicParameter = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParam']", resolver);
+            Assert.That(dynamicParameter, Is.Not.Null);
 
-            // We also expect the dynamic parameter without a ParameterAttribute to be documented.
-            var dynamicParameterWithoutAttribute = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'DynamicParamWithoutAttribute']", resolver);
-            Assert.That(dynamicParameterWithoutAttribute, Is.Not.Null);
+            // We don't expect dynamic parameters missing a ParameterAttribute to be documented, as they
+            // are not part of any parameter set.
+            var irrelevantParameter = testRuntimeDynamicParametersCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'IrrelevantParam']", resolver);
+            Assert.That(irrelevantParameter, Is.Null);
         }
 
         [Test]

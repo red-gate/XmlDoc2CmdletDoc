@@ -25,13 +25,14 @@ namespace XmlDoc2CmdletDoc.TestModule.DynamicParameters
             attributes.Add(new ParameterAttribute());
 
             //This parameter has a ParameterAttribute and is considered a dynamic parameter.
-            var dynamicParamWithAttribute = new RuntimeDefinedParameter("DynamicParamWithAttribute", typeof(string), attributes);
+            var dynamicParam = new RuntimeDefinedParameter("DynamicParam", typeof(string), attributes);
 
-            //This parameter is missing a ParameterAttribute, but will still be considered a dynamic parameter.
-            var dynamicParamWithoutAttribute = new RuntimeDefinedParameter("DynamicParamWithoutAttribute", typeof(string), new Collection<Attribute>());
+            //This parameter is missing a ParameterAttribute. While it is technically still a dynamic parameter,
+            //it is not considered part of any parameter set and cannot be used.
+            var irrelevantParam = new RuntimeDefinedParameter("IrrelevantParam", typeof(string), new Collection<Attribute>());
 
-            runtimeParamDictionary.Add("DynamicParamWithAttribute", dynamicParamWithAttribute);
-            runtimeParamDictionary.Add("DynamicParamWithoutAttribute", dynamicParamWithoutAttribute);
+            runtimeParamDictionary.Add("DynamicParam", dynamicParam);
+            runtimeParamDictionary.Add("IrrelevantParam", irrelevantParam);
 
             return runtimeParamDictionary;
         }
