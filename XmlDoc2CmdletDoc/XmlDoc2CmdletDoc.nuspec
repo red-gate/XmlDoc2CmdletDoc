@@ -7,7 +7,7 @@
     <authors>Redgate</authors>
     <owners>Redgate</owners>
     <projectUrl>https://github.com/red-gate/XmlDoc2CmdletDoc</projectUrl>
-    <licenseUrl>https://github.com/red-gate/XmlDoc2CmdletDoc/blob/master/LICENSE.md</licenseUrl>
+    <license type="file">license\LICENSE.md</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>Generates help documentation for binary PowerShell modules from XML Doc comments.</summary>
     <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments. Licensed under the terms of the new 3-clause BSD license.</description>
@@ -21,5 +21,6 @@
     <file src="bin\$configuration$\*.dll" target="tools" />
     <file src="bin\$configuration$\*.exe" target="tools" />
     <file src="XmlDoc2CmdletDoc.targets" target="build" />
+    <file src="..\LICENSE.md" target="license" />
   </files>
 </package>
