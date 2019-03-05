@@ -326,7 +326,7 @@ namespace XmlDoc2CmdletDoc.Core
         {
             var syntaxItemElement = new XElement(CommandNs + "syntaxItem",
                                                  new XElement(MamlNs + "name", command.Name));
-            foreach (var parameter in command.GetParameters(parameterSetName).Where(p => !p.MemberInfo.CustomAttributes.Any(x => x.AttributeType == typeof(ObsoleteAttribute)))
+            foreach (var parameter in command.GetParameters(parameterSetName).Where(p => !p.GetCustomAttributes<ObsoleteAttribute>().Any())
                                                                              .OrderBy(p => p.GetPosition(parameterSetName))
                                                                              .ThenBy(p => p.IsRequired(parameterSetName) ? "0" : "1")
                                                                              .ThenBy(p => p.Name))
@@ -387,11 +387,13 @@ namespace XmlDoc2CmdletDoc.Core
         /// <returns>A <em>&lt;command:parameter&gt;</em> element for the <paramref name="parameter"/>.</returns>
         private XElement GenerateParameterElement(ICommentReader commentReader, Parameter parameter, string parameterSetName, ReportWarning reportWarning)
         {
+            var position = parameter.GetPosition(parameterSetName);
+
             var element = new XElement(CommandNs + "parameter",
                                 new XAttribute("required", parameter.IsRequired(parameterSetName)),
                                 new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
                                 new XAttribute("pipelineInput", parameter.GetIsPipelineAttribute(parameterSetName)),
-                                new XAttribute("position", parameter.GetPosition(parameterSetName)),
+                                position != null ? new XAttribute("position", position) : null,
                                 new XElement(MamlNs + "name", parameter.Name),
                                 GenerateDescriptionElement(commentReader, parameter, reportWarning),
                                 commentReader.GetParameterValueElement(parameter, reportWarning),

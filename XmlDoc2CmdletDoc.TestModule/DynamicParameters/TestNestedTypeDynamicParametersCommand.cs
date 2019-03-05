@@ -3,11 +3,11 @@
 namespace XmlDoc2CmdletDoc.TestModule.DynamicParameters
 {
     /// <summary>
-    /// <para type="synopsis">This is part of the Test-DynamicParameters synopsis.</para>
-    /// <para type="description">This is part of the Test-DynamicParameters description.</para>
+    /// <para type="synopsis">This is part of the Test-NestedTypeDynamicParameters synopsis.</para>
+    /// <para type="description">This is part of the Test-NestedTypeDynamicParameters description.</para>
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "DynamicParameters")]
-    public class TestDynamicParametersCommand : Cmdlet, IDynamicParameters
+    [Cmdlet(VerbsDiagnostic.Test, "NestedTypeDynamicParameters")]
+    public class TestNestedTypeDynamicParametersCommand : Cmdlet, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">This is part of the StaticParam description.</para>
@@ -15,9 +15,9 @@ namespace XmlDoc2CmdletDoc.TestModule.DynamicParameters
         [Parameter]
         public string StaticParam { get; set; }
 
-        public object GetDynamicParameters() { return new DynamicParameters(); }
+        public object GetDynamicParameters() { return new NestedDynamicParameters(); }
 
-        private class DynamicParameters
+        private class NestedDynamicParameters
         {
             /// <summary>
             /// <para type="description">This is part of the DynamicParam description.</para>

@@ -244,9 +244,17 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// <returns>A description element for the parameter.</returns>
         public static XElement GetParameterDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
-            var memberInfo = parameter.MemberInfo;
-            var commentsElement = commentReader.GetComments(memberInfo);
-            return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description", warningText => reportWarning(memberInfo, warningText));
+            var reflectionParameter = parameter as ReflectionParameter;
+
+            if (reflectionParameter != null)
+            {
+                var memberInfo = reflectionParameter.MemberInfo;
+                var commentsElement = commentReader.GetComments(memberInfo);
+                return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description", warningText => reportWarning(memberInfo, warningText));
+            }
+
+            //Other parameter types do not support XML comments.
+            return null;
         }
 
         /// <summary>
@@ -301,23 +309,31 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// for the input type.</returns>
         public static XElement GetInputTypeDescriptionElement(this ICommentReader commentReader, Parameter parameter, ReportWarning reportWarning)
         {
-            var parameterMemberInfo = parameter.MemberInfo;
-            var commentsElement = commentReader.GetComments(parameterMemberInfo);
+            var reflectionParameter = parameter as ReflectionParameter;
 
-            // First try to read the explicit inputType description.
-            var inputTypeDescription = GetMamlDescriptionElementFromXmlDocComment(commentsElement, "inputType", _ => { });
-            if (inputTypeDescription != null)
+            if (reflectionParameter != null)
             {
-                return inputTypeDescription;
+                var parameterMemberInfo = reflectionParameter.MemberInfo;
+                var commentsElement = commentReader.GetComments(parameterMemberInfo);
+
+                // First try to read the explicit inputType description.
+                var inputTypeDescription = GetMamlDescriptionElementFromXmlDocComment(commentsElement, "inputType", _ => { });
+                if (inputTypeDescription != null)
+                {
+                    return inputTypeDescription;
+                }
+
+                // Then fall back to using the parameter description.
+                var parameterDescription = commentReader.GetParameterDescriptionElement(parameter, reportWarning);
+                if (parameterDescription == null)
+                {
+                    reportWarning(parameterMemberInfo, "No inputType comment found and no fallback description comment found.");
+                }
+                return parameterDescription;
             }
 
-            // Then fall back to using the parameter description.
-            var parameterDescription = commentReader.GetParameterDescriptionElement(parameter, reportWarning);
-            if (parameterDescription == null)
-            {
-                reportWarning(parameterMemberInfo, "No inputType comment found and no fallback description comment found.");
-            }
-            return parameterDescription;
+            //Other parameter types do not support XML comments.
+            return null;
         }
 
         /// <summary>
