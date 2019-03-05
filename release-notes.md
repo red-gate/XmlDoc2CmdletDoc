@@ -1,5 +1,9 @@
 *Note: The build version number is derived from the first entry in this file.*
 
+# 0.2.11
+
+- Added support for dynamic parameters.
+
 # 0.2.10
 
 - Parameters marked with the [Obsolete] attribute no longer appear in the cmdlet syntax summary, though it's still possible to provide help text for the parameter, which can be viewed using the `-Parameter` switch of the `Get-Help` cmdlet.
