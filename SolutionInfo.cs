@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("Redgate")]
 [assembly: AssemblyProduct("XmlDoc2CmdletDoc")]
-[assembly: AssemblyCopyright("Copyright © 2014-2017, Red Gate Software Ltd.")]
+[assembly: AssemblyCopyright("Copyright © 2014-2019, Red Gate Software Ltd and other contributors.")]
 
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

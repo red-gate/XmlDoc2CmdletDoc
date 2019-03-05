@@ -12,7 +12,7 @@
     <summary>Generates help documentation for binary PowerShell modules from XML Doc comments.</summary>
     <description>Tool used to generate .dll-Help.xml help files for binary PowerShell modules from XML Doc comments. Licensed under the terms of the new 3-clause BSD license.</description>
     <language>en-us</language>
-    <copyright>Copyright 2014-2018 Red Gate Software Ltd.</copyright>
+    <copyright>Copyright 2014-2019 Red Gate Software Ltd and other contributors.</copyright>
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
     <releaseNotes><![CDATA[$releaseNotes$]]></releaseNotes>
