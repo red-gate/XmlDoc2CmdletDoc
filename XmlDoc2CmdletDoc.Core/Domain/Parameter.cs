@@ -113,14 +113,34 @@ namespace XmlDoc2CmdletDoc.Core.Domain
             {
                 if (MemberType == MemberTypes.Property)
                 {
-                    var type = ParameterType;
-                    if (type.IsEnum)
+                    Type enumType = null;
+
+                    if (ParameterType.IsEnum)
+                        enumType = ParameterType;
+                    else
                     {
-                        return type
+                        foreach (var @interface in ParameterType.GetInterfaces())
+                        {
+                            if (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                            {
+                                var genericArgument = @interface.GetGenericArguments()[0];
+
+                                if (genericArgument.IsEnum)
+                                    enumType = genericArgument;
+
+                                break;
+                            }
+                        }
+                    }
+
+                    if (enumType != null)
+                    {
+                        return enumType
                                .GetFields(BindingFlags.Public | BindingFlags.Static)
                                .Select(field => field.Name);
                     }
                 }
+
                 return Enumerable.Empty<string>();
             }
         }
