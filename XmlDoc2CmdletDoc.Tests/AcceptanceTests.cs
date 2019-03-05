@@ -333,6 +333,25 @@ namespace XmlDoc2CmdletDoc.Tests
         public void Command_Parameters_Parameter_EnumValues_AddedToParameterValueGroup()
         {
             var targetName = "EnumParameter";
+            CheckEnumParameterValues(targetName);
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_EnumArrayValues_AddedToParameterValueGroup()
+        {
+            var targetName = "EnumArrayParameter";
+            CheckEnumParameterValues(targetName);
+        }
+
+        [Test]
+        public void Command_Parameters_Parameter_EnumListValues_AddedToParameterValueGroup()
+        {
+            var targetName = "EnumListParameter";
+            CheckEnumParameterValues(targetName);
+        }
+
+        private void CheckEnumParameterValues(string targetName)
+        {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var parameter = testManualElementsCommandElement.XPathSelectElement(
@@ -920,7 +939,7 @@ If ($thingy -eq $that) {
             Assert.That(testManualElementsCommandElement, Is.Not.Null);
 
             var syntaxItemParameters = testManualElementsCommandElement.XPathSelectElements("./command:syntax/command:syntaxItem/command:parameter/maml:name", resolver).ToList();
-                
+
             Assert.That(syntaxItemParameters, Is.Not.Empty);
             Assert.That(syntaxItemParameters.Select(x => x.Value).Contains("ObsoleteParameter"), Is.False);
         }

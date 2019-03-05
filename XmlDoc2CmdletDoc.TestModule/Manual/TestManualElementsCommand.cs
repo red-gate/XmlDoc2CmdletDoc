@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 
 namespace XmlDoc2CmdletDoc.TestModule.Manual
@@ -110,6 +111,12 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
 
         [Parameter(Mandatory = false)]
         public Importance EnumParameter { get; set; }
+
+        [Parameter(Mandatory = false)]
+        public Importance[] EnumArrayParameter { get; set; }
+
+        [Parameter(Mandatory = false)]
+        public List<Importance> EnumListParameter { get; set; }
 
         [Parameter]
         public int? NullableParameter { get; set; }
