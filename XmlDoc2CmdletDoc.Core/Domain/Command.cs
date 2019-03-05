@@ -72,11 +72,9 @@ namespace XmlDoc2CmdletDoc.Core.Domain
                                                                  .Select(member => new ReflectionParameter(nestedType, member)));
                     }
 
-                    var cmdlet = Activator.CreateInstance(CmdletType);
+                    var cmdlet = (IDynamicParameters) Activator.CreateInstance(CmdletType);
 
-                    var runtimeParamDictionary = ((IDynamicParameters) cmdlet).GetDynamicParameters() as RuntimeDefinedParameterDictionary;
-
-                    if (runtimeParamDictionary != null)
+                    if (cmdlet.GetDynamicParameters() is RuntimeDefinedParameterDictionary runtimeParamDictionary)
                     {
                         parameters = parameters.Concat(runtimeParamDictionary.Where(member => member.Value.Attributes.OfType<ParameterAttribute>().Any())
                                                                              .Select(member => new RuntimeParameter(CmdletType, member.Value)));
