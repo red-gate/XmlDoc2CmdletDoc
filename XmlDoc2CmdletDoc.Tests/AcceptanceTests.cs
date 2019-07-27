@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -207,13 +208,13 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var syntaxItemOne = syntaxItems[0];
                 var names = syntaxItemOne.XPathSelectElements("./command:parameter/maml:name", resolver).Select(x => x.Value);
-                Assert.That(names, Is.EqualTo(new[] { "CommonParameter", "ParameterOne" }));
+                Assert.That(names, Is.EqualTo(new[] { "ArrayParameter", "CommonParameter", "ParameterOne" }));
             }
 
             {
                 var syntaxItemTwo = syntaxItems[1];
                 var names = syntaxItemTwo.XPathSelectElements("./command:parameter/maml:name", resolver).Select(x => x.Value);
-                Assert.That(names, Is.EqualTo(new[] { "CommonParameter", "ParameterTwo" }));
+                Assert.That(names, Is.EqualTo(new[] { "ArrayParameter", "CommonParameter", "ParameterTwo" }));
             }
         }
 
@@ -411,25 +412,36 @@ namespace XmlDoc2CmdletDoc.Tests
         [Test]
         public void Command_Parmeters_Parameter_Type_ForTestManualElements()
         {
-            Assert.That(testManualElementsCommandElement, Is.Not.Null);
-
-            var parameter = testManualElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'MandatoryParameter']", resolver);
-            Assert.That(parameter, Is.Not.Null);
-
-            var type = parameter.XPathSelectElement("./dev:type", resolver);
-            CheckManualClassType(type, true);
+            TestCommandParameterType(testManualElementsCommandElement, "MandatoryParameter", false, CheckManualClassType);
         }
 
         [Test]
         public void Command_Parmeters_Parameter_Type_ForTestMamlElements()
         {
-            Assert.That(testMamlElementsCommandElement, Is.Not.Null);
+            TestCommandParameterType(testMamlElementsCommandElement, "CommonParameter", false, CheckMamlClassType);
+        }
 
-            var parameter = testMamlElementsCommandElement.XPathSelectElement("./command:parameters/command:parameter[maml:name/text() = 'CommonParameter']", resolver);
+        [Test]
+        public void Command_Parmeters_Parameter_Type_Array_ForTestManualElements()
+        {
+            TestCommandParameterType(testManualElementsCommandElement, "ArrayParameter", true, CheckManualClassType);
+        }
+
+        [Test]
+        public void Command_Parmeters_Parameter_Type_Array_ForTestMamlElements()
+        {
+            TestCommandParameterType(testMamlElementsCommandElement, "ArrayParameter", true, CheckMamlClassType);
+        }
+
+        private void TestCommandParameterType(XElement commandElement, string elementName, bool isArrayType, Action<XElement, bool, bool> checkClassType)
+        {
+            Assert.That(commandElement, Is.Not.Null);
+
+            var parameter = commandElement.XPathSelectElement($"./command:parameters/command:parameter[maml:name/text() = '{elementName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
             var type = parameter.XPathSelectElement("./dev:type", resolver);
-            CheckMamlClassType(type, true);
+            checkClassType(type, true, isArrayType);
         }
 
         [Test]
@@ -604,7 +616,7 @@ namespace XmlDoc2CmdletDoc.Tests
                 enumerator.MoveNext();
                 var returnValue = enumerator.Current;
                 var type = returnValue.XPathSelectElement("./dev:type", resolver);
-                CheckManualClassType(type, true);
+                CheckManualClassType(type, true, false);
 
                 var description = returnValue.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description, Is.Null);
@@ -631,7 +643,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = inputTypes.Last();
                 var type = returnValue.XPathSelectElement("./dev:type", resolver);
-                CheckMamlClassType(type, true);
+                CheckMamlClassType(type, true, false);
 
                 var description = returnValue.XPathSelectElement("./maml:description", resolver);
                 Assert.That(description, Is.Null);
@@ -756,7 +768,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = returnValues[2];
                 var type = returnValue.XPathSelectElement("./dev:type", resolver);
-                CheckManualClassType(type, false);
+                CheckManualClassType(type, false, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
@@ -785,7 +797,7 @@ namespace XmlDoc2CmdletDoc.Tests
             {
                 var returnValue = returnValues.Last();
                 var type = returnValue.XPathSelectElement("./dev:type", resolver);
-                CheckMamlClassType(type, false);
+                CheckMamlClassType(type, false, false);
 
                 // Currently the returnValue description is the same as the type description. If we provide another
                 // means to specify the description, the following assertion should be changed.
@@ -882,13 +894,19 @@ If ($thingy -eq $that) {
   </command:example>
 </command:examples>";
 
-        private void CheckManualClassType(XElement type, bool expectADescription)
+        private void CheckManualClassType(XElement type, bool expectADescription, bool expectArrayType)
         {
             Assert.That(type, Is.Not.Null);
 
             var name = type.XPathSelectElement("./maml:name", resolver);
             Assert.That(name, Is.Not.Null);
-            Assert.That(name.Value, Is.EqualTo(typeof(ManualClass).FullName));
+
+            var expectedTypeName = typeof(ManualClass).FullName;
+
+            if (expectArrayType)
+                expectedTypeName = $"{expectedTypeName}[]";
+
+            Assert.That(name.Value, Is.EqualTo(expectedTypeName));
 
             var description = type.XPathSelectElement("./maml:description", resolver);
             if (expectADescription)
@@ -908,13 +926,19 @@ If ($thingy -eq $that) {
   <maml:para>This is also part of the ManualClass description.</maml:para>
 </maml:description>";
 
-        private void CheckMamlClassType(XElement type, bool expectADescription)
+        private void CheckMamlClassType(XElement type, bool expectADescription, bool expectArrayType)
         {
             Assert.That(type, Is.Not.Null);
 
             var name = type.XPathSelectElement("./maml:name", resolver);
             Assert.That(name, Is.Not.Null);
-            Assert.That(name.Value, Is.EqualTo(typeof(MamlClass).FullName));
+
+            var expectedTypeName = typeof(MamlClass).FullName;
+
+            if (expectArrayType)
+                expectedTypeName = $"{expectedTypeName}[]";
+
+            Assert.That(name.Value, Is.EqualTo(expectedTypeName));
 
             var description = type.XPathSelectElement("./maml:description", resolver);
             if (expectADescription)

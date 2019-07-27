@@ -363,6 +363,9 @@ namespace XmlDoc2CmdletDoc.Core.Extensions
         /// <returns>A description for the type, or null if no description is available.</returns>
         public static XElement GetTypeDescriptionElement(this ICommentReader commentReader, Type type, ReportWarning reportWarning)
         {
+            if (type.IsArray)
+                type = type.GetElementType();
+
             var commentsElement = commentReader.GetComments(type);
             return GetMamlDescriptionElementFromXmlDocComment(commentsElement, "description", warningText => reportWarning(type, warningText));
         }

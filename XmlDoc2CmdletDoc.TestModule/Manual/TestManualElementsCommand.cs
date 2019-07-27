@@ -73,6 +73,13 @@ namespace XmlDoc2CmdletDoc.TestModule.Manual
         [Parameter(Mandatory = true)]
         public ManualClass MandatoryParameter { get; set; }
 
+        /// <summary>
+        /// <para type="description">This is part of the ArrayParameter description.</para>
+        /// </summary>
+        /// <para type="description">This is also part of the ArrayParameter description.</para>
+        [Parameter(Mandatory = true)]
+        public ManualClass[] ArrayParameter { get; set; }
+
         [Parameter(Mandatory = false)]
         public string OptionalParameter { get; set; }
 
