@@ -1,5 +1,9 @@
 *Note: The build version number is derived from the first entry in this file.*
 
+# 0.2.13
+
+- Correctly resolve type descriptions for array-typed parameters.
+
 # 0.2.12
 
 - Extended the support for documenting parameters of type `Enum` to include parameters of type `IEnumerable<T> where T : Enum`.
