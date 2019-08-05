@@ -18,6 +18,6 @@ using System.Runtime.InteropServices;
 
 // The following attributes are automatically set by the build scripts. Please do not modify them manually.
 // Instead, change the value defined in version-number.txt.
-[assembly: AssemblyVersion("0.2.12")]
-[assembly: AssemblyFileVersion("0.2.12")]
-[assembly: AssemblyInformationalVersion("0.2.12")]
+[assembly: AssemblyVersion("0.2.13")]
+[assembly: AssemblyFileVersion("0.2.13")]
+[assembly: AssemblyInformationalVersion("0.2.13")]
