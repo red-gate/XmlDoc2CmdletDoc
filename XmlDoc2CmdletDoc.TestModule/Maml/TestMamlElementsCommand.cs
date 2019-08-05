@@ -36,6 +36,15 @@ namespace XmlDoc2CmdletDoc.TestModule.Maml
         [Parameter]
         public MamlClass CommonParameter { get; set; }
 
+        /// <summary xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+        /// This text shouldn't appear in the cmldet help.
+        /// <maml:description type="description">
+        ///   <maml:para>This is the ArrayParameter description.</maml:para>
+        /// </maml:description>
+        /// </summary>
+        [Parameter]
+        public MamlClass[] ArrayParameter { get; set; }
+
         [Parameter(ParameterSetName = "One", ValueFromPipeline = true)]
         public string ParameterOne { get; set; }
 
