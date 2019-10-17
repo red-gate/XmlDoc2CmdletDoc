@@ -143,7 +143,7 @@ task UpdateAssemblyInfo  Init, {
 task Compile  UpdateAssemblyInfo, RestorePackages, {
     Write-Info "Compiling solution $SolutionPath"
 
-    $MSBuildPath = Resolve-MSBuild 16.0
+    $MSBuildPath = Resolve-MSBuild -MinimumVersion 16.0
     $Parameters = @(
         $SolutionPath,
         '/nodeReuse:False',
