@@ -57,15 +57,7 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         public override MemberTypes MemberType => MemberInfo.MemberType;
 
         /// <inheritdoc />
-        public override bool SupportsGlobbing
-        {
-            get
-            {
-                //Globbing only supported in Powershell references v4 or newer, so going in manually here
-                return MemberInfo.GetCustomAttributes(true)
-                    .Any(x => Equals(x.GetType().FullName, "System.Management.Automation.SupportsWildcardAttribute"));
-            }
-        }
+        public override bool SupportsGlobbing => MemberInfo.GetCustomAttributes<SupportsWildcardsAttribute>(true).Any();
 
         /// <summary>
         /// The default value of the parameter. This is obtained by instantiating the cmdlet and accessing the parameter
