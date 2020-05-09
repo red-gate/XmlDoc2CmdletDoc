@@ -44,6 +44,11 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         public abstract MemberTypes MemberType { get; }
 
         /// <summary>
+        /// Indicates whether or not the parameter supports globbing.
+        /// </summary>
+        public abstract bool SupportsGlobbing { get; }
+
+        /// <summary>
         /// The names of the parameter sets that the parameter belongs to.
         /// </summary>
         public IEnumerable<string> ParameterSetNames => _attributes.Select(attr => attr.ParameterSetName);
@@ -58,11 +63,6 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// Indicates whether or not the parameter is mandatory.
         /// </summary>
         public bool IsRequired(string parameterSetName) => GetAttributes(parameterSetName).Any(attr => attr.Mandatory);
-
-        /// <summary>
-        /// Indicates whether or not the parameter supports globbing. Currently always returns false.
-        /// </summary>
-        public bool SupportsGlobbing(string parameterSetName) => false; // TODO: How do we determine this correctly?
 
         /// <summary>
         /// Indicates whether or not the parameter takes its value from the pipeline input.

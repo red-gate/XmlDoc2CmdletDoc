@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 
@@ -54,6 +55,17 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// The type of this parameter's member - method, constructor, property, and so on.
         /// </summary>
         public override MemberTypes MemberType => MemberInfo.MemberType;
+
+        /// <inheritdoc />
+        public override bool SupportsGlobbing
+        {
+            get
+            {
+                //Globbing only supported in Powershell references v4 or newer, so going in manually here
+                return MemberInfo.GetCustomAttributes(true)
+                    .Any(x => Equals(x.GetType().FullName, "System.Management.Automation.SupportsWildcardAttribute"));
+            }
+        }
 
         /// <summary>
         /// The default value of the parameter. This is obtained by instantiating the cmdlet and accessing the parameter

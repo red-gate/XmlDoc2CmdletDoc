@@ -40,6 +40,17 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// </summary>
         public override MemberTypes MemberType => MemberTypes.Property; //RuntimeDefinedParameters are always defined as a Property
 
+        /// <inheritdoc />
+        public override bool SupportsGlobbing 
+        {
+            get
+            {
+                //Globbing only supported in Powershell references v4 or newer, so going in manually here
+                return RuntimeDefinedParameter.Attributes
+                        .Any(x => Equals(x.GetType().FullName, "System.Management.Automation.SupportsWildcardAttribute"));
+            }
+        }
+
         /// <summary>
         /// The default value of the parameter. Runtime parameters do not support specifying default values.
         /// </summary>
