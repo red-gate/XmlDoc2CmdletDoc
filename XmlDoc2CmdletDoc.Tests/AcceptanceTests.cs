@@ -10,6 +10,7 @@ using XmlDoc2CmdletDoc.Core;
 using XmlDoc2CmdletDoc.TestModule.InputTypes;
 using XmlDoc2CmdletDoc.TestModule.Maml;
 using XmlDoc2CmdletDoc.TestModule.Manual;
+using XmlDoc2CmdletDoc.TestModule.Wildcards;
 
 namespace XmlDoc2CmdletDoc.Tests
 {
@@ -43,6 +44,7 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testNestedTypeDynamicParametersCommandElement;
         private XElement testRuntimeDynamicParametersCommandElement;
         private XElement testDefaultValueCommandElement;
+        private XElement testWildCardSupportCommandElement;
 
         [SetUp]
         public void SetUp()
@@ -77,6 +79,7 @@ namespace XmlDoc2CmdletDoc.Tests
             testNestedTypeDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-NestedTypeDynamicParameters']", resolver);
             testRuntimeDynamicParametersCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-RuntimeDynamicParameters']", resolver);
             testDefaultValueCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-DefaultValue']", resolver);
+            testWildCardSupportCommandElement = rootElement.XPathSelectElement("command:command[command:details/command:name/text() = 'Test-WildcardSupport']", resolver);
         }
 
         [Test]
@@ -281,12 +284,13 @@ namespace XmlDoc2CmdletDoc.Tests
         }
 
         [Test]
-        [TestCase("MandatoryParameter", "false")] // TODO: Globbing is always false. Once we add support for it, update this test.
+        [TestCase(nameof(TestWildcardSupportedCommand.StringParameter), "true")]
+        [TestCase(nameof(TestWildcardSupportedCommand.NonWildParameter), "false")]
         public void Command_Parameters_Parameter_GlobbingInputAttribute(string parameterName, string expectedValue)
         {
-            Assert.That(testManualElementsCommandElement, Is.Not.Null);
+            Assert.That(testWildCardSupportCommandElement, Is.Not.Null);
 
-            var parameter = testManualElementsCommandElement.XPathSelectElement(
+            var parameter = testWildCardSupportCommandElement.XPathSelectElement(
                 $"./command:parameters/command:parameter[maml:name/text() = '{parameterName}']", resolver);
             Assert.That(parameter, Is.Not.Null);
 
