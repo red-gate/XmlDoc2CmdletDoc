@@ -15,7 +15,7 @@ namespace XmlDoc2CmdletDoc.Core
     /// <summary>
     /// Delegate used when reporting a warning against a reflected member.
     /// </summary>
-    /// <param name="target">The reflected meber to which the warning pertains.</param>
+    /// <param name="target">The reflected member to which the warning pertains.</param>
     /// <param name="warningText">The warning message.</param>
     public delegate void ReportWarning(MemberInfo target, string warningText);
 
@@ -160,10 +160,10 @@ namespace XmlDoc2CmdletDoc.Core
                         }
                         name += ".dll";
                         var path = Path.Combine(assemblyDir, name);
-                        return Assembly.LoadFrom(path);
+                        return File.Exists(path) ? Assembly.LoadFrom(path) : null;
                     };
 
-                return Assembly.LoadFile(assemblyPath);
+                return Assembly.LoadFrom(assemblyPath);
             }
             catch (Exception exception)
             {

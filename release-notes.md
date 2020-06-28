@@ -1,5 +1,9 @@
 *Note: The build version number is derived from the first entry in this file.*
 
+# 0.4.0
+
+- Added support for .NET Standard 2.0, .NET Core 2.1 and .NET Core 3.1. Increased the minimum supported .NET Framework version from 4.5 to 4.6.1.
+
 # 0.3.0
 
 - Use Microsoft.PowerShell.5.ReferenceAssemblies instead of a legacy version of System.Management.Automation.

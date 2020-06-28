@@ -1,0 +1,4 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Condition=" '$(OS)' == 'Windows_NT'" Project="$(MSBuildThisFileDirectory)..\net461\XmlDoc2CmdletDoc.targets" />
+    <Import Condition=" '$(OS)' != 'Windows_NT'" Project="$(MSBuildThisFileDirectory)..\netcoreapp2.1\XmlDoc2CmdletDoc.targets" />
+</Project>

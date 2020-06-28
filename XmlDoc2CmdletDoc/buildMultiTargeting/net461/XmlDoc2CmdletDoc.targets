@@ -1,0 +1,3 @@
+<Project>
+    <Import Project="$(MSBuildThisFileDirectory)..\..\build\net461\XmlDoc2CmdletDoc.targets" />
+</Project>

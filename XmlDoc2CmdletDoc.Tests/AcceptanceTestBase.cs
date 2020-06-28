@@ -6,7 +6,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using XmlDoc2CmdletDoc.Core;
 using XmlDoc2CmdletDoc.TestModule.InputTypes;
 using XmlDoc2CmdletDoc.TestModule.Maml;
 using XmlDoc2CmdletDoc.TestModule.Manual;
@@ -14,8 +13,7 @@ using XmlDoc2CmdletDoc.TestModule.Wildcards;
 
 namespace XmlDoc2CmdletDoc.Tests
 {
-    [TestFixture]
-    public class AcceptanceTests
+    public abstract class AcceptanceTestBase
     {
         private static readonly XNamespace mshNs = XNamespace.Get("http://msh");
         private static readonly XNamespace mamlNs = XNamespace.Get("http://schemas.microsoft.com/maml/2004/10");
@@ -24,7 +22,7 @@ namespace XmlDoc2CmdletDoc.Tests
 
         private static readonly IXmlNamespaceResolver resolver;
 
-        static AcceptanceTests()
+        static AcceptanceTestBase()
         {
             var manager = new XmlNamespaceManager(new NameTable());
             manager.AddNamespace("", mshNs.NamespaceName);
@@ -46,24 +44,26 @@ namespace XmlDoc2CmdletDoc.Tests
         private XElement testDefaultValueCommandElement;
         private XElement testWildCardSupportCommandElement;
 
-        [SetUp]
+        protected abstract string TestAssemblyPath { get; }
+
+        protected abstract void GenerateHelpForTestAssembly(string assemblyPath);
+
+        [OneTimeSetUp]
         public void SetUp()
         {
-            // ARRANGE
-            var assemblyPath = typeof(TestManualElementsCommand).Assembly.Location;
-            var cmdletXmlHelpPath = Path.ChangeExtension(assemblyPath, ".dll-Help.xml");
+            var testAssemblyPath = TestAssemblyPath;
+
+            Assert.That(File.Exists(testAssemblyPath), $"Test assembly not found: {testAssemblyPath}");
+
+            var cmdletXmlHelpPath = Path.ChangeExtension(testAssemblyPath, ".dll-Help.xml");
             if (File.Exists(cmdletXmlHelpPath))
             {
                 File.Delete(cmdletXmlHelpPath);
             }
 
-            // ACT
-            var options = new Options(false, assemblyPath);
-            var engine = new Engine();
-            engine.GenerateHelp(options);
+            GenerateHelpForTestAssembly(testAssemblyPath);
 
-            // ASSERT
-            Assert.That(File.Exists(cmdletXmlHelpPath));
+            Assert.That(File.Exists(cmdletXmlHelpPath), $"Output help file not found: {cmdletXmlHelpPath}");
 
             using (var stream = File.OpenRead(cmdletXmlHelpPath))
             {

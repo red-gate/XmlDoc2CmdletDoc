@@ -18,9 +18,13 @@
     <releaseNotes><![CDATA[$releaseNotes$]]></releaseNotes>
   </metadata>
   <files>
-    <file src="bin\$configuration$\*.dll" target="tools" />
-    <file src="bin\$configuration$\*.exe" target="tools" />
-    <file src="XmlDoc2CmdletDoc.targets" target="build" />
+    <file src="bin\$configuration$\net461\publish\**" target="tools\net461" />
+    <file src="bin\$configuration$\net472\publish\**" target="tools\net472" />
+    <file src="bin\$configuration$\net48\publish\**" target="tools\net48" />
+    <file src="bin\$configuration$\netcoreapp2.1\publish\**" target="tools\netcoreapp2.1" />
+    <file src="bin\$configuration$\netcoreapp3.1\publish\**" target="tools\netcoreapp3.1" />
+    <file src="build\**" target="build" />
+    <file src="buildMultiTargeting\**" target="buildMultiTargeting" />
     <file src="..\LICENSE.md" target="license" />
   </files>
 </package>

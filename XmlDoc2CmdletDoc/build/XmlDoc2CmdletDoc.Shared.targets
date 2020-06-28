@@ -1,0 +1,53 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <!--
+        Indicates that, by default, XmlDoc2CmdletDoc should not run in strict mode.
+        Projects that wish to use strict mode should add the following to their
+        project file within a <PropertyGroup/> element:
+
+        <XmlDoc2CmdletDocStrict>true</XmlDoc2CmdletDocStrict>
+        -->
+        <XmlDoc2CmdletDocStrict Condition="'$(XmlDoc2CmdletDocStrict)' == ''">false</XmlDoc2CmdletDocStrict>
+
+        <!--
+        Indicates the names of any parameter sets that should be ignored.
+        Projects that wish to use exclude any parameter sets should add the
+        following to their project file within a <PropertyGroup/> element:
+
+        <XmlDoc2CmdletDocExcludeParameterSets>ParameterSetToExclude1,ParameterSetToExclude2</XmlDoc2CmdletDocExcludeParameterSets>
+        -->
+
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- Resolve full path of XmlDoc2CmdletDocToolPath. -->
+        <XmlDoc2CmdletDocToolPath>$(MSBuildThisFileDirectory)..\tools\$(XmlDocToolsPath)</XmlDoc2CmdletDocToolPath>
+
+        <!-- Build up the command to be executed. -->
+        <XmlDoc2CmdletDocCommand Condition="$(XmlDoc2CmdletDocToolPath.EndsWith('.exe'))">"$(XmlDoc2CmdletDocToolPath)"</XmlDoc2CmdletDocCommand>
+        <XmlDoc2CmdletDocCommand Condition="$(XmlDoc2CmdletDocToolPath.EndsWith('.dll'))">dotnet "$(XmlDoc2CmdletDocToolPath)"</XmlDoc2CmdletDocCommand>
+
+        <!-- Append -strict parameter if required -->
+        <XmlDoc2CmdletDocCommand Condition="'$(XmlDoc2CmdletDocStrict)' == 'true'">$(XmlDoc2CmdletDocCommand) -strict</XmlDoc2CmdletDocCommand>
+
+        <!-- Append -excludeParameterSets parameter if required -->
+        <XmlDoc2CmdletDocCommand Condition="'$(XmlDoc2CmdletDocExcludeParameterSets)' != ''">$(XmlDoc2CmdletDocCommand) -excludeParameterSets "$(XmlDoc2CmdletDocExcludeParameterSets)"</XmlDoc2CmdletDocCommand>
+
+        <!-- Append -target assembly to be documented. -->
+        <XmlDoc2CmdletDocCommand>$(XmlDoc2CmdletDocCommand) "$(TargetPath)"</XmlDoc2CmdletDocCommand>
+
+    </PropertyGroup>
+
+    <Target Name="XmlDoc2CmdletDoc"
+            AfterTargets="CopyFilesToOutputDirectory"
+            Inputs="$(TargetPath)"
+            Outputs="$(TargetPath)-Help.xml">
+        <Exec Command="$(XmlDoc2CmdletDocCommand)" />
+    </Target>
+
+  <Target Name="CleanXmlDoc2CmdletDoc"
+          AfterTargets="Clean"
+          Condition="Exists('$(TargetPath)-Help.xml')">
+    <Delete Files="$(TargetPath)-Help.xml"/>
+  </Target>
+</Project>

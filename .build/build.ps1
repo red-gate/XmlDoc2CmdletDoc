@@ -97,13 +97,9 @@ function Get-BranchName {
     # If the .git folder is present, try to get the current branch using Git.
     $DotGitDirPath = "$RepositoryRoot\.git"
     if (Test-Path $DotGitDirPath) {
-        Add-Type -Path ("$PsScriptRoot\packages\GitSharp\lib\GitSharp.dll" | Resolve-Path)
-        Add-Type -Path ("$PsScriptRoot\packages\SharpZipLib\lib\20\ICSharpCode.SharpZipLib.dll" | Resolve-Path)
-        Add-Type -Path ("$PsScriptRoot\packages\Tamir.SharpSSH\lib\Tamir.SharpSSH.dll" | Resolve-Path)
-        Add-Type -Path ("$PsScriptRoot\packages\Winterdom.IO.FileMap\lib\Winterdom.IO.FileMap.dll" | Resolve-Path)
-    
-        $Repository = New-Object 'GitSharp.Repository' $DotGitDirPath
-        return $Repository.CurrentBranch.Name
+        return exec {
+            git rev-parse --abbrev-ref HEAD
+        }
     }
 
     # Otherwise, assume 'master'
@@ -123,14 +119,6 @@ task Clean {
 }
 
 
-# RestorePackages task, restores all the NuGet packages.
-task RestorePackages {
-    Write-Info "Restoring NuGet packages for solution $SolutionPath"
-
-    & $NuGetPath @('restore', $SolutionPath)
-}
-
-
 # UpdateAssemblyInfo task, updates the AssemblyVersion, AssemblyFileVersion and AssemblyInformationlVersion attributes in the source code.
 task UpdateAssemblyInfo  Init, {
     Write-Info 'Updating assembly information'
@@ -140,36 +128,43 @@ task UpdateAssemblyInfo  Init, {
 
 
 # Compile task, runs MSBuild to build the solution.
-task Compile  UpdateAssemblyInfo, RestorePackages, {
+task Compile  UpdateAssemblyInfo, {
     Write-Info "Compiling solution $SolutionPath"
 
-    $MSBuildPath = Resolve-MSBuild -MinimumVersion 16.0
-    $Parameters = @(
-        $SolutionPath,
-        '/nodeReuse:False',
-        '/target:Build',
-        "/property:Configuration=$Configuration"
-    )
     exec {
-        & $MSBuildPath $Parameters
+        dotnet build --configuration $Configuration $SolutionPath
+    }
+
+    @('net461', 'net472', 'net48', 'netcoreapp2.1', 'netcoreapp3.1') | ForEach-Object {
+        exec {
+            dotnet publish --configuration $Configuration --framework $_ --self-contained false "$RepositoryRoot\XmlDoc2CmdletDoc\XmlDoc2CmdletDoc.csproj"
+        }
     }
 }
 
 # Create a forced 32-bit version of the tool.
 task CorFlags  Compile, {
-    Write-Info 'Using CorFlags.exe to create a 32-bit forced version of XmlDoc2CmdletDoc.exe'
-
-    copy -Force "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc.exe" "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc32.exe"
-
+    Write-Info 'Using CorFlags.exe to create a 32-bit forced versions of XmlDoc2CmdletDoc.exe'
+    
     $CorFlagsPath = Get-CorFlagsPath
     Write-Host "CorFlagsPath = $CorFlagsPath"
-    $Parameters = @(
-        "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\XmlDoc2CmdletDoc32.exe"
-        '/32BITREQ+'
-    )
 
-    exec {
-        & $CorFlagsPath $Parameters
+    @('net461', 'net472', 'net48') | ForEach-Object {
+        $Input = "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\$_\publish\XmlDoc2CmdletDoc.exe"
+        $Output = "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\$_\publish\XmlDoc2CmdletDoc32.exe"
+
+        copy -Force $Input $Output
+
+        $Parameters = @(
+            $Output
+            '/32BITREQ+'
+        )
+
+        exec {
+            & $CorFlagsPath $Parameters
+        }
+        
+        Copy-Item "$Input.config" "$Output.config"
     }
 }
 
@@ -194,13 +189,15 @@ task Sign  CorFlags, {
         Write-Info 'Skipping assembly signing'
     } else {
         Write-Info 'Signing Redgate assemblies'
-        
-        "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration" |
-            Get-ChildItem -File |
-            Where-Object { $_.Extension -eq '.dll' -or $_.Extension -eq '.exe'} |
-            ForEach-Object {
-                $_.FullName | Invoke-SigningService
-            }
+
+        @('net461', 'net472', 'net48', 'netcoreapp2.1', 'netcoreapp3.1') | ForEach-Object {
+            "$RepositoryRoot\XmlDoc2CmdletDoc\bin\$Configuration\$_\publish" |
+                Get-ChildItem -File |
+                Where-Object { $_.Name -match '^XmlDoc2CmdletDoc' -and $_.Extension -match '\.(exe|dll)$' } |
+                ForEach-Object {
+                    $_.FullName | Invoke-SigningService
+                }
+        }
     }
 }
 
@@ -209,10 +206,12 @@ task Sign  CorFlags, {
 task Test  Sign, {
     Write-Info 'Running tests'
 
-    $AssemblyPath = "$RepositoryRoot\XmlDoc2CmdletDoc.Tests\bin\$Configuration\XmlDoc2CmdletDoc.Tests.dll" | Resolve-Path
-    Invoke-NUnitForAssembly -AssemblyPath $AssemblyPath `
-                            -NUnitVersion '2.6.3' `
-                            -FrameworkVersion 'net-4.5'
+    @('net461', 'net472', 'net48', 'netcoreapp2.1', 'netcoreapp3.1') | ForEach-Object {
+        $AssemblyPath = "$RepositoryRoot\XmlDoc2CmdletDoc.Tests\bin\$Configuration\$_\XmlDoc2CmdletDoc.Tests.dll" | Resolve-Path
+        exec {
+            dotnet vstest $AssemblyPath
+        }
+    }
 }
 
 # Package task, create the NuGet package.
@@ -233,7 +232,9 @@ task Package  Test, {
         '-OutputDirectory', $DistPath,
         '-Properties', "configuration=$Configuration;releaseNotes=$ReleaseNotes"
     )
-    & $NuGetPath $Parameters
+    exec {
+        & $NuGetPath $Parameters
+    }
 }
 
 

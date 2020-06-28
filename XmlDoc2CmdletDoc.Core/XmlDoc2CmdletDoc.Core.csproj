@@ -1,12 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFrameworks>net461;net472;net48;netstandard2.0;netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="RedGate.ThirdParty.Jolt.Core" Version="0.4.1" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <PackageReference Include="Microsoft.PowerShell.5.ReferenceAssemblies" Version="1.1.0" />
-    <PackageReference Include="RedGate.ThirdParty.Jolt.Core" Version="0.4.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+    <PackageReference Include="System.Management.Automation" Version="6.2.6" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="System.Management.Automation" Version="7.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs">
