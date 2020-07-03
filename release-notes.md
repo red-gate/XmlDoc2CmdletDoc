@@ -1,5 +1,9 @@
 *Note: The build version number is derived from the first entry in this file.*
 
+# 0.3.0
+
+- Use Microsoft.PowerShell.5.ReferenceAssemblies instead of a legacy version of System.Management.Automation.
+
 # 0.2.13
 
 - Correctly resolve type descriptions for array-typed parameters.
