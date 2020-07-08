@@ -41,6 +41,9 @@ _bin_deployable[Aa]ssemblies/
 _ReSharper*/
 *.resharper*
 
+# Rider
+.idea/
+
 # NCrunch
 _[Nn][Cc]runch*/
 
