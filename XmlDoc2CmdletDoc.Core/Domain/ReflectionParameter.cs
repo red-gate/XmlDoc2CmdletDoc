@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 
@@ -54,6 +55,9 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// The type of this parameter's member - method, constructor, property, and so on.
         /// </summary>
         public override MemberTypes MemberType => MemberInfo.MemberType;
+
+        /// <inheritdoc />
+        public override bool SupportsGlobbing => MemberInfo.GetCustomAttributes<SupportsWildcardsAttribute>(true).Any();
 
         /// <summary>
         /// The default value of the parameter. This is obtained by instantiating the cmdlet and accessing the parameter

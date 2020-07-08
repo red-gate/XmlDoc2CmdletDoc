@@ -391,7 +391,7 @@ namespace XmlDoc2CmdletDoc.Core
 
             var element = new XElement(CommandNs + "parameter",
                                 new XAttribute("required", parameter.IsRequired(parameterSetName)),
-                                new XAttribute("globbing", parameter.SupportsGlobbing(parameterSetName)),
+                                new XAttribute("globbing", parameter.SupportsGlobbing),
                                 new XAttribute("pipelineInput", parameter.GetIsPipelineAttribute(parameterSetName)),
                                 position != null ? new XAttribute("position", position) : null,
                                 new XElement(MamlNs + "name", parameter.Name),

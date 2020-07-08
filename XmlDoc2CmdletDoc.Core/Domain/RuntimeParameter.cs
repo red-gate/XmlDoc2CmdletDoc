@@ -40,6 +40,9 @@ namespace XmlDoc2CmdletDoc.Core.Domain
         /// </summary>
         public override MemberTypes MemberType => MemberTypes.Property; //RuntimeDefinedParameters are always defined as a Property
 
+        /// <inheritdoc />
+        public override bool SupportsGlobbing => RuntimeDefinedParameter.Attributes.OfType<SupportsWildcardsAttribute>().Any();
+
         /// <summary>
         /// The default value of the parameter. Runtime parameters do not support specifying default values.
         /// </summary>
