@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net45</TargetFramework>
-		<OutputType>Exe</OutputType>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	</PropertyGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\XmlDoc2CmdletDoc.Core\XmlDoc2CmdletDoc.Core.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="..\SolutionInfo.cs">
-			<Link>Properties\SolutionInfo.cs</Link>
-		</Compile>
-	</ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XmlDoc2CmdletDoc.Core\XmlDoc2CmdletDoc.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
 </Project>

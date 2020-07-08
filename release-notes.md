@@ -3,6 +3,7 @@
 # 0.3.0
 
 - Use Microsoft.PowerShell.5.ReferenceAssemblies instead of a legacy version of System.Management.Automation.
+- Added support for globbing/wildcards based on the presence of SupportsWildcardsAttribute.
 
 # 0.2.13
 
