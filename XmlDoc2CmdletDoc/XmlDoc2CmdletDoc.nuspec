@@ -16,6 +16,14 @@
     <tags>PowerShell help xmldoc</tags>
     <developmentDependency>true</developmentDependency>
     <releaseNotes><![CDATA[$releaseNotes$]]></releaseNotes>
+    <dependencies>
+      <group targetFramework="net461"/>
+      <group targetFramework="net472"/>
+      <group targetFramework="net48"/>
+      <group targetFramework="netcoreapp2.1"/>
+      <group targetFramework="netcoreapp3.1"/>
+      <group targetFramework="netstandard2.0"/>
+    </dependencies>
   </metadata>
   <files>
     <file src="bin\$configuration$\net461\publish\**" target="tools\net461" />
@@ -25,6 +33,7 @@
     <file src="bin\$configuration$\netcoreapp3.1\publish\**" target="tools\netcoreapp3.1" />
     <file src="build\**" target="build" />
     <file src="buildMultiTargeting\**" target="buildMultiTargeting" />
+    <file src="lib\**" target="lib" />
     <file src="..\LICENSE.md" target="license" />
   </files>
 </package>

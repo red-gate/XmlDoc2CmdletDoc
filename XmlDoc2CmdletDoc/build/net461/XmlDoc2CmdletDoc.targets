@@ -3,5 +3,5 @@
         <XmlDoc2CmdletDocToolPath Condition="'$(PlatformTarget)' != 'x86'">net461\XmlDoc2CmdletDoc.exe</XmlDoc2CmdletDocToolPath>
         <XmlDoc2CmdletDocToolPath Condition="'$(PlatformTarget)' == 'x86'">net461\XmlDoc2CmdletDoc32.exe</XmlDoc2CmdletDocToolPath>
     </PropertyGroup>
-    <Import Project="$(MSBuildThisFileDirectory)..\XmlDoc2CmdletDoc.Shared.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)..\XmlDoc2CmdletDoc.targets" />
 </Project>
