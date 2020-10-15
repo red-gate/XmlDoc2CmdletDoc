@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup Condition="'XmlDoc2CmdletDocToolPath' == ''">
-        <XmlDoc2CmdletDocToolPath>netcoreapp3.1\XmlDoc2CmdletDoc.dll</XmlDoc2CmdletDocToolPath>
+    <PropertyGroup Condition="'$(XmlDocToolsPath)' == ''">
+        <XmlDocToolsPath>netcoreapp3.1\XmlDoc2CmdletDoc.dll</XmlDocToolsPath>
     </PropertyGroup>
     <Import Project="$(MSBuildThisFileDirectory)..\XmlDoc2CmdletDoc.targets" />
 </Project>
