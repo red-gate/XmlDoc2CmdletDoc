@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup Condition="'XmlDoc2CmdletDocToolPath' == ''">
-        <XmlDoc2CmdletDocToolPath Condition="'$(PlatformTarget)' != 'x86'">net48\XmlDoc2CmdletDoc.exe</XmlDoc2CmdletDocToolPath>
-        <XmlDoc2CmdletDocToolPath Condition="'$(PlatformTarget)' == 'x86'">net48\XmlDoc2CmdletDoc32.exe</XmlDoc2CmdletDocToolPath>
+    <PropertyGroup Condition="'$(XmlDocToolsPath)' == ''">
+        <XmlDocToolsPath Condition="'$(PlatformTarget)' != 'x86'">net48\XmlDoc2CmdletDoc.exe</XmlDocToolsPath>
+        <XmlDocToolsPath Condition="'$(PlatformTarget)' == 'x86'">net48\XmlDoc2CmdletDoc32.exe</XmlDocToolsPath>
     </PropertyGroup>
     <Import Project="$(MSBuildThisFileDirectory)..\XmlDoc2CmdletDoc.targets" />
 </Project>
