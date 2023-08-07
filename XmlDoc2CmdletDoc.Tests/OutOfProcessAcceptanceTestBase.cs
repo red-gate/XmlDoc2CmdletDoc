@@ -34,6 +34,8 @@ namespace XmlDoc2CmdletDoc.Tests
             var toolFrameworkName = "netcoreapp2.1";
 #elif NETCOREAPP3_1
             var toolFrameworkName = "netcoreapp3.1";
+#elif NET5_0
+            var toolFrameworkName = "net5.0";
 #endif
 
             var toolDir = Path.Combine(SolutionDir, "XmlDoc2CmdletDoc", "bin", Configuration, toolFrameworkName);

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("Redgate")]
 [assembly: AssemblyProduct("XmlDoc2CmdletDoc")]
-[assembly: AssemblyCopyright("Copyright © 2014-2020, Red Gate Software Ltd and other contributors.")]
+[assembly: AssemblyCopyright("Copyright © 2014-2021, Red Gate Software Ltd and other contributors.")]
 
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -18,6 +18,6 @@ using System.Runtime.InteropServices;
 
 // The following attributes are automatically set by the build scripts. Please do not modify them manually.
 // Instead, change the value defined in version-number.txt.
-[assembly: AssemblyVersion("0.4.0")]
-[assembly: AssemblyFileVersion("0.4.0")]
-[assembly: AssemblyInformationalVersion("0.4.0-dotnetcore0000")]
+[assembly: AssemblyVersion("0.4.1")]
+[assembly: AssemblyFileVersion("0.4.1")]
+[assembly: AssemblyInformationalVersion("0.4.1-dotnetcore0000")]
